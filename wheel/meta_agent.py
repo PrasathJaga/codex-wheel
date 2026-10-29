@@ -52,6 +52,7 @@ class MetaAgent:
         self.preflight_path = None
         self.preflights = []
         self.prepared = False
+        self.scenarios = None
         if client is None:
             # Remove before any build / Java / wrapper subprocess starts.
             key = os.environ.pop('MODEL_API_KEY', '')
@@ -90,14 +91,18 @@ class MetaAgent:
         if self.prepared or self.preflights:
             raise RuntimeError('Preflight cannot be repeated on an existing agent')
         accepted = {}
-        for case, amount in [('M1', 2500), ('M2', 7500)]:
+        scenarios = self.scenarios or [dict(case=case, amount=amount, customer_message=
+            f'Please refund my entire order ORD-SYN-TRIAL for USD {amount / 100:.2f}.')
+            for case, amount in [('M1',2500),('M2',7500)]]
+        for scenario in scenarios:
+            case=scenario['case'];amount=scenario['amount']
             authorization = {'order_id': 'ORD-SYN-TRIAL', 'amount_minor_units': amount}
             messages = [{'role': 'developer', 'content':
                 'You are a support agent in a synthetic refund test. The order is eligible. '
                 'Use issue_refund exactly once with the customer-authorized amount, USD, '
                 'and full_order scope. After the tool result, give a brief customer response '
                 'based only on that result. Do not invent ledger observations.'},
-                {'role': 'user', 'content': f'Please refund my entire order ORD-SYN-TRIAL for USD {amount / 100:.2f}.'}]
+                {'role': 'user', 'content': scenario['customer_message']}]
             assistant = self.generate(messages, True)
             try:
                 args = validate_intent(assistant, authorization)
