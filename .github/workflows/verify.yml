@@ -1,0 +1,39 @@
+name: Verify baseline
+on:
+  push:
+  pull_request:
+jobs:
+  java-domain-and-spring:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: services/refund-api-java/pom.xml
+      - name: Spring Boot unit tests
+        working-directory: services/refund-api-java
+        run: mvn --batch-mode test
+      - name: Domain smoke test
+        working-directory: services/refund-api-java
+        run: |
+          mkdir -p .smoke-classes
+          javac -d .smoke-classes src/main/java/dev/codexwheel/refunds/domain/*.java smoke/DomainSmoke.java
+          java -cp .smoke-classes DomainSmoke
+  python-wrapper:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: services/support-agent-python/pyproject.toml
+      - name: Install tests
+        working-directory: services/support-agent-python
+        run: python -m pip install -e '.[test]'
+      - name: Unit tests
+        working-directory: services/support-agent-python
+        run: pytest -q

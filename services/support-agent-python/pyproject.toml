@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=70", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "codex-wheel-refund-tool"
+version = "0.1.0"
+description = "Synthetic refund wrapper; not yet a Meta agent"
+requires-python = ">=3.11"
+dependencies = ["httpx>=0.27,<0.29"]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["refund_tool*"]
