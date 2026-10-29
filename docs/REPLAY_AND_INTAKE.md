@@ -8,7 +8,7 @@ The new `wheel.replay` path consumes G6's accepted plans, source snapshots, auth
 
 `wheel.intake` reads full pinned base/candidate Git SHAs without switching the worktree. It requires exactly one changed supported Java domain/Python client file and an unchanged peer, and rejects changed producer/build inputs. Admission is an exact source-byte allowlist derived from the trusted runner's already-reviewed M1/M2/B1/B2 fixtures. A commit hash is provenance, not permission to build arbitrary code. New source bytes require a separately reviewed policy change. This is independently pinned **reviewed-fixture** intake, not generic developer-repository onboarding or the optional adapter stretch project.
 
-The packaging demonstration creates actual local synthetic commits from saved G6 source bytes and exports their Git history. They are disclosed as synthetic fixture commits, not external developer PRs or new blind cases. The CLI also accepts independently supplied commits satisfying the same reviewed policy.
+The Actions demonstration creates actual local synthetic commits from saved G6 source bytes in an explicit preparation step, supplies those revision pairs to the packaging interface, and exports their Git history. They are disclosed as synthetic fixture commits, not external developer PRs or new blind cases. Both the inspection CLI and packaging interface accept caller-supplied full commit pairs satisfying the same reviewed policy. Packaging requires the four-case inventory; it validates those inputs before Docker/builds and uses their exact commits in the exported source bundle.
 
 ## Package once, replay on a clean runner
 
@@ -31,12 +31,21 @@ python -m wheel.intake --repo /reviewed/repo --base FULL_BASE_SHA \
 python -m wheel.replay pack --evidence /saved/g6 \
   --expected-plan-sha256 EXPECTED_G6_PLAN_HASH --output replay-bundle
 
+# Optional caller-supplied pairs; otherwise pack creates disclosed synthetic pins.
+python -m wheel.replay pack --evidence /saved/g6 \
+  --expected-plan-sha256 EXPECTED_G6_PLAN_HASH --output replay-bundle \
+  --revision-pairs /reviewed/revision-pairs.json --source-repo /reviewed/repo
+
 python -m wheel.replay verify --bundle replay-bundle \
   --expected-manifest-sha256 TRUSTED_EXPECTED_MANIFEST_HASH
 
 python -m wheel.replay run --bundle replay-bundle \
   --expected-manifest-sha256 TRUSTED_EXPECTED_MANIFEST_HASH --output replay-results
 ```
+
+The revision-pair JSON has exactly `M1`, `M2`, `B1`, `B2` keys. Each value contains `base`, `candidate` (full 40-character commit SHAs) and `changed_side` (`java` or `python`). Provided source is still limited to the exact reviewed fixture bytes; author/origin is not independently certified.
+
+Optional fresh continuations also require the OpenAI-compatible Python SDK and `MODEL_API_KEY`. That path is implemented but the default zero-inference workflow does not verify fresh Meta continuation behavior.
 
 The dedicated Actions workflow supplies these steps without requiring laptop commands. Its package job has `actions: read` to download the identified G6 artifact. The clean replay job starts on another runner and receives only the bundle, pinned code and trusted manifest-hash output. No Meta secret is provided. Both raw bundle and replay evidence have 90-day artifact retention; this is finite retention, not permanent archiving.
 

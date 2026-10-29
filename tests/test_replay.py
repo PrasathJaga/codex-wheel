@@ -218,3 +218,27 @@ def test_default_execution_does_not_instantiate_a_model_or_invent_messages(bundl
     results = json.loads((output / 'results.json').read_text())
     assert len(results) == 48 and all(r['model_reply'] is None for r in results)
     assert json.loads((output / 'summary.json').read_text())['fresh_support_agent_calls'] == 0
+
+
+def test_caller_supplied_revision_pairs_are_admitted_before_docker(tmp_path, repo):
+    root, base = repo; java, python = variants(); pairs = {}
+    for case in replay.CASES:
+        side = 'java' if case in ('M1', 'B1') else 'python'
+        candidate = intake.fixture_commit(root, base, DOMAIN if side == 'java' else CLIENT,
+                                         java[case] if side == 'java' else python[case], case)
+        pairs[case] = {'base': base, 'candidate': candidate, 'changed_side': side}
+    path = tmp_path / 'requested.json'; path.write_text(json.dumps(pairs))
+    evidence = tmp_path / 'origin'; evidence.mkdir()
+    frozen = {'commit': base, 'plans': plans()}
+    with patch.object(replay, 'load_g6', return_value=(frozen, java, python)), \
+            patch.object(replay, 'revision', return_value=base), patch.object(replay, 'DockerRuntime') as runtime:
+        runtime.return_value.prepare.side_effect = RuntimeError('offline stop before actual Docker')
+        with pytest.raises(RuntimeError, match='offline stop'):
+            replay.pack(evidence, '0' * 64, tmp_path / 'out', path, root)
+        runtime.return_value.prepare.assert_called_once()
+    pairs['M1']['candidate'] = base  # No change; cannot reach build/runtime.
+    path.write_text(json.dumps(pairs))
+    with patch.object(replay, 'load_g6', return_value=(frozen, java, python)), \
+            patch.object(replay, 'revision', return_value=base), patch.object(replay, 'DockerRuntime') as runtime:
+        with pytest.raises(IntegrityError): replay.pack(evidence, '0' * 64, tmp_path / 'bad', path, root)
+        runtime.assert_not_called()

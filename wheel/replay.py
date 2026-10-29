@@ -141,10 +141,25 @@ def load_g6(evidence, expected_plan):
     return frozen, java, python
 
 
-def pack(evidence, expected_plan, output):
+def pack(evidence, expected_plan, output, revision_pairs=None, source_repo=ROOT):
     evidence, output = Path(evidence).resolve(), Path(output).absolute()
     frozen, java, python = load_g6(evidence, expected_plan)  # Before Docker/build/network.
     engine_commit = revision()
+    source_repo = Path(source_repo).resolve()
+    supplied = None
+    if revision_pairs is not None:
+        requested = bounded_json(revision_pairs)
+        if set(requested) != set(CASES): raise IntegrityError('Four reviewed revision pairs required')
+        supplied = {}
+        for case, item in requested.items():
+            if set(item) != {'base', 'candidate', 'changed_side'}:
+                raise IntegrityError('Unexpected revision-pair fields')
+            record = inspect(source_repo, item['base'], item['candidate'], item['changed_side'])
+            if record['case'] != case: raise IntegrityError('Revision pair has the wrong reviewed case')
+            record['provenance'] = 'caller_supplied_reviewed_commit_pair; author_origin_not_verified'
+            supplied[case] = record
+    elif source_repo != ROOT.resolve():
+        raise IntegrityError('A source repository requires explicit revision pairs')
     if output.exists(): raise IntegrityError('Bundle output must not exist')
     output.mkdir(parents=True)
     runtime = None
@@ -171,15 +186,19 @@ def pack(evidence, expected_plan, output):
                 side = 'java' if case in ('M1', 'B1') else 'python'
                 path = DOMAIN if side == 'java' else CLIENT
                 text = java[case] if side == 'java' else python[case]
-                candidate = fixture_commit(ROOT, frozen['commit'], path, text, case)
-                records[case] = inspect(ROOT, frozen['commit'], candidate, side)
-                records[case]['provenance'] = 'synthetic_local_fixture_commit_from_saved_G6_source'
+                if supplied:
+                    records[case] = supplied[case]
+                    candidate = records[case]['candidate_commit']
+                else:
+                    candidate = fixture_commit(ROOT, frozen['commit'], path, text, case)
+                    records[case] = inspect(ROOT, frozen['commit'], candidate, side)
+                    records[case]['provenance'] = 'synthetic_local_fixture_commit_from_saved_G6_source'
                 ref = 'refs/codex-wheel/replay-' + namespace + '-' + case
-                git(ROOT, 'update-ref', ref, candidate); refs.append(ref)
+                git(source_repo, 'update-ref', ref, candidate); refs.append(ref)
             try:
-                git(ROOT, 'bundle', 'create', str(output / 'sources.bundle'), *refs)
+                git(source_repo, 'bundle', 'create', str(output / 'sources.bundle'), *refs)
             finally:
-                for ref in refs: git(ROOT, 'update-ref', '-d', ref)
+                for ref in refs: git(source_repo, 'update-ref', '-d', ref)
             (output / 'intake.json').write_text(json.dumps(records, indent=2, sort_keys=True))
             files = {p.relative_to(output).as_posix(): {'sha256': file_sha(p), 'bytes': p.stat().st_size}
                      for p in sorted(output.rglob('*')) if p.is_file()}
@@ -346,6 +365,8 @@ def main():
     packing.add_argument('--evidence', type=Path, required=True)
     packing.add_argument('--expected-plan-sha256', required=True)
     packing.add_argument('--output', type=Path, required=True)
+    packing.add_argument('--revision-pairs', type=Path)
+    packing.add_argument('--source-repo', type=Path, default=ROOT)
     for name in ('verify', 'run'):
         command = commands.add_parser(name)
         command.add_argument('--bundle', type=Path, required=True)
@@ -354,7 +375,7 @@ def main():
             command.add_argument('--output', type=Path, required=True)
             command.add_argument('--live-continuations', action='store_true')
     args = parser.parse_args()
-    if args.command == 'pack': pack(args.evidence, args.expected_plan_sha256, args.output)
+    if args.command == 'pack': pack(args.evidence, args.expected_plan_sha256, args.output, args.revision_pairs, args.source_repo)
     elif args.command == 'verify':
         data, _, _ = verify(args.bundle, args.expected_manifest_sha256)
         print(json.dumps({'status': 'verified_before_execution', 'plans': len(data['plans'])}))

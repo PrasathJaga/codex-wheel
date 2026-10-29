@@ -45,11 +45,30 @@ jobs:
           run-id: 40881599825
           github-token: ${{ github.token }}
           path: inputs/g6
+      - name: Create disclosed synthetic commit-pair inputs for the intake demonstration
+        run: |
+          python - <<'PYTHON'
+          import json
+          from pathlib import Path
+          from wheel.replay import load_g6, CASES
+          from wheel.intake import fixture_commit
+          from wheel.experiment import ROOT, DOMAIN, CLIENT
+          frozen, java, python = load_g6(Path('inputs/g6'), 'e4069cc7e2b3de850535c77c84bb7c7de4a280116f0a0d1ed86ed2840e5d1dd6')
+          pairs = {}
+          for case in CASES:
+              side = 'java' if case in ('M1', 'B1') else 'python'
+              path = DOMAIN if side == 'java' else CLIENT
+              text = java[case] if side == 'java' else python[case]
+              candidate = fixture_commit(ROOT, frozen['commit'], path, text, case)
+              pairs[case] = {'base': frozen['commit'], 'candidate': candidate, 'changed_side': side}
+          Path('inputs/revision-pairs.json').write_text(json.dumps(pairs, indent=2))
+          print('Created four synthetic reviewed commit pairs; no external developer PR claimed')
+          PYTHON
       - name: Pack original plans and reviewed pinned sources with immutable runtime archives
         run: >-
           python -m wheel.replay pack --evidence inputs/g6
           --expected-plan-sha256 e4069cc7e2b3de850535c77c84bb7c7de4a280116f0a0d1ed86ed2840e5d1dd6
-          --output replay-bundle
+          --output replay-bundle --revision-pairs inputs/revision-pairs.json
       - name: Publish independent expected root for the next clean runner
         id: root
         run: |
