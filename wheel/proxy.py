@@ -9,7 +9,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 ACTIONS = {'PASS_THROUGH', 'DROP_DOWNSTREAM_BEFORE_RESPONSE', 'REPLACE_DOWNSTREAM_STATUS_502'}
 
 class Gateway:
-    def __init__(self, upstream_port, rule, observe_commit=None):
+    def __init__(self, upstream_port, rule, observe_commit=None, upstream_host='127.0.0.1'):
         if set(rule) != {'action', 'min', 'max'} or rule['action'] not in ACTIONS:
             raise ValueError('Invalid fault rule')
         if type(rule['min']) is not int or type(rule['max']) is not int or not 1 <= rule['min'] <= rule['max'] <= 100000000:
@@ -28,7 +28,7 @@ class Gateway:
                 body = self.rfile.read(length)
                 payload = json.loads(body)
                 key = self.headers.get('Idempotency-Key', '')
-                connection = http.client.HTTPConnection('127.0.0.1', upstream_port, timeout=3)
+                connection = http.client.HTTPConnection(upstream_host, upstream_port, timeout=3)
                 try:
                     connection.request('POST', '/refunds', body, {'Content-Type':'application/json', 'Idempotency-Key':key})
                     response = connection.getresponse()

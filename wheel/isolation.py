@@ -135,28 +135,30 @@ print(json.dumps(checks))
         self.names.add(name)
         # Token stays out of argv; only this synthetic producer receives it.
         env = {**child_env(), 'WHEEL_EVALUATOR_TOKEN': token}
-        subprocess.run(['docker', 'run', '-d', '--name', name, *self.limits(),
-            '--network', self.network, '-p', '127.0.0.1::8080',
-            '--mount', f'type=bind,src={jar},dst=/app.jar,readonly',
-            '--mount', f'type=bind,src={ledger_directory},dst=/state',
-            '-e', 'WHEEL_EVALUATOR_TOKEN', '-e', 'WHEEL_LEDGER_PATH=/state/ledger.tsv',
-            self.images['java'], 'java', '-XX:ActiveProcessorCount=1', '-jar', '/app.jar',
-            '--server.address=0.0.0.0'], env=env, check=True, text=True,
-            capture_output=True, timeout=30)
-        data = json.loads(docker('inspect', name).stdout)[0]
-        config = data['HostConfig']
-        if (data['Image'] != self.images['java'] or not config['ReadonlyRootfs'] or
-                config['NetworkMode'] != self.network or config['Privileged'] or
-                data['Config']['User'] != self.uid or
-                'no-new-privileges' not in config['SecurityOpt'] or
-                'ALL' not in config['CapDrop']):
-            raise RuntimeError('Producer container configuration drift')
-        p = int(data['NetworkSettings']['Ports']['8080/tcp'][0]['HostPort'])
         try:
+            subprocess.run(['docker', 'run', '-d', '--name', name, *self.limits(),
+                '--network', self.network,
+                '--mount', f'type=bind,src={jar},dst=/app.jar,readonly',
+                '--mount', f'type=bind,src={ledger_directory},dst=/state',
+                '-e', 'WHEEL_EVALUATOR_TOKEN', '-e', 'WHEEL_LEDGER_PATH=/state/ledger.tsv',
+                self.images['java'], 'java', '-XX:ActiveProcessorCount=1', '-jar', '/app.jar',
+                '--server.address=0.0.0.0'], env=env, check=True, text=True,
+                capture_output=True, timeout=30)
+            data = json.loads(docker('inspect', name).stdout)[0]
+            config = data['HostConfig']
+            if (data['Image'] != self.images['java'] or not config['ReadonlyRootfs'] or
+                    config['NetworkMode'] != self.network or config['Privileged'] or
+                    data['Config']['User'] != self.uid or
+                    'no-new-privileges' not in config['SecurityOpt'] or
+                    'ALL' not in config['CapDrop']):
+                raise RuntimeError('Producer container configuration drift')
+            host = data['NetworkSettings']['Networks'][self.network]['IPAddress']
+            if not host: raise RuntimeError('Internal producer address unavailable')
+            p = 8080
             for _ in range(150):
                 try:
-                    if httpx.get(f'http://127.0.0.1:{p}/health', timeout=.5, trust_env=False).status_code == 200:
-                        return name, p
+                    if httpx.get(f'http://{host}:{p}/health', timeout=.5, trust_env=False).status_code == 200:
+                        return name, (host, p)
                 except httpx.TransportError: pass
                 time.sleep(.2)
             raise RuntimeError('Container readiness timeout')

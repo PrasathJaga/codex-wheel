@@ -49,8 +49,8 @@ def stop(process):
     try: process.wait(timeout=10)
     except subprocess.TimeoutExpired: process.kill(); process.wait()
 
-def snapshot(p, token):
-    with httpx.Client(base_url=f'http://127.0.0.1:{p}', trust_env=False) as c:
+def snapshot(p, token, host='127.0.0.1'):
+    with httpx.Client(base_url=f'http://{host}:{p}', trust_env=False) as c:
         assert c.get('/internal/evaluator/ledger').status_code == 403
         r = c.get('/internal/evaluator/ledger',headers={'X-Evaluator-Token':token})
         r.raise_for_status(); return r.json()['effects']

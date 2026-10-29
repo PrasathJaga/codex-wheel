@@ -115,9 +115,10 @@ def world(runtime, plan, trial, which, jars, java, python, out, scratch, guard, 
     started = time.monotonic()
     token = secrets.token_hex(32)
     with (out / (label + '.log')).open('w') as log:
-        name, port = runtime.start_java(jars[j], ledger_dir, token, log)
+        name, endpoint = runtime.start_java(jars[j], ledger_dir, token, log)
+        host, port = endpoint
         try:
-            record['reset_empty'] = snapshot(port, token) == [] and not ledger.exists()
+            record['reset_empty'] = snapshot(port, token, host) == [] and not ledger.exists()
             if not record['reset_empty']: raise IntegrityError('Ledger state leaked between worlds')
             def observe(upstream):
                 rows = ledger.read_text().splitlines()
@@ -125,14 +126,14 @@ def world(runtime, plan, trial, which, jars, java, python, out, scratch, guard, 
                     raise IntegrityError('Upstream success before persisted effect')
                 return {'effect_id': upstream['refund_effect_id'], 'ledger_sha256': digest(ledger.read_bytes()),
                         'rows_before_downstream_action': len(rows)}
-            with Gateway(port, plan['rule'], observe) as gateway:
+            with Gateway(port, plan['rule'], observe, upstream_host=host) as gateway:
                 with UnixBroker(bridge / 'gateway.sock', gateway.port):
                     guard.verify('before_wrapper:' + label)
                     outcome = runtime.wrapper(module, bridge, plan['seed']['payload']['arguments'])
                 record['events'] = copy.deepcopy(gateway.events)
             record['receipt'] = outcome['receipt']
             record['transport_errors'] = outcome['transport_errors']
-            record['effects'] = snapshot(port, token)
+            record['effects'] = snapshot(port, token, host)
             # Host verifier checks persisted bytes independently of the reported HTTP snapshot.
             rows = [row.split('\t') for row in ledger.read_text().splitlines()]
             expected = [[e['effect_id'], e['order_id'], str(e['amount_minor_units']), e['currency'],
@@ -144,9 +145,10 @@ def world(runtime, plan, trial, which, jars, java, python, out, scratch, guard, 
         finally: runtime.stop_java(name, log)
         # New process, same world ledger, verifies graceful-restart reconstruction.
         guard.verify('before_restart:' + label)
-        name, port = runtime.start_java(jars[j], ledger_dir, token, log)
+        name, endpoint = runtime.start_java(jars[j], ledger_dir, token, log)
+        host, port = endpoint
         try:
-            record['restart_recovered'] = snapshot(port, token) == record['effects']
+            record['restart_recovered'] = snapshot(port, token, host) == record['effects']
             if not record['restart_recovered']: raise IntegrityError('Restart recovery mismatch')
         finally: runtime.stop_java(name, log)
     record['oracle_pass'] = check(record['effects'], plan['fixture'])
@@ -167,9 +169,11 @@ def run():
         scratch = Path(temporary)
         runtime = DockerRuntime(ROOT, scratch)
         try:
+            print('G6: preparing constrained runtime', flush=True)
             images = runtime.prepare()
             isolation = runtime.probe()
             save('isolation-probes.json', isolation)
+            print('G6: confinement probes passed; building source variants', flush=True)
             jars = build_jars(java, scratch)
             save('build-hashes.json', {k: digest(v.read_bytes()) for k, v in jars.items()})
             # Only genuine provider calls. Container/build/probe errors precede spending.
@@ -178,6 +182,7 @@ def run():
             investigator = Investigator(agent.client, out / 'investigator-traces.json', max_calls=24)
             proposals = {}; decisions = {}; views = {}; scenarios = []
             for case in ('M1', 'M2', 'B1', 'B2'):
+                print('G6: investigating source case ' + case, flush=True)
                 views[case] = source_view(case, java, python)
                 changed = DOMAIN if case in ('M1', 'B1') else CLIENT
                 try:
@@ -226,6 +231,7 @@ def run():
                     guard.bind(path, path.read_bytes())
             manifest = {'commit': commit, 'plan_hash': plan_hash, 'policy': POLICY, 'images': images,
                         'build_hashes': frozen['build_hashes']}
+            print('G6: frozen plans accepted; starting 48 fresh worlds', flush=True)
             outcomes = {}
             for plan in plans:
                 plan_records = []
@@ -251,6 +257,7 @@ def run():
                             record['status'] = 'analysis_error'; record['error_type'] = type(error).__name__
                         records.append(record); plan_records.append(record); pair.append(record)
                         save('results.json', records)
+                        print('G6: ' + label + ' ' + record['status'], flush=True)
                     if all(r['status'] == 'completed' for r in pair):
                         validate_pair(*pair, plan, manifest)
                 outcomes[plan['id']] = summarize(plan_records)

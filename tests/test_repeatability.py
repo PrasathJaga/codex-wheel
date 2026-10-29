@@ -167,3 +167,23 @@ def test_request_budget_is_explicit_and_bounded():
     agent = MetaAgent(client=object(), max_calls=52)
     agent.calls = 52
     with pytest.raises(RuntimeError, match='budget'): agent.generate([], False)
+
+
+def test_internal_producer_uses_bridge_address_without_publishing_ports():
+    from wheel.isolation import DockerRuntime
+    from unittest.mock import Mock
+    with tempfile.TemporaryDirectory() as directory:
+        runtime = DockerRuntime(Path(directory), Path(directory))
+        runtime.images = {'java': 'immutable-java-image'}
+        inspect = {'Image': 'immutable-java-image', 'Config': {'User': runtime.uid},
+                   'HostConfig': {'ReadonlyRootfs': True, 'NetworkMode': runtime.network,
+                                  'Privileged': False, 'SecurityOpt': ['no-new-privileges'], 'CapDrop': ['ALL']},
+                   'NetworkSettings': {'Networks': {runtime.network: {'IPAddress': '172.30.0.2'}},
+                                       'Ports': {'8080/tcp': None}}}
+        with patch('wheel.isolation.subprocess.run') as spawn, \
+                patch('wheel.isolation.docker', return_value=Mock(stdout=json.dumps([inspect]))), \
+                patch('wheel.isolation.httpx.get', return_value=Mock(status_code=200)) as health:
+            _, endpoint = runtime.start_java('/jar', '/state', 'synthetic-token', Mock())
+        assert endpoint == ('172.30.0.2', 8080)
+        assert '-p' not in spawn.call_args.args[0]
+        assert health.call_args.args[0] == 'http://172.30.0.2:8080/health'
