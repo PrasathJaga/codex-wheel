@@ -1,0 +1,47 @@
+name: G5 source-grounded investigator
+on:
+  workflow_dispatch:
+  push:
+    branches: [hackathon/g5-investigator]
+    paths:
+      - 'wheel/**'
+      - 'tests/**'
+      - '.github/workflows/g5-investigator.yml'
+permissions:
+  contents: read
+concurrency:
+  group: g5-investigator
+  cancel-in-progress: false
+jobs:
+  investigate:
+    if: github.repository == 'PrasathJaga/codex-wheel'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: services/refund-api-java/pom.xml
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -e './services/support-agent-python[test]' 'openai>=2,<3'
+      - name: Offline boundary and gate tests
+        run: python -m pytest -q tests services/support-agent-python/tests
+      - name: Bounded genuine investigator and support-agent trials
+        env:
+          MODEL_API_KEY: ${{ secrets.MODEL_API_KEY }}
+        run: python -m wheel.experiment --investigate
+      - name: Record dependency versions
+        if: always()
+        run: |
+          mkdir -p evidence-g5
+          python -m pip freeze > evidence-g5/dependencies.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: g5-investigator-evidence
+          path: evidence-g5/

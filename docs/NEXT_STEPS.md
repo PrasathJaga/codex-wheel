@@ -8,3 +8,5 @@ Authoritative design: Codex_Wheel_v3.2_MASTER_Session2_Updated_2026-10-29.md and
 - Then: repeated live trials, benign/partial-refund controls, stronger isolation and provenance, portable verified replay, fair C0/C2/C4 comparisons, and three-minute demo.
 
 No working claim follows solely from checked-in code. Preserve failed attempts and unknowns. Do not copy the pre-event archive into public source or claim it as event-period implementation.
+
+G5 branch update: source/diff investigator and generated-plan execution are implemented but not yet live-verified. This branch is stacked on PR #6. Validate its real traces/outcomes before claiming source-grounded experiment selection; then prioritize repeated trials, benign controls and honest baseline comparisons.

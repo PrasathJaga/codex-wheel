@@ -63,3 +63,7 @@ G4 execution update: commit c295b9d27072ee207cb5cf61cb52ad01efd24526, Actions 40
 Added side-effect-free mock tool dispatch after genuine support-agent selection, all-or-nothing preflight acceptance, mandatory file/hash checks before execution and final publication, stale-output rejection and negative-path tests. Implementation exists; this branch's live execution is pending. PR #5 merged as 5b14f7309f0aaf78ce41ff9fb892e11ec5a87a23; master Actions 40870468023 passed. See docs/PREFLIGHT_FREEZE_GATES.md for precise architecture mapping and remaining limits.
 
 Preflight/freeze execution update: commit 91f63a37640d68e302ad0b385d0c8662e71ce318, live Actions 40872383954 and inspected artifact 12895724593 verify two mock preflights selected by genuine Meta calls, six real generations, four expected ledger worlds and 18 integrity checkpoints. See docs/PREFLIGHT_FREEZE_GATES.md for hashes, separate negative-path test evidence and remaining limits. No G5 investigator or comparative superiority is claimed.
+
+## G5 investigator branch contribution (2026-10-29)
+
+Implemented a bounded genuine Meta investigator loop with read-only in-memory source/diff mediation, exact source-reference validation, generated customer/amount/fault proposals, abstention and bounded rejection handling. Runner consumes accepted proposals before preflight/freeze and reports actual one-trial outcomes without forcing a regression. Local fake-client tests pass; live verification is pending. G5_INVESTIGATOR.md discloses seeded-source scope and outstanding evaluation/isolation work.
