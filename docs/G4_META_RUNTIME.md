@@ -16,3 +16,20 @@ The bounded slice has one paired trial per mutation with its fault active (four 
 The dedicated workflow runs only on manual dispatch or code changes to the named G4 implementation branch; PRs and ordinary master pushes do not spend credits. Every dispatch/re-run can consume another bounded budget. GitHub stores the key as repository Actions secret `MODEL_API_KEY`; never paste it into code or conversation. No Baseten deployment is needed for this slice.
 
 Success requires successful model turns AND baseline ledger pass / candidate duplicate-effect failure for both mutations, plus existing commit-before-fault and persisted-ledger restart checks. A failed model request or malformed intent fails closed; no successful G4 summary is emitted.
+
+## Observed execution — 2026-10-29
+
+The bounded slice is **experimentally verified** at commit `c295b9d27072ee207cb5cf61cb52ad01efd24526`, Actions [40868779979](https://github.com/PrasathJaga/codex-wheel/actions/runs/40868779979). This supersedes the implementation-time pending status above, not the explicitly incomplete full G4 gate.
+
+Inspected artifact [12894409373](https://github.com/PrasathJaga/codex-wheel/actions/runs/40868779979/artifacts/12894409373):
+- ZIP SHA-256: `0991af39636f9cfdb306ce05d44027149bc925527e6cf105bf78966d4e3afa68`
+- Frozen plan SHA-256: `0d5d871df14b73670eac1fe63602d0ba011d7fdca49251cd217debac20a460ec`
+- Six successful genuine `muse-spark-1.3` calls: two tool selections, four post-tool text responses. Provider-reported total tokens: 5,376; this is not a dollar-cost measurement.
+- M1/drop: baseline one effect, candidate two; independent oracle true/false.
+- M2/502: baseline one effect, candidate two; independent oracle true/false.
+- All four worlds recovered the same ledger on restart. Actual drop paths recorded `RemoteProtocolError`.
+- The model reported successful refunds in both faulty worlds despite duplicate effects. This establishes the disclosed synthetic cases only, not general model reliability or superiority.
+
+The first run [40868461679](https://github.com/PrasathJaga/codex-wheel/actions/runs/40868461679) produced two successful initial tool calls, then failed on a continuation HTTP 400. The implementation had supplied unsupported `tool_choice="none"`. Meta documentation permits only `auto`; the corrected run uses it and still rejects further tool execution. Across these two runs there were eight successful generations and one rejected request. Failed-run usage was 1,685 tokens for its successful generations. No credit balance or billed total was queried.
+
+Next: implement and verify the full mocked-tool preflight, then the G5 investigator and remaining controls/isolation/evaluation gates. This evidence must not be labeled full architecture completion.
