@@ -1,0 +1,16 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+*.class
+.venv/
+.idea/
+.vscode/
+.env
+.env.*
+!.env.example
+**/target/
+**/build/
+**/dist/
+*.egg-info/
+/runs/
+**/.smoke-classes/
