@@ -38,3 +38,22 @@ Commit 3ce64b33a602d995a8239aa050051e77e941f3c7, Actions [40874181663](https://g
 There were 10 genuine investigator generations plus 6 support-agent generations, with 45,599 and 5,299 provider-reported tokens respectively. Three rejected proposals and their actual correction history remain in the trace. ZIP SHA-256: 5c204703aa2979c02248a26d33e0a710aac76054e80d73ce73b4aeaa827b32a8. Plan SHA-256: c44ba1b34321fa03f3738686c667540ad873d81ce5320da814cad3a076088a45.
 
 The v2 fixture policy enforces the already-documented M2 high-value constraint before proposal acceptance. This creates a new run/manifest; the original evidence is not rewritten or relabeled. It is a conformance correction, not evidence of better selection performance. The actual fault remains freely selected from the allowlist, including PASS_THROUGH. V2 execution is pending.
+
+## Corrected policy: observed bounded execution
+
+At commit `7efa2daa2bb9e8b65d1948c2ad051fbd29bf0efb`, Actions [40874813904](https://github.com/PrasathJaga/codex-wheel/actions/runs/40874813904) passed. Inspected artifact [12898145845](https://github.com/PrasathJaga/codex-wheel/actions/runs/40874813904/artifacts/12898145845) records:
+
+| Case | Accepted amount | Investigator-selected fault | Baseline effects | Candidate effects | Oracle pair |
+| --- | --- | --- | --- | --- | --- |
+| M1 | 2500 | DROP_DOWNSTREAM_BEFORE_RESPONSE | 1 | 2 | true / false |
+| M2 | 7500 (public fixture constraint) | REPLACE_DOWNSTREAM_STATUS_502 | 1 | 2 | true / false |
+
+- Eight genuine investigator generations and six support-agent generations, all reported `muse-spark-1.3`. Investigator/support provider-reported total tokens: 32,168 / 5,252. No dollar-cost or credit-balance assertion.
+- Two initial proposals were rejected for `Quote does not match source span`; both were corrected before acceptance/world execution. Full rejected outputs and feedback are retained.
+- Both generated dialogues passed mocked-tool preflight; all four world restarts recovered the ledger; all 18 integrity checkpoints passed.
+- ZIP SHA-256: `d6aef4aacb355e76fc7512b70f4a4d50ee48b6a3ab29df01f0fb1232b927dcfb`.
+- Plan SHA-256: `a5f75a3950bf28d2c745a94b0e2667184a70a66f0196507061b5f3f01e01d5af`.
+
+Inspection independently checked ZIP/plan hashes, proposal-to-frozen-plan equality, the v2 policy marker and all accepted quote/span matches against the archived source snapshots. Local offline tests passed: 28 tests plus 14 subtests. Full regression CI was still running when this note was written; PR checks carry its final status.
+
+Status: **verified bounded G5 source-reading/experiment-selection slice** on two known seeded cases, one paired trial each. This is not a claim of completed G6/G7, blind discovery, overall reliability, baseline superiority, complete architectural isolation or successful submission. The earlier low-value M2 run remains disclosed above.
