@@ -85,7 +85,10 @@ def run(agent=None, investigate=False):
             sources={DOMAIN:{'base':base_source,'candidate':variants['M1'] if case=='M1' else base_source},
                      CLIENT:{'base':client_source,'candidate':wrappers['M2'] if case=='M2' else client_source}}
             source_snapshots[case]=sources
-            proposal=investigator.investigate(sources, changed_path)
+            # v3.2 requires the Python-change case to use a high-value fixture.
+            # This is public eligibility, not an outcome-dependent change.
+            allowed_amounts=(2500,7500) if case=='M1' else (7500,)
+            proposal=investigator.investigate(sources, changed_path, allowed_amounts)
             proposals[case]=proposal
             selected.append(dict(case=case,amount=proposal['amount_minor_units'],
                 action=proposal['fault']['action'],min=proposal['fault']['min'],max=proposal['fault']['max']))
@@ -108,6 +111,7 @@ def run(agent=None, investigate=False):
         'oracle_sha256':digest((ROOT/'wheel/verifier.py').read_bytes()),
         'proxy_sha256':digest((ROOT/'wheel/proxy.py').read_bytes()),
         'commit':os.getenv('GITHUB_SHA','local'), 'policy_version':'preflight-freeze-v1',
+        'investigator_policy_version':'source-tools-high-value-v2' if investigate else None,
         'investigator_proposals':proposals, 'sources':source_hashes, 'preflight_sha256':digest((out/'preflight.json').read_bytes()) if agent else None, 'trials':trials, 'model_intents':model_intents},sort_keys=True).encode()
     (out/'frozen-plan.json').write_bytes(frozen)
     plan_hash=digest(frozen)

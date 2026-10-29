@@ -48,6 +48,14 @@ class InvestigatorTests(unittest.TestCase):
         self.assertEqual(m.dispatch('propose_experiment',proposal()),proposal())
         with self.assertRaises(ProposalError): m.dispatch('read_diff',{})
 
+    def test_public_high_value_fixture_rejects_low_value_before_execution(self):
+        m=SourceTools(SOURCES,'producer.java',allowed_amounts=(7500,));read_all(m)
+        with self.assertRaises(ProposalError): m.dispatch('propose_experiment',proposal())
+        p=proposal();p['amount_minor_units']=7500
+        p['fault']={'action':'PASS_THROUGH','min':7500,'max':7500}
+        # Eligibility enforces value, not the desired fault or regression result.
+        self.assertEqual(m.dispatch('propose_experiment',p)['fault']['action'],'PASS_THROUGH')
+
     def test_model_cannot_set_oracle_or_unbounded_fault(self):
         for update in [{'expected_effect_count':2},{'amount_minor_units':True},
                        {'fault':{'action':'SHELL','min':1,'max':7500}},
