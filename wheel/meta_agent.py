@@ -3,6 +3,7 @@ import copy
 import hashlib
 import json
 import os
+from wheel.preflight import MockRefundTool, TriggerNotReached
 
 MODEL = 'muse-spark-1.3'
 TOOL = {'type': 'function', 'function': {'name': 'issue_refund',
@@ -48,6 +49,9 @@ class MetaAgent:
         self.traces = []
         self.frozen = {}
         self.trace_path = None
+        self.preflight_path = None
+        self.preflights = []
+        self.prepared = False
         if client is None:
             # Remove before any build / Java / wrapper subprocess starts.
             key = os.environ.pop('MODEL_API_KEY', '')
@@ -83,6 +87,9 @@ class MetaAgent:
         return message
 
     def prepare(self):
+        if self.prepared or self.preflights:
+            raise RuntimeError('Preflight cannot be repeated on an existing agent')
+        accepted = {}
         for case, amount in [('M1', 2500), ('M2', 7500)]:
             authorization = {'order_id': 'ORD-SYN-TRIAL', 'amount_minor_units': amount}
             messages = [{'role': 'developer', 'content':
@@ -92,11 +99,28 @@ class MetaAgent:
                 'based only on that result. Do not invent ledger observations.'},
                 {'role': 'user', 'content': f'Please refund my entire order ORD-SYN-TRIAL for USD {amount / 100:.2f}.'}]
             assistant = self.generate(messages, True)
-            args = validate_intent(assistant, authorization)
-            # Schema/authorization preflight only; no refund or mocked model response.
+            try:
+                args = validate_intent(assistant, authorization)
+                mock = MockRefundTool()
+                receipt = mock.issue_refund(**args)
+            except (ValueError, TypeError, KeyError):
+                self.preflights.append({'case': case, 'status': 'trigger_not_reached'})
+                if self.preflight_path:
+                    self.preflight_path.write_text(json.dumps(self.preflights, indent=2))
+                raise TriggerNotReached('trigger_not_reached; no worlds executed') from None
+            self.preflights.append({'case': case, 'status': 'reached_tool',
+                'tool_call_id': assistant['tool_calls'][0]['id'],
+                'arguments': copy.deepcopy(args), 'mock_calls': copy.deepcopy(mock.calls),
+                'mock_receipt': receipt, 'model_trace_ordinal': self.calls})
+            if self.preflight_path:
+                self.preflight_path.write_text(json.dumps(self.preflights, indent=2))
+            # Keep pre-tool history: the mock receipt must never become a real-world result.
             frozen = {'messages': messages + [assistant], 'arguments': args,
-                      'authorization': authorization, 'tool_call_id': assistant['tool_calls'][0]['id']}
-            self.frozen[case] = {'payload': frozen, 'sha256': fingerprint(frozen)}
+                      'authorization': authorization, 'operation_context': 'synthetic-full-order-' + case,
+                      'tool_call_id': assistant['tool_calls'][0]['id']}
+            accepted[case] = {'payload': frozen, 'sha256': fingerprint(frozen)}
+        self.frozen = accepted
+        self.prepared = True
         return copy.deepcopy(self.frozen)
 
     def intent(self, case):
