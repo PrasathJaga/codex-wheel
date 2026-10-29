@@ -79,3 +79,25 @@ jobs:
         with:
           name: g1-java-api-log
           path: java-api.log
+  manual-counterfactuals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: services/refund-api-java/pom.xml
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -e './services/support-agent-python[test]'
+      - run: python -m pytest -q tests
+      - run: python -m wheel.experiment
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: manual-counterfactual-evidence
+          path: evidence/

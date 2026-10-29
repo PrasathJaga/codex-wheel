@@ -8,5 +8,5 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class RefundApplication {
     public static void main(String[] args) { SpringApplication.run(RefundApplication.class, args); }
-    @Bean public RefundService refundService() { return new RefundService(); }
+    @Bean public RefundService refundService() { String path = System.getenv("WHEEL_LEDGER_PATH"); return new RefundService(path == null ? null : java.nio.file.Path.of(path)); }
 }
