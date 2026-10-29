@@ -49,6 +49,7 @@ class MetaContractTests(unittest.TestCase):
         for _ in range(6): agent.generate([],False)
         with self.assertRaisesRegex(RuntimeError,'budget'): agent.generate([],False)
         self.assertEqual(len(client.requests),6)
+        self.assertTrue(all(r['tool_choice']=='auto' for r in client.requests))
         agent=MetaAgent(FakeClient(error=RuntimeError('SECRET VALUE')))
         with self.assertRaises(RuntimeError) as error: agent.generate([],True)
         self.assertNotIn('SECRET',str(error.exception))

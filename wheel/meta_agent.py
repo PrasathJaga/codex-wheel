@@ -62,7 +62,7 @@ class MetaAgent:
         self.calls += 1
         try:
             response = self.client.chat.completions.create(model=MODEL,
-                messages=messages, tools=[TOOL], tool_choice='auto' if initial else 'none',
+                messages=messages, tools=[TOOL], tool_choice='auto',
                 max_completion_tokens=1024, reasoning_effort='minimal')
         except Exception as error:
             # Never persist exception bodies, headers, request objects, or credentials.
