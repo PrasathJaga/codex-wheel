@@ -32,7 +32,7 @@ class UnixBroker:
         class Handler(BaseHTTPRequestHandler):
             def log_message(self, *args): pass
             def do_POST(self):
-                if self.path != '/refunds':
+                if self.path != '/refunds' or self.headers.get('Host') != 'gateway':
                     self.send_error(403); return
                 try: length = int(self.headers.get('Content-Length', '0'))
                 except ValueError:

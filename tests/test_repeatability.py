@@ -136,7 +136,7 @@ def test_broker_blocks_evaluator_routes_gets_and_arbitrary_destinations():
             if os.getenv('WHEEL_REQUIRE_BROKER_TEST') == '1': raise
             pytest.skip('Local runtime denies Unix sockets; mandatory in G6 Actions')
         with broker, httpx.Client(transport=httpx.HTTPTransport(uds=str(path)),
-                                             base_url='http://broker') as client:
+                                             base_url='http://gateway') as client:
             for route in ('/internal/evaluator/ledger', 'http://example.com/refunds', '/refunds?bypass=1'):
                 assert client.post(route, json={}).status_code == 403
             assert client.get('/refunds').status_code == 501
