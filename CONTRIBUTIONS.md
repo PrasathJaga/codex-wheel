@@ -1,35 +1,53 @@
 # Codex Wheel — Hackathon contribution and provenance ledger
 
-**Hackathon building window:** October 27–November 4, 2026.
+Building window in the supplied Participant Guide: October 27–November 4, 2026. Track: Indie Developer. Theme: Push the Frontier.
 
-## Pre-existing assets
+## Pre-existing work
 
-A pre-event Codex Wheel Python analysis/indexing codebase exists in a separately supplied archive named `codecx-wheel-main.zip`. It includes Python, Java and JavaScript analysis utilities, repository indexing, access policy, and secret-redaction helpers. **This old codebase is not bundled in this branch.** The v3.2 architecture proposal and other technical references predate these commits; proposals are not evidence of working functionality.
+The separate codecx-wheel-main.zip contains earlier analysis/indexing utilities. That archive has not been copied into this repository. Architecture documents are design sources, not implementation evidence. Only event-period functionality may be highlighted as newly built in the demo.
 
-## New work (2026-10-29; verification pending)
+## Event-period implementation and evidence
 
-This branch introduces an AI-assisted draft of a new Java 21 synthetic refund service and Spring Boot HTTP adapter, Python refund wrapper with stable retry keys, tests, CI definition and this contribution ledger.
+| Work | Implementation commit | Observed evidence |
+| --- | --- | --- |
+| G0/G1 synthetic Java API, Python wrapper, initial tests | 053a0c474fd24e81f39e626fe778a65f66b91016; master merge 07905405028fa244c5ca3ed82462bae00add4e43 | Actions 40855794807 passed; this baseline did not execute the live integration test |
+| G1 live Java/Python HTTP and credential-protected evaluator reads | 4b912e0574013d743d6c5921288e143f44085e9d; master merge 185008c76ee75905b8965d9067f339e645e5c03d | Actions 40856908942: all jobs passed, one live test passed without skipping |
+| G2/G3 manual buffered faults, append ledger, M1/M2 and controls | 875d67ab69beaeeef925442a1c1212487322ff01 and 34b5c685a77790a0df013ab44a059cf613edb39b | Actions 40857277640 passed; 48 worlds; artifact 12889463709 |
+| G2 merge into integration branch | ab1eb8e241f45c5c02195fb2f986aee042a4e718 | PR #3 targeted hackathon/g1-live-integration, not master; corrective PR is required |
 
-Actual contribution commit hashes must be recorded here **after commits are created**. The GitHub repository's initial LICENSE-only commit is not a claim of implemented functionality.
+These are AI-assisted event-period contributions. Git history and linked execution evidence establish the boundary; the old archive and design history are not claimed as newly implemented.
 
 ## Claim ledger
 
-| Feature | Status | Evidence / limitation |
+| Feature | Status | Scope and limits |
 | --- | --- | --- |
-| Public GitHub repository | verified through connected GitHub metadata | `PrasathJaga/codex-wheel` public, initial `master` only LICENSE |
-| G0 source provenance | in_progress | This file; event-period commit and source pinning still required |
-| Java synthetic refund service | implemented_unverified | Prior local domain smoke test; Maven CI pending |
-| Python HTTP wrapper | implemented_unverified | Prior local unit tests; GitHub CI pending |
-| G1 Java/Python live HTTP + protected ledger | planned | Live test must run and pass |
-| G2 fault gateway | planned | Not implemented |
-| G3 M1/M2 comparisons, independent oracle | planned | Not implemented |
-| G4/G5 real Meta agent and investigator | planned | Not implemented |
-| G6/G7 trial parity, controls, replay, evaluation | planned | Not implemented |
+| Public repository | verified through GitHub metadata | PrasathJaga/codex-wheel |
+| G1 live synthetic API/wrapper | verified_with_run | HTTP credential boundary; no hostile-code isolation |
+| G2 buffered success then drop/502 | verified_with_run for manual fixtures | First persisted effect observed before downstream fault |
+| G3 seeded M1/M2 manual comparisons | verified_with_run | Three trials, 1 baseline vs 2 candidate effects under relevant fault |
+| Benign/no-fault controls and restart recovery | verified_with_run on disclosed matrix | One effect in all such worlds; graceful restart, not power-loss guarantee |
+| Genuine Meta support agent and investigator | planned | Model calls: zero; no live model evidence |
+| Full G6/G7 protection/replay/evaluation | incomplete | Hashes and repeated trials exist; full isolation, tamper rejection, replay and fair competitor evaluation remain outstanding |
+| Demo video and final submission | planned | No completed or submitted demo is claimed |
+
+## Evidence bundle
+
+Run: https://github.com/PrasathJaga/codex-wheel/actions/runs/40857277640
+
+Artifact: https://github.com/PrasathJaga/codex-wheel/actions/runs/40857277640/artifacts/12889463709
+
+ZIP SHA-256: 0559c422e59f1f55dac5ae61ee7b31a1b7d69a5ce00820fd7cd9f03bbca99a89
+
+Frozen plan SHA-256: 12fc464f9fd053360f6c8a15166ebc81bec3201bafc6b94b502a11ea87f6109d
+
+Artifact inspection confirmed 48 worlds, actual RemoteProtocolError on drops, same-key retry except M2 candidate 502, and ledger recovery. No model discovery, generalization or superiority is inferred.
 
 ## Third-party dependencies and rights
 
-Java 21, Spring Boot, Python, httpx and pytest are used under their upstream terms. The refund fixtures are synthetic. No real payment provider, production code, customer data or API credentials are included. Code generated with AI assistance requires source review and testing.
+Java, Spring Boot, Python, httpx, pytest and GitHub Actions are used under their upstream terms. Fixtures are synthetic. Rights/license review remains a submission responsibility; use of these dependencies is not a blanket legal clearance. Do not add employer code, real payments/customer data, or credentials.
 
-## Required provenance updates
+## Remaining competition requirements
 
-Record exact event-period commit SHAs, experiments and model identifiers, genuine live-run results and whether any demo is recorded replay. Never imply passing tests or a successful model call without observed evidence.
+Meaningful genuine Meta model use is still unfulfilled. A public accessible three-minute demo highlighting only event-period work, submission details/contributors, and final rights/provenance review are still pending. The supplied Guide sets November 4, 2026 at 9 PM EST (November 5 at 7:30 AM IST) as the submission deadline. Organizer decisions control eligibility; this ledger is not a certification.
+
+Architecture obligations not yet satisfied include OS-level evaluator separation, constrained execution/model gateway, robust plan freeze and tamper rejection, legitimate partial-refund counterexamples and fair baseline comparisons. Do not label these complete.
