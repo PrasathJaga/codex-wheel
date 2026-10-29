@@ -27,6 +27,7 @@ TOOLS=[
 
 class ProposalError(ValueError): pass
 class InvestigationInconclusive(RuntimeError): pass
+class InvestigatorAbstained(InvestigationInconclusive): pass
 
 def strict_json(raw):
     def unique(pairs):
@@ -71,7 +72,7 @@ class SourceTools:
             return copy.deepcopy(args)
         if name=='abstain':
             if set(args)!={'reason'} or not isinstance(args['reason'],str): raise ProposalError('Invalid abstention')
-            raise InvestigationInconclusive('Investigator abstained; no worlds executed')
+            raise InvestigatorAbstained('Investigator abstained; no worlds executed')
         raise ProposalError('Tool is not allowlisted')
 
     def validate(self, plan):
@@ -107,7 +108,10 @@ class SourceTools:
             raise ProposalError('Cite changed candidate and unchanged peer source')
 
 class Investigator:
-    def __init__(self, client, trace_path):
+    def __init__(self, client, trace_path, max_calls=12):
+        if type(max_calls) is not int or not 1 <= max_calls <= 24:
+            raise ValueError("Invalid investigator request budget")
+        self.max_calls = max_calls
         self.client=client;self.trace_path=trace_path;self.calls=0;self.traces=[]
 
     def persist(self):
@@ -130,7 +134,7 @@ class Investigator:
                 'request':'Investigate this change and propose a source-grounded experiment.'})}]
         rejected_proposals=0
         for turn in range(6):
-            if self.calls>=12: raise InvestigationInconclusive('Investigator total request budget exhausted')
+            if self.calls>=self.max_calls: raise InvestigationInconclusive('Investigator total request budget exhausted')
             self.calls+=1
             try:
                 response=self.client.chat.completions.create(model=MODEL,messages=messages,tools=TOOLS,

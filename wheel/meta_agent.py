@@ -44,7 +44,10 @@ def validate_intent(message, authorization):
     return args
 
 class MetaAgent:
-    def __init__(self, client=None):
+    def __init__(self, client=None, max_calls=6):
+        if type(max_calls) is not int or not 1 <= max_calls <= 64:
+            raise ValueError("Invalid model request budget")
+        self.max_calls = max_calls
         self.calls = 0
         self.traces = []
         self.frozen = {}
@@ -63,7 +66,7 @@ class MetaAgent:
         self.client = client
 
     def generate(self, messages, initial):
-        if self.calls >= 6: raise RuntimeError('Six-call budget exhausted')
+        if self.calls >= self.max_calls: raise RuntimeError('Model-call budget exhausted')
         self.calls += 1
         try:
             response = self.client.chat.completions.create(model=MODEL,

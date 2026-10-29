@@ -1,10 +1,10 @@
 # Codex Wheel — Meta Hackathon 2026
 
-**Current code status:** G0/G1 baseline candidate; not an end-to-end v3.2 investigator.
+**Current master evidence:** G1 live Java/Python, the manual G2/G3 matrix, genuine Meta support-agent/preflight and bounded source-reading G5 investigator are demonstrated in linked Actions runs. PR #7 merged as `ec55072fede610c26265e9660828f9530cf1a4f6`.
 
-Codex Wheel aims to discover agent-tool/backend behavioral regressions by having a Meta-powered investigator choose source-grounded experiments and by independently validating business effects.
+Codex Wheel uses a Meta-powered investigator to choose source-grounded experiments and independently validates committed business effects in a **synthetic refund workflow**. G5 covers two disclosed seeded cases, one selected paired trial each. It does not establish general bug-finding accuracy or superiority over deterministic methods.
 
-This branch introduces a **synthetic** Java refund API and a **non-agent** Python tool wrapper. It does not yet contain a working Meta investigator, real Meta model calls, fault proxy, M1/M2 mutation comparisons, independent external oracle or reproducible counterfactual verdicts.
+The G6 branch adds repeated live-plan trials, benign/no-fault controls, strict parity and constrained Docker execution. See [G6_REPEATABILITY.md](docs/G6_REPEATABILITY.md) for protocol, evidence status and limitations. See [NEXT_STEPS.md](docs/NEXT_STEPS.md) for the remaining replay/evaluation/demo work.
 
 ## Source history
 
@@ -45,9 +45,9 @@ cd services/support-agent-python
 WHEEL_TEST_LIVE=1 pytest -q tests/test_live_integration.py
 ```
 
-This live test asserts the refund ledger delta; it is skipped in the default unit-test suite. CI currently runs Java and Python unit tests, **not** the live Java/Python integration test.
+This live test asserts the refund ledger delta; it is skipped in the default unit-test suite. CI runs Java/Python unit tests, live Java/Python integration and a manual counterfactual matrix. Paid G4/G5/G6 workflows are separately bounded.
 
-No real payment system, customer orders or money are involved. The initial ledger is in memory, and reset on restart. The evaluator inspection endpoint is protected by a token and bound to loopback by default; G2 requires stronger isolation and verified post-commit fault semantics.
+No real payment system, customer orders or money are involved. The fixture optionally uses a forced append ledger with graceful-restart recovery. The evaluator endpoint is token-protected. Earlier runs use trusted same-host processes; G6 adds constrained containers, with the limits documented above.
 
 ## Next engineering gates
 
