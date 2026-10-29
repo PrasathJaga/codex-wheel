@@ -2,6 +2,12 @@
 
 Sources: Codex_Wheel_v3.2_MASTER_Session2_Updated_2026-10-29.md, updated START_HERE, and user-supplied October 26 Meta Global AI Developer Hackathon Participant Guide.
 
+## Current evidence update
+
+The sections below retain historical assessments from earlier implementation stages. Current master includes genuine Meta support-agent/preflight and bounded source-reading G5 investigation (PRs #5–#7). PR #8 adds the G6 slice verified at code 367626239f7acc703e9e0c693117a0c8718377e9, live Actions 40881599825 and inspected artifact 12901497160: 48 completed worlds, repeated seeded regressions, benign/no-fault controls and constrained Docker execution. See G6_REPEATABILITY.md for exact outcomes, failed attempts and limits. PR #8 remains open; G6 is not yet merged into master.
+
+Meaningful Meta runtime use is demonstrated within the synthetic disclosed scope; organizer eligibility is not certified. The three-minute demo, submission, fair baseline comparison and portable replay remain pending. Docker isolation materially strengthens execution separation but does not certify malicious-producer ledger truth, hostile-kernel security or general production safety. Legitimate partial-operation counterexamples exist offline; the runtime API remains full-order only.
+
 ## Competition requirements versus project gates
 
 No rule violation has been established by this repository review. This is an in-progress project, not a submission-ready or certified-compliant entry.
