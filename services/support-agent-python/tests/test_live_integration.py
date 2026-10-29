@@ -27,3 +27,7 @@ def test_java_http_python_wrapper_one_effect():
         assert len(new)==1 and new[0]["order_id"]==order
         assert new[0]["amount_minor_units"]==2500
         assert new[0]["refund_scope"]=="full_order"
+        assert new[0]["currency"]=="USD"
+        assert sum(row["amount_minor_units"] for row in new)==2500
+        assert new[0]["effect_id"]==receipt["refund_effect_id"]
+        assert client.get("/internal/evaluator/ledger",headers={"X-Evaluator-Token":"wrong"}).status_code==403

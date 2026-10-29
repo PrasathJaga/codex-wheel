@@ -37,3 +37,45 @@ jobs:
       - name: Unit tests
         working-directory: services/support-agent-python
         run: pytest -q
+
+  live-java-python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: services/refund-api-java/pom.xml
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -e './services/support-agent-python[test]'
+      - run: mvn -B -f services/refund-api-java/pom.xml package
+      - name: Live wrapper and protected ledger assertions
+        shell: bash
+        run: |
+          set -euo pipefail
+          export WHEEL_EVALUATOR_TOKEN="$(python -c 'import secrets; print(secrets.token_hex(32))')"
+          echo "::add-mask::$WHEEL_EVALUATOR_TOKEN"
+          java -jar services/refund-api-java/target/refund-api-java-0.1.0-SNAPSHOT.jar > java-api.log 2>&1 &
+          api_pid=$!
+          trap 'kill "$api_pid" || true' EXIT
+          python - <<'PYTHON'
+          import time, urllib.request
+          for _ in range(60):
+              try:
+                  with urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=1) as r:
+                      if r.status == 200: break
+              except OSError: pass
+              time.sleep(1)
+          else: raise SystemExit('Java readiness timeout')
+          PYTHON
+          WHEEL_TEST_LIVE=1 python -m pytest -q services/support-agent-python/tests/test_live_integration.py -rA
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: g1-java-api-log
+          path: java-api.log
