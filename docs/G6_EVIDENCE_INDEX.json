@@ -1,0 +1,699 @@
+{
+  "code_commit": "367626239f7acc703e9e0c693117a0c8718377e9",
+  "run_id": 40881599825,
+  "artifact_id": 12901497160,
+  "artifact_sha256": "5e5db684b91f7298cc72c08f63efdeaf1f970d9aa671e6c19030f91b113035e4",
+  "plan_hash": "e4069cc7e2b3de850535c77c84bb7c7de4a280116f0a0d1ed86ed2840e5d1dd6",
+  "outcomes": {
+    "M1-selected": {
+      "verdict": "reproduced_regression",
+      "reason": "repeatable_baseline_pass_candidate_fail",
+      "pairs": [
+        {
+          "trial": 0,
+          "baseline_pass": true,
+          "candidate_pass": false,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 1,
+          "baseline_pass": true,
+          "candidate_pass": false,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 2,
+          "baseline_pass": true,
+          "candidate_pass": false,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        }
+      ],
+      "baseline_passes": 3,
+      "candidate_passes": 0,
+      "paired_trials": 3
+    },
+    "M1-no_fault": {
+      "verdict": "not_reproduced",
+      "reason": "no_violation_under_tested_conditions",
+      "pairs": [
+        {
+          "trial": 0,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 1,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 2,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        }
+      ],
+      "baseline_passes": 3,
+      "candidate_passes": 3,
+      "paired_trials": 3
+    },
+    "M2-selected": {
+      "verdict": "reproduced_regression",
+      "reason": "repeatable_baseline_pass_candidate_fail",
+      "pairs": [
+        {
+          "trial": 0,
+          "baseline_pass": true,
+          "candidate_pass": false,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 1,
+          "baseline_pass": true,
+          "candidate_pass": false,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 2,
+          "baseline_pass": true,
+          "candidate_pass": false,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        }
+      ],
+      "baseline_passes": 3,
+      "candidate_passes": 0,
+      "paired_trials": 3
+    },
+    "M2-no_fault": {
+      "verdict": "not_reproduced",
+      "reason": "no_violation_under_tested_conditions",
+      "pairs": [
+        {
+          "trial": 0,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 1,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 2,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        }
+      ],
+      "baseline_passes": 3,
+      "candidate_passes": 3,
+      "paired_trials": 3
+    },
+    "B1-selected": {
+      "verdict": "not_reproduced",
+      "reason": "no_violation_under_tested_conditions",
+      "pairs": [
+        {
+          "trial": 0,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 1,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 2,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        }
+      ],
+      "baseline_passes": 3,
+      "candidate_passes": 3,
+      "paired_trials": 3
+    },
+    "B1-no_fault": {
+      "verdict": "not_reproduced",
+      "reason": "no_violation_under_tested_conditions",
+      "pairs": [
+        {
+          "trial": 0,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 1,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 2,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        }
+      ],
+      "baseline_passes": 3,
+      "candidate_passes": 3,
+      "paired_trials": 3
+    },
+    "B2-selected": {
+      "verdict": "not_reproduced",
+      "reason": "no_violation_under_tested_conditions",
+      "pairs": [
+        {
+          "trial": 0,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 1,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 2,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        }
+      ],
+      "baseline_passes": 3,
+      "candidate_passes": 3,
+      "paired_trials": 3
+    },
+    "B2-no_fault": {
+      "verdict": "not_reproduced",
+      "reason": "no_violation_under_tested_conditions",
+      "pairs": [
+        {
+          "trial": 0,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 1,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 2,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        }
+      ],
+      "baseline_passes": 3,
+      "candidate_passes": 3,
+      "paired_trials": 3
+    }
+  },
+  "decisions": {
+    "B1": {
+      "control_origin": "inherited_M1_after_abstention",
+      "status": "abstained"
+    },
+    "B2": {
+      "control_origin": "inherited_M2_after_abstention",
+      "status": "abstained"
+    },
+    "M1": {
+      "status": "accepted"
+    },
+    "M2": {
+      "status": "accepted"
+    }
+  },
+  "worlds": [
+    {
+      "label": "M1-selected-0-base",
+      "trial": 0,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "M1-selected-0-candidate",
+      "trial": 0,
+      "world": "candidate",
+      "oracle_pass": false,
+      "effect_count": 2,
+      "total_minor_units": 5000,
+      "key_count": 1
+    },
+    {
+      "label": "M1-selected-1-base",
+      "trial": 1,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "M1-selected-1-candidate",
+      "trial": 1,
+      "world": "candidate",
+      "oracle_pass": false,
+      "effect_count": 2,
+      "total_minor_units": 5000,
+      "key_count": 1
+    },
+    {
+      "label": "M1-selected-2-base",
+      "trial": 2,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "M1-selected-2-candidate",
+      "trial": 2,
+      "world": "candidate",
+      "oracle_pass": false,
+      "effect_count": 2,
+      "total_minor_units": 5000,
+      "key_count": 1
+    },
+    {
+      "label": "M1-no_fault-0-base",
+      "trial": 0,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "M1-no_fault-0-candidate",
+      "trial": 0,
+      "world": "candidate",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "M1-no_fault-1-base",
+      "trial": 1,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "M1-no_fault-1-candidate",
+      "trial": 1,
+      "world": "candidate",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "M1-no_fault-2-base",
+      "trial": 2,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "M1-no_fault-2-candidate",
+      "trial": 2,
+      "world": "candidate",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "M2-selected-0-base",
+      "trial": 0,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "M2-selected-0-candidate",
+      "trial": 0,
+      "world": "candidate",
+      "oracle_pass": false,
+      "effect_count": 2,
+      "total_minor_units": 15000,
+      "key_count": 2
+    },
+    {
+      "label": "M2-selected-1-base",
+      "trial": 1,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "M2-selected-1-candidate",
+      "trial": 1,
+      "world": "candidate",
+      "oracle_pass": false,
+      "effect_count": 2,
+      "total_minor_units": 15000,
+      "key_count": 2
+    },
+    {
+      "label": "M2-selected-2-base",
+      "trial": 2,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "M2-selected-2-candidate",
+      "trial": 2,
+      "world": "candidate",
+      "oracle_pass": false,
+      "effect_count": 2,
+      "total_minor_units": 15000,
+      "key_count": 2
+    },
+    {
+      "label": "M2-no_fault-0-base",
+      "trial": 0,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "M2-no_fault-0-candidate",
+      "trial": 0,
+      "world": "candidate",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "M2-no_fault-1-base",
+      "trial": 1,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "M2-no_fault-1-candidate",
+      "trial": 1,
+      "world": "candidate",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "M2-no_fault-2-base",
+      "trial": 2,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "M2-no_fault-2-candidate",
+      "trial": 2,
+      "world": "candidate",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "B1-selected-0-base",
+      "trial": 0,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "B1-selected-0-candidate",
+      "trial": 0,
+      "world": "candidate",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "B1-selected-1-base",
+      "trial": 1,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "B1-selected-1-candidate",
+      "trial": 1,
+      "world": "candidate",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "B1-selected-2-base",
+      "trial": 2,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "B1-selected-2-candidate",
+      "trial": 2,
+      "world": "candidate",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "B1-no_fault-0-base",
+      "trial": 0,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "B1-no_fault-0-candidate",
+      "trial": 0,
+      "world": "candidate",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "B1-no_fault-1-base",
+      "trial": 1,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "B1-no_fault-1-candidate",
+      "trial": 1,
+      "world": "candidate",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "B1-no_fault-2-base",
+      "trial": 2,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "B1-no_fault-2-candidate",
+      "trial": 2,
+      "world": "candidate",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 2500,
+      "key_count": 1
+    },
+    {
+      "label": "B2-selected-0-base",
+      "trial": 0,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "B2-selected-0-candidate",
+      "trial": 0,
+      "world": "candidate",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "B2-selected-1-base",
+      "trial": 1,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "B2-selected-1-candidate",
+      "trial": 1,
+      "world": "candidate",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "B2-selected-2-base",
+      "trial": 2,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "B2-selected-2-candidate",
+      "trial": 2,
+      "world": "candidate",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "B2-no_fault-0-base",
+      "trial": 0,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "B2-no_fault-0-candidate",
+      "trial": 0,
+      "world": "candidate",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "B2-no_fault-1-base",
+      "trial": 1,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "B2-no_fault-1-candidate",
+      "trial": 1,
+      "world": "candidate",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "B2-no_fault-2-base",
+      "trial": 2,
+      "world": "base",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    },
+    {
+      "label": "B2-no_fault-2-candidate",
+      "trial": 2,
+      "world": "candidate",
+      "oracle_pass": true,
+      "effect_count": 1,
+      "total_minor_units": 7500,
+      "key_count": 1
+    }
+  ]
+}

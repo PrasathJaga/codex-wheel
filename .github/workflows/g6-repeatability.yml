@@ -1,0 +1,52 @@
+name: G6 repeated trials and controls
+on:
+  workflow_dispatch:
+  push:
+    branches: [hackathon/g6-repeatability-controls]
+    paths:
+      - 'wheel/**'
+      - 'tests/**'
+      - '.github/workflows/g6-repeatability.yml'
+permissions:
+  contents: read
+concurrency:
+  group: g6-repeatability
+  cancel-in-progress: false
+jobs:
+  repeatability:
+    if: github.repository == 'PrasathJaga/codex-wheel'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: services/refund-api-java/pom.xml
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -e './services/support-agent-python[test]' 'openai>=2,<3'
+      - name: Offline boundary, parity, aggregation and scope tests
+        env:
+          WHEEL_REQUIRE_BROKER_TEST: '1'
+        run: python -m pytest -q tests services/support-agent-python/tests
+      - name: Genuine investigation, frozen plans and three fresh pairs with controls
+        env:
+          MODEL_API_KEY: ${{ secrets.MODEL_API_KEY }}
+        run: python -m wheel.g6
+      - name: Record dependency versions
+        if: always()
+        run: |
+          mkdir -p evidence-g6
+          python -m pip freeze > evidence-g6/dependencies.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: g6-repeatability-evidence
+          path: evidence-g6/
+          retention-days: 30
