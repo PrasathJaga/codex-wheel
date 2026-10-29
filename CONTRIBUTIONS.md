@@ -51,3 +51,9 @@ Java, Spring Boot, Python, httpx, pytest and GitHub Actions are used under their
 Meaningful genuine Meta model use is still unfulfilled. A public accessible three-minute demo highlighting only event-period work, submission details/contributors, and final rights/provenance review are still pending. The supplied Guide sets November 4, 2026 at 9 PM EST (November 5 at 7:30 AM IST) as the submission deadline. Organizer decisions control eligibility; this ledger is not a certification.
 
 Architecture obligations not yet satisfied include OS-level evaluator separation, constrained execution/model gateway, robust plan freeze and tamper rejection, legitimate partial-refund counterexamples and fair baseline comparisons. Do not label these complete.
+
+## G4 branch contribution (2026-10-29)
+
+Added a credential-owning Meta support-agent gateway, strict intent validation, frozen conversation replay, credential-free wrapper subprocesses, bounded live workflow and negative contract tests. Status: implemented, live verification pending. This supersedes the earlier planned-only support-agent status for this branch, but does not claim completed G4/G5 gates. PR #4 is now merged to master at c04543143fd78840c8f76af8ad0974ff009c5175; master Actions 40865513972 passed.
+
+G4 execution update: commit c295b9d27072ee207cb5cf61cb52ad01efd24526, Actions 40868779979, inspected artifact 12894409373 verifies six genuine muse-spark-1.3 calls and four worlds: one effect in each baseline, two in each faulty candidate, with the model reporting refund success. The previous zero-model-call statements apply to the earlier manual matrix, not this new slice. Meaningful runtime Meta integration is now demonstrated for these synthetic cases; full G4 preflight, G5 investigator and competition submission remain incomplete. See docs/G4_META_RUNTIME.md for failed-attempt disclosure and exact hashes.

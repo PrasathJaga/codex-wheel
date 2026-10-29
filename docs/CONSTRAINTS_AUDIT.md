@@ -29,3 +29,7 @@ PR #2 merged into master as 185008c76ee75905b8965d9067f339e645e5c03d. PR #3 merg
 ## Next dependency
 
 After the integration correction, implement G4 with a trusted credential-owning Meta gateway, strict tool arguments, actual provider tool-call/continuation traces and frozen initial intent. Verify provider documentation and account model entitlement before choosing exact API/model names. Keep credentials out of repository files, tool containers and public artifacts. A missing credential or unsupported model must fail explicitly; mocks must never count as live model evidence.
+
+## G4 evidence update
+
+The earlier zero-model-call/planned-support-agent statements are historical. Actions 40868779979 at c295b9d27072ee207cb5cf61cb52ad01efd24526 verifies a bounded genuine Meta support-agent slice (six calls, four worlds). See G4_META_RUNTIME.md for evidence and limits. Runtime model integration is demonstrated; full G4 mocked-tool preflight, G5 investigation, OS isolation and later evaluation/submission requirements remain incomplete. PR #4 is merged into master at c04543143fd78840c8f76af8ad0974ff009c5175.

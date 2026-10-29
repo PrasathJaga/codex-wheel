@@ -1,6 +1,5 @@
-"""Manually frozen synthetic counterfactuals. No model calls or AI discovery."""
+"""Synthetic counterfactuals: manual matrix or bounded live Meta support-agent slice."""
 import hashlib
-import importlib.util
 import json
 import os
 from pathlib import Path
@@ -9,6 +8,7 @@ import socket
 import subprocess
 import tempfile
 import time
+import sys
 
 import httpx
 from wheel.proxy import Gateway
@@ -24,10 +24,15 @@ def port():
     with socket.socket() as s:
         s.bind(('127.0.0.1', 0)); return s.getsockname()[1]
 
+def child_env():
+    """Allow only runtime plumbing into candidate subprocesses."""
+    return {k:v for k,v in os.environ.items() if k in
+            {"PATH", "JAVA_HOME", "HOME", "LANG", "LC_ALL", "TMPDIR", "SYSTEMROOT"}}
+
 def start(jar, ledger, token, log):
     p = port()
     process = subprocess.Popen(['java', '-jar', str(jar), '--server.port='+str(p)],
-        env={**os.environ, 'WHEEL_LEDGER_PATH':str(ledger), 'WHEEL_EVALUATOR_TOKEN':token}, stdout=log, stderr=subprocess.STDOUT)
+        env={**child_env(), 'WHEEL_LEDGER_PATH':str(ledger), 'WHEEL_EVALUATOR_TOKEN':token}, stdout=log, stderr=subprocess.STDOUT)
     for _ in range(100):
         try:
             if httpx.get(f'http://127.0.0.1:{p}/health', timeout=.5, trust_env=False).status_code == 200:
@@ -49,8 +54,8 @@ def snapshot(p, token):
         r = c.get('/internal/evaluator/ledger',headers={'X-Evaluator-Token':token})
         r.raise_for_status(); return r.json()['effects']
 
-def run():
-    out = ROOT/'evidence'; out.mkdir(exist_ok=True)
+def run(agent=None):
+    out = ROOT/('evidence-g4' if agent else 'evidence'); out.mkdir(exist_ok=True)
     base_source = (ROOT/DOMAIN).read_text()
     client_source = (ROOT/CLIENT).read_text()
     needle = 'if (prior != null) {'
@@ -66,11 +71,15 @@ def run():
     for case, amount, action in [('M1',2500,'DROP_DOWNSTREAM_BEFORE_RESPONSE'), ('M2',7500,'REPLACE_DOWNSTREAM_STATUS_502'), ('B1',2500,'DROP_DOWNSTREAM_BEFORE_RESPONSE'), ('B2',7500,'REPLACE_DOWNSTREAM_STATUS_502')]:
         for fault in [False, True]:
             plans.append(dict(case=case, amount=amount, action=action if fault else 'PASS_THROUGH'))
+    trials = 1 if agent else 3
+    if agent: plans = [p for p in plans if p['case'] in ['M1','M2'] and p['action'] != 'PASS_THROUGH']
+    if agent: agent.trace_path = out/'model-traces.json'
+    model_intents = agent.prepare() if agent else None
     frozen = json.dumps({'plans':plans, 'java':{k:digest(v.encode()) for k,v in variants.items()},
         'python':{k:digest(v.encode()) for k,v in wrappers.items()},
         'oracle_sha256':digest((ROOT/'wheel/verifier.py').read_bytes()),
         'proxy_sha256':digest((ROOT/'wheel/proxy.py').read_bytes()),
-        'commit':os.getenv('GITHUB_SHA','local'), 'trials':3},sort_keys=True).encode()
+        'commit':os.getenv('GITHUB_SHA','local'), 'trials':trials, 'model_intents':model_intents},sort_keys=True).encode()
     (out/'frozen-plan.json').write_bytes(frozen)
     plan_hash=digest(frozen)
     results=[]
@@ -79,20 +88,18 @@ def run():
             td=Path(td); jars={}
             for name, source in variants.items():
                 (ROOT/DOMAIN).write_text(source)
-                subprocess.run(['mvn','-B','-f',str(ROOT/JAVA/'pom.xml'), 'clean','package','-DskipTests'], check=True)
+                subprocess.run(['mvn','-B','-f',str(ROOT/JAVA/'pom.xml'), 'clean','package','-DskipTests'], check=True, env=child_env())
                 jar=td/(name+'.jar'); jar.write_bytes((ROOT/JAVA/'target/refund-api-java-0.1.0-SNAPSHOT.jar').read_bytes()); jars[name]=jar
                 (out/(name+'.java')).write_text(source)
             for name, source in wrappers.items(): (out/(name+'-client.py')).write_text(source)
             for plan in plans:
-                for trial in range(3):
+                for trial in range(trials):
                     pair=[]
                     for world in ['base','candidate']:
                         case=plan['case']; label=f'{case}-{plan["action"]}-{trial}-{world}'
                         java_variant=case if world=='candidate' and case in variants else 'base'
                         py_variant=case if world=='candidate' and case in wrappers else 'base'
                         module_file=td/(py_variant+'.py'); module_file.write_text(wrappers[py_variant])
-                        spec=importlib.util.spec_from_file_location('trial_client',module_file)
-                        module=importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
                         ledger=td/(label+'.tsv'); token=secrets.token_hex(32)
                         authorization={'order_id':'ORD-SYN-TRIAL','amount_minor_units':plan['amount']}
                         rule={'action':plan['action'],'min':plan['amount'],'max':plan['amount']}
@@ -105,15 +112,13 @@ def run():
                                     assert any(row.split('\t')[0]==upstream['refund_effect_id'] for row in rows)
                                     return {'effect_id':upstream['refund_effect_id'], 'ledger_sha256':digest(ledger.read_bytes()),'rows_before_downstream_action':len(rows)}
                                 with Gateway(p,rule,observe_commit) as gateway:
-                                    transport_errors=[]
-                                    class ObservedClient(httpx.Client):
-                                        def send(self, *args, **kwargs):
-                                            try: return super().send(*args, **kwargs)
-                                            except httpx.TransportError as error:
-                                                transport_errors.append(type(error).__name__)
-                                                raise
-                                    with ObservedClient(base_url=f'http://127.0.0.1:{gateway.port}',trust_env=False,timeout=3) as client:
-                                        receipt=module.RefundTool(client=client).issue_refund(**authorization)
+                                    arguments = agent.intent(case)['arguments'] if agent else authorization
+                                    worker = subprocess.run([sys.executable, '-m', 'wheel.wrapper_worker',
+                                        str(module_file), f'http://127.0.0.1:{gateway.port}'],
+                                        input=json.dumps(arguments), text=True, capture_output=True,
+                                        timeout=30, env=child_env(), check=True)
+                                    outcome = json.loads(worker.stdout)
+                                    receipt=outcome['receipt']; transport_errors=outcome['transport_errors']
                                     events=list(gateway.events)
                                 assert bool(transport_errors)==(plan['action']=='DROP_DOWNSTREAM_BEFORE_RESPONSE')
                                 effects=snapshot(p,token)
@@ -134,9 +139,11 @@ def run():
                             process,p=start(jars[java_variant],ledger,token,log)
                             try: assert snapshot(p,token)==effects
                             finally: stop(process)
+                        model_reply = agent.continue_world(case, receipt) if agent else None
+                        if agent: (out/'model-traces.json').write_text(json.dumps(agent.traces,indent=2))
                         valid=check(effects,authorization)
                         record=dict(label=label, case=case,world=world,trial=trial,plan_hash=plan_hash,
-                            transport_errors=transport_errors,oracle_pass=valid,effects=effects,events=events,receipt=receipt,
+                            model_reply=model_reply,transport_errors=transport_errors,oracle_pass=valid,effects=effects,events=events,receipt=receipt,
                             restart_recovered=True,java_sha256=digest(variants[java_variant].encode()),
                             python_sha256=digest(wrappers[py_variant].encode()))
                         results.append(record);pair.append(valid)
@@ -146,7 +153,15 @@ def run():
             assert digest((out/'frozen-plan.json').read_bytes())==plan_hash
             assert digest((ROOT/'wheel/proxy.py').read_bytes())==json.loads(frozen)['proxy_sha256']
             assert digest((ROOT/'wheel/verifier.py').read_bytes())==json.loads(frozen)['oracle_sha256']
-            (out/'summary.json').write_text(json.dumps({'status':'verified_manual_fixture_matrix','worlds':len(results),'model_calls':0,'plan_hash':plan_hash},indent=2))
+            (out/'summary.json').write_text(json.dumps({'status':'verified_g4_bounded_live_slice' if agent else 'verified_manual_fixture_matrix','worlds':len(results),'model_calls':agent.calls if agent else 0,'plan_hash':plan_hash},indent=2))
     finally: (ROOT/DOMAIN).write_text(base_source)
 
-if __name__=='__main__': run()
+if __name__=='__main__':
+    if '--meta' in sys.argv:
+        from wheel.meta_agent import MetaAgent
+        try: run(MetaAgent())
+        except Exception as error:
+            print('G4 failed: ' + type(error).__name__ + '; inspect stage artifacts. No verification claimed.')
+            if isinstance(error, RuntimeError): print(str(error))
+            raise SystemExit(1) from None
+    else: run()

@@ -10,3 +10,9 @@
 - G7: Measured, honest baseline comparisons, replayable evidence and three-minute demo.
 
 No completed outcome is claimed solely by checking in code. Do not copy the historical pre-event ZIP into this public repo without a rights and secrets audit.
+
+## G4 implementation update
+
+The bounded Meta support-agent slice is implemented on the G4 branch; see [G4_META_RUNTIME.md](G4_META_RUNTIME.md). Live verification is pending until its dedicated Actions run is inspected. Full mocked-tool preflight, G5 investigation and G6/G7 evaluation remain outstanding.
+
+Execution update: the bounded G4 slice passed in Actions 40868779979 at c295b9d27072ee207cb5cf61cb52ad01efd24526. Six genuine Meta calls and both duplicate-effect counterfactuals are verified; see the G4 evidence document. Next engineering dependency is full mocked-tool preflight before G5 investigation. Merge the reviewed G4 PR into master before extending it.
