@@ -19,3 +19,18 @@ Offline tests use explicitly fake model responses and fake build outputs only fo
 The mock validates reachability and arguments, not refund success. It does not require an additional model continuation; both actual world receipts receive real post-tool turns. Neither model wording nor mock success can override the ledger oracle.
 
 Limitations: same-host trusted-runner checks, not hostile-code isolation, signed attestations or prevention of every check/use race. Model gateway and runner share a trusted process. Dependencies are version ranges with runtime versions recorded, not fully locked reproducible builds. The investigator, its source-tool allowlist/repair loop, three-trial live-model matrix, legitimate partial-refund controls, fair C0/C2/C4 evaluation and portable replay command remain incomplete. No generalization, superiority or full-project completion claim follows from this step.
+
+## Observed verification — 2026-10-29
+
+At code commit `91f63a37640d68e302ad0b385d0c8662e71ce318`, live Actions [40872383954](https://github.com/PrasathJaga/codex-wheel/actions/runs/40872383954) passed. Inspected artifact [12895724593](https://github.com/PrasathJaga/codex-wheel/actions/runs/40872383954/artifacts/12895724593) establishes:
+
+- Two genuine model-selected calls dispatched once each to the mock, before the frozen plans and builds; `preflight.json` records both as `reached_tool`.
+- Six successful `muse-spark-1.3` generations in this run; 5,489 provider-reported total tokens. Dollar cost and credit balance were not queried.
+- Four worlds: M1 baseline one effect / candidate two; M2 baseline one / candidate two. Independent oracle results true/false in each pair. All four restart checks passed.
+- Eighteen successful integrity checkpoints, including pre-build, execution and pre-summary gates.
+- ZIP SHA-256: `0c1554445868b946d5244ddee7812c8d288849163784621bfba28cdb49b1e3ac`.
+- Plan SHA-256: `06f8cbd259ccaaab34abdcdc864ea58b762308345016096ab2ac04b1473081b7`.
+
+Artifact inspection independently recomputed the ZIP/plan/preflight hashes, checked matching locked-plan copies and sidecar, and confirmed mock receipts are absent from the replay seed. Offline negative-path tests passed (21 tests and 14 subtests locally; the live workflow's pre-spend test step also passed). Those simulated tamper/failure tests are distinct from the successful live-model run. The long manual regression matrix was still running when this evidence note was written; consult PR checks for its final outcome.
+
+This verifies the disclosed preflight/gate slice. G5 autonomous investigation and the limitations listed above remain outstanding.
