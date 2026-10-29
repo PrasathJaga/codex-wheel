@@ -1,0 +1,123 @@
+name: G7 portable replay and pinned intake
+on:
+  workflow_dispatch:
+  push:
+    branches: [hackathon/g7-replay-intake]
+    paths:
+      - 'wheel/**'
+      - 'tests/**'
+      - '.github/workflows/g7-replay.yml'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: g7-portable-replay
+  cancel-in-progress: false
+jobs:
+  package:
+    if: github.repository == 'PrasathJaga/codex-wheel'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      manifest_sha256: ${{ steps.root.outputs.manifest_sha256 }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: services/refund-api-java/pom.xml
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -e './services/support-agent-python[test]'
+      - name: Offline replay, intake and boundary tests
+        env:
+          WHEEL_REQUIRE_BROKER_TEST: '1'
+        run: python -m pytest -q tests services/support-agent-python/tests
+      - uses: actions/download-artifact@v4
+        with:
+          name: g6-repeatability-evidence
+          run-id: 40881599825
+          github-token: ${{ github.token }}
+          path: inputs/g6
+      - name: Create disclosed synthetic commit-pair inputs for the intake demonstration
+        run: |
+          python - <<'PYTHON'
+          import json
+          from pathlib import Path
+          from wheel.replay import load_g6, CASES
+          from wheel.intake import fixture_commit
+          from wheel.experiment import ROOT, DOMAIN, CLIENT
+          frozen, java, python = load_g6(Path('inputs/g6'), 'e4069cc7e2b3de850535c77c84bb7c7de4a280116f0a0d1ed86ed2840e5d1dd6')
+          pairs = {}
+          for case in CASES:
+              side = 'java' if case in ('M1', 'B1') else 'python'
+              path = DOMAIN if side == 'java' else CLIENT
+              text = java[case] if side == 'java' else python[case]
+              candidate = fixture_commit(ROOT, frozen['commit'], path, text, case)
+              pairs[case] = {'base': frozen['commit'], 'candidate': candidate, 'changed_side': side}
+          Path('inputs/revision-pairs.json').write_text(json.dumps(pairs, indent=2))
+          print('Created four synthetic reviewed commit pairs; no external developer PR claimed')
+          PYTHON
+      - name: Pack original plans and reviewed pinned sources with immutable runtime archives
+        run: >-
+          python -m wheel.replay pack --evidence inputs/g6
+          --expected-plan-sha256 e4069cc7e2b3de850535c77c84bb7c7de4a280116f0a0d1ed86ed2840e5d1dd6
+          --output replay-bundle --revision-pairs inputs/revision-pairs.json
+      - name: Publish independent expected root for the next clean runner
+        id: root
+        run: |
+          python - <<'PY'
+          import hashlib, os
+          from pathlib import Path
+          value = hashlib.sha256(Path('replay-bundle/manifest.json').read_bytes()).hexdigest()
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write('manifest_sha256=' + value + '\n')
+          print('Expected replay manifest SHA-256: ' + value)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: portable-replay-bundle
+          path: replay-bundle/
+          retention-days: 90
+  clean-replay:
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -e './services/support-agent-python[test]'
+      - uses: actions/download-artifact@v4
+        with:
+          name: portable-replay-bundle
+          path: replay-bundle
+      - name: Verify every input before loading images or executing worlds
+        env:
+          EXPECTED_MANIFEST_SHA256: ${{ needs.package.outputs.manifest_sha256 }}
+        run: >-
+          python -m wheel.replay verify --bundle replay-bundle
+          --expected-manifest-sha256 "$EXPECTED_MANIFEST_SHA256"
+      - name: Replay all eight frozen plans with fresh state and zero model calls
+        env:
+          EXPECTED_MANIFEST_SHA256: ${{ needs.package.outputs.manifest_sha256 }}
+        run: >-
+          python -m wheel.replay run --bundle replay-bundle
+          --expected-manifest-sha256 "$EXPECTED_MANIFEST_SHA256" --output replay-results
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: clean-replay-evidence
+          path: replay-results/
+          retention-days: 90
