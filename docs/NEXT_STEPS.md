@@ -10,3 +10,7 @@
 - G7: Measured, honest baseline comparisons, replayable evidence and three-minute demo.
 
 No completed outcome is claimed solely by checking in code. Do not copy the historical pre-event ZIP into this public repo without a rights and secrets audit.
+
+## G4 implementation update
+
+The bounded Meta support-agent slice is implemented on the G4 branch; see [G4_META_RUNTIME.md](G4_META_RUNTIME.md). Live verification is pending until its dedicated Actions run is inspected. Full mocked-tool preflight, G5 investigation and G6/G7 evaluation remain outstanding.

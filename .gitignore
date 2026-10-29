@@ -14,3 +14,5 @@ __pycache__/
 *.egg-info/
 /runs/
 **/.smoke-classes/
+
+evidence-g4/
