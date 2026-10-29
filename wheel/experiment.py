@@ -100,7 +100,11 @@ def run():
                             process,p=start(jars[java_variant],ledger,token,log)
                             try:
                                 assert snapshot(p, token)==[]
-                                with Gateway(p,rule) as gateway:
+                                def observe_commit(upstream):
+                                    rows=ledger.read_text().splitlines()
+                                    assert any(row.split('\t')[0]==upstream['refund_effect_id'] for row in rows)
+                                    return {'effect_id':upstream['refund_effect_id'], 'ledger_sha256':digest(ledger.read_bytes()),'rows_before_downstream_action':len(rows)}
+                                with Gateway(p,rule,observe_commit) as gateway:
                                     transport_errors=[]
                                     class ObservedClient(httpx.Client):
                                         def send(self, *args, **kwargs):
@@ -113,6 +117,11 @@ def run():
                                     events=list(gateway.events)
                                 assert bool(transport_errors)==(plan['action']=='DROP_DOWNSTREAM_BEFORE_RESPONSE')
                                 effects=snapshot(p,token)
+                                disk_rows=[line.split('\t') for line in ledger.read_text().splitlines()]
+                                assert len(disk_rows)==len(effects)
+                                for row,effect in zip(disk_rows,effects):
+                                    assert row[:6]==[effect['effect_id'],effect['order_id'],str(effect['amount_minor_units']),effect['currency'],effect['refund_scope'],effect['idempotency_key_sha256']]
+                                (out/(label+'.tsv')).write_bytes(ledger.read_bytes())
                                 assert len(events)==(1 if plan['action']=='PASS_THROUGH' else 2)
                                 assert all(e['upstream_status']==200 for e in events)
                                 assert events[0]['upstream_body']['refund_effect_id']==effects[0]['effect_id']
@@ -135,6 +144,7 @@ def run():
                     expected_regression=plan['case'] in ['M1','M2'] and plan['action']!='PASS_THROUGH'
                     assert pair==[True,not expected_regression], (plan,pair)
             assert digest((out/'frozen-plan.json').read_bytes())==plan_hash
+            assert digest((ROOT/'wheel/proxy.py').read_bytes())==json.loads(frozen)['proxy_sha256']
             assert digest((ROOT/'wheel/verifier.py').read_bytes())==json.loads(frozen)['oracle_sha256']
             (out/'summary.json').write_text(json.dumps({'status':'verified_manual_fixture_matrix','worlds':len(results),'model_calls':0,'plan_hash':plan_hash},indent=2))
     finally: (ROOT/DOMAIN).write_text(base_source)

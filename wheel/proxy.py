@@ -9,7 +9,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 ACTIONS = {'PASS_THROUGH', 'DROP_DOWNSTREAM_BEFORE_RESPONSE', 'REPLACE_DOWNSTREAM_STATUS_502'}
 
 class Gateway:
-    def __init__(self, upstream_port, rule):
+    def __init__(self, upstream_port, rule, observe_commit=None):
         if set(rule) != {'action', 'min', 'max'} or rule['action'] not in ACTIONS:
             raise ValueError('Invalid fault rule')
         if type(rule['min']) is not int or type(rule['max']) is not int or not 1 <= rule['min'] <= rule['max'] <= 100000000:
@@ -38,7 +38,8 @@ class Gateway:
                     if response.status == 200 and owner.applied == 0 and rule['min'] <= payload['amount_minor_units'] <= rule['max']:
                         action = rule['action']
                         if action != 'PASS_THROUGH': owner.applied += 1
-                    owner.events.append({'upstream_status':response.status, 'action':action,
+                    commit_evidence = observe_commit(json.loads(buffered)) if response.status == 200 and observe_commit else None
+                    owner.events.append({'commit_evidence':commit_evidence, 'upstream_status':response.status, 'action':action,
                         'key_sha256':hashlib.sha256(key.encode()).hexdigest(),
                         'upstream_body':json.loads(buffered)})
                     if action == 'DROP_DOWNSTREAM_BEFORE_RESPONSE':

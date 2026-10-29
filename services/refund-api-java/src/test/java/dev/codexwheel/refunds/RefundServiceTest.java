@@ -9,6 +9,18 @@ class RefundServiceTest {
     private static final RefundRequest REQUEST = new RefundRequest(
         "ORD-SYN-1001", 2500, "USD", "full_order");
 
+    @Test void persistedEffectAndDedupSurviveRestart(@org.junit.jupiter.api.io.TempDir java.nio.file.Path dir) {
+        var path = dir.resolve("ledger.tsv");
+        var first = new RefundService(path).issueRefund("synthetic-key-0001", REQUEST);
+        var recovered = new RefundService(path);
+        assertEquals(first.effectId(), recovered.issueRefund("synthetic-key-0001", REQUEST).effectId());
+        assertEquals(1, recovered.ledgerSnapshot().size());
+    }
+    @Test void writeFailureDoesNotPublishEffect(@org.junit.jupiter.api.io.TempDir java.nio.file.Path dir) {
+        var service = new RefundService(dir.resolve("missing").resolve("ledger.tsv"));
+        assertThrows(IllegalStateException.class, () -> service.issueRefund("synthetic-key-0001", REQUEST));
+        assertTrue(service.ledgerSnapshot().isEmpty());
+    }
     @Test void sameKeyDeduplicates() {
         var service = new RefundService();
         var first = service.issueRefund("synthetic-key-0001",REQUEST);
