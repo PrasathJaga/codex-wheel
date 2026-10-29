@@ -2,7 +2,7 @@ name: G4 bounded Meta runtime
 on:
   workflow_dispatch:
   push:
-    branches: [hackathon/g4-meta-runtime]
+    branches: [hackathon/preflight-freeze-gates]
     paths:
       - 'wheel/**'
       - 'tests/**'

@@ -13,6 +13,7 @@ import sys
 import httpx
 from wheel.proxy import Gateway
 from wheel.verifier import check
+from wheel.plan_guard import PlanGuard, IntegrityError
 
 ROOT = Path(__file__).resolve().parents[1]
 JAVA = 'services/refund-api-java'
@@ -56,6 +57,8 @@ def snapshot(p, token):
 
 def run(agent=None):
     out = ROOT/('evidence-g4' if agent else 'evidence'); out.mkdir(exist_ok=True)
+    # Refuse to reuse an output directory that could contain an old success summary.
+    if any(out.iterdir()): raise RuntimeError('Evidence directory must be empty')
     base_source = (ROOT/DOMAIN).read_text()
     client_source = (ROOT/CLIENT).read_text()
     needle = 'if (prior != null) {'
@@ -73,15 +76,30 @@ def run(agent=None):
             plans.append(dict(case=case, amount=amount, action=action if fault else 'PASS_THROUGH'))
     trials = 1 if agent else 3
     if agent: plans = [p for p in plans if p['case'] in ['M1','M2'] and p['action'] != 'PASS_THROUGH']
-    if agent: agent.trace_path = out/'model-traces.json'
+    if agent:
+        agent.trace_path = out/'model-traces.json'
+        agent.preflight_path = out/'preflight.json'
     model_intents = agent.prepare() if agent else None
+    source_paths = sorted(set(list((ROOT/'wheel').glob('*.py')) +
+        list((ROOT/JAVA/'src').rglob('*.java')) + list((ROOT/JAVA/'src').rglob('*.properties')) +
+        [ROOT/JAVA/'pom.xml', ROOT/CLIENT, ROOT/'services/support-agent-python/pyproject.toml']))
+    source_hashes = {str(p.relative_to(ROOT)): digest(p.read_bytes()) for p in source_paths}
     frozen = json.dumps({'plans':plans, 'java':{k:digest(v.encode()) for k,v in variants.items()},
         'python':{k:digest(v.encode()) for k,v in wrappers.items()},
         'oracle_sha256':digest((ROOT/'wheel/verifier.py').read_bytes()),
         'proxy_sha256':digest((ROOT/'wheel/proxy.py').read_bytes()),
-        'commit':os.getenv('GITHUB_SHA','local'), 'trials':trials, 'model_intents':model_intents},sort_keys=True).encode()
+        'commit':os.getenv('GITHUB_SHA','local'), 'policy_version':'preflight-freeze-v1',
+        'sources':source_hashes, 'preflight_sha256':digest((out/'preflight.json').read_bytes()) if agent else None, 'trials':trials, 'model_intents':model_intents},sort_keys=True).encode()
     (out/'frozen-plan.json').write_bytes(frozen)
     plan_hash=digest(frozen)
+    (out/'locked_experiment.json').write_bytes(frozen)
+    (out/'locked_experiment.sha256').write_text(plan_hash+'\n')
+    (out/'tool_intent_seed.json').write_text(json.dumps(model_intents,sort_keys=True))
+    guard=PlanGuard(out/'frozen-plan.json', frozen, source_paths)
+    for path in [out/'locked_experiment.json', out/'locked_experiment.sha256', out/'tool_intent_seed.json']:
+        guard.bind(path, path.read_bytes())
+    if agent: guard.bind(out/'preflight.json', (out/'preflight.json').read_bytes())
+    guard.verify('before_build')
     results=[]
     try:
         with tempfile.TemporaryDirectory() as td:
@@ -91,7 +109,13 @@ def run(agent=None):
                 subprocess.run(['mvn','-B','-f',str(ROOT/JAVA/'pom.xml'), 'clean','package','-DskipTests'], check=True, env=child_env())
                 jar=td/(name+'.jar'); jar.write_bytes((ROOT/JAVA/'target/refund-api-java-0.1.0-SNAPSHOT.jar').read_bytes()); jars[name]=jar
                 (out/(name+'.java')).write_text(source)
+            (ROOT/DOMAIN).write_text(base_source)
             for name, source in wrappers.items(): (out/(name+'-client.py')).write_text(source)
+            for name, jar in jars.items(): guard.bind(jar, jar.read_bytes())
+            for name in variants: guard.bind(out/(name+'.java'), variants[name].encode())
+            for name in wrappers: guard.bind(out/(name+'-client.py'), wrappers[name].encode())
+            (out/'build-hashes.json').write_text(json.dumps({k:digest(p.read_bytes()) for k,p in jars.items()},sort_keys=True))
+            guard.bind(out/'build-hashes.json', (out/'build-hashes.json').read_bytes())
             for plan in plans:
                 for trial in range(trials):
                     pair=[]
@@ -100,11 +124,14 @@ def run(agent=None):
                         java_variant=case if world=='candidate' and case in variants else 'base'
                         py_variant=case if world=='candidate' and case in wrappers else 'base'
                         module_file=td/(py_variant+'.py'); module_file.write_text(wrappers[py_variant])
+                        guard.bind(module_file, wrappers[py_variant].encode())
+                        if agent and agent.frozen != model_intents:
+                            raise IntegrityError('In-memory tool intent differs from locked plan')
                         ledger=td/(label+'.tsv'); token=secrets.token_hex(32)
                         authorization={'order_id':'ORD-SYN-TRIAL','amount_minor_units':plan['amount']}
                         rule={'action':plan['action'],'min':plan['amount'],'max':plan['amount']}
                         with (out/(label+'.log')).open('w') as log:
-                            process,p=start(jars[java_variant],ledger,token,log)
+                            process,p=guard.call('before_start:'+label, start,jars[java_variant],ledger,token,log)
                             try:
                                 assert snapshot(p, token)==[]
                                 def observe_commit(upstream):
@@ -113,7 +140,7 @@ def run(agent=None):
                                     return {'effect_id':upstream['refund_effect_id'], 'ledger_sha256':digest(ledger.read_bytes()),'rows_before_downstream_action':len(rows)}
                                 with Gateway(p,rule,observe_commit) as gateway:
                                     arguments = agent.intent(case)['arguments'] if agent else authorization
-                                    worker = subprocess.run([sys.executable, '-m', 'wheel.wrapper_worker',
+                                    worker = guard.call('before_wrapper:'+label, subprocess.run,[sys.executable, '-m', 'wheel.wrapper_worker',
                                         str(module_file), f'http://127.0.0.1:{gateway.port}'],
                                         input=json.dumps(arguments), text=True, capture_output=True,
                                         timeout=30, env=child_env(), check=True)
@@ -136,9 +163,10 @@ def run(agent=None):
                                 assert (len(set(keys))==2)==expected_change
                             finally: stop(process)
                             # Restart checks persisted effects and stable-key dedup recovery.
-                            process,p=start(jars[java_variant],ledger,token,log)
+                            process,p=guard.call('before_start:'+label, start,jars[java_variant],ledger,token,log)
                             try: assert snapshot(p,token)==effects
                             finally: stop(process)
+                        guard.verify('before_continuation:'+label)
                         model_reply = agent.continue_world(case, receipt) if agent else None
                         if agent: (out/'model-traces.json').write_text(json.dumps(agent.traces,indent=2))
                         valid=check(effects,authorization)
@@ -153,7 +181,11 @@ def run(agent=None):
             assert digest((out/'frozen-plan.json').read_bytes())==plan_hash
             assert digest((ROOT/'wheel/proxy.py').read_bytes())==json.loads(frozen)['proxy_sha256']
             assert digest((ROOT/'wheel/verifier.py').read_bytes())==json.loads(frozen)['oracle_sha256']
-            (out/'summary.json').write_text(json.dumps({'status':'verified_g4_bounded_live_slice' if agent else 'verified_manual_fixture_matrix','worlds':len(results),'model_calls':agent.calls if agent else 0,'plan_hash':plan_hash},indent=2))
+            if json.loads((out/'results.json').read_text()) != results:
+                raise IntegrityError('Trial evidence changed before publication')
+            if agent and agent.frozen != model_intents:
+                raise IntegrityError('Tool intent changed before publication')
+            guard.publish(out/'summary.json', {'status':'verified_g4_bounded_live_slice' if agent else 'verified_manual_fixture_matrix','worlds':len(results),'model_calls':agent.calls if agent else 0,'plan_hash':plan_hash, 'preflight_status':'reached_tool' if agent else 'not_applicable'})
     finally: (ROOT/DOMAIN).write_text(base_source)
 
 if __name__=='__main__':

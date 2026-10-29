@@ -1,18 +1,10 @@
-# Acceptance gates (source: October 29 v3.2 master)
+# Current priorities
 
-- G0: Public repo and event-period provenance, real pinned commits.
-- G1: Java refund service, ledger and Python tool work with no fault; live HTTP + protected ledger assertion.
-- G2: Buffer successful upstream response and inject downstream fault only after the verified fixture commit.
-- G3: M1 Java low-amount dedup bypass; M2 Python HTTP-502 retry changes key; reproduce both with a manually frozen experiment and protected evaluator.
-- G4: Genuine Meta support agent tool call and post-tool continuation.
-- G5: Genuine Meta investigator reads source spans and selects source-grounded experiment; preflight before freezing.
-- G6: At least three isolated A/B trials, matching source/fixture hashes, benign controls.
-- G7: Measured, honest baseline comparisons, replayable evidence and three-minute demo.
+Authoritative design: Codex_Wheel_v3.2_MASTER_Session2_Updated_2026-10-29.md and updated START_HERE. Official competition requirements remain distinct from architecture/workshop guidance.
 
-No completed outcome is claimed solely by checking in code. Do not copy the historical pre-event ZIP into this public repo without a rights and secrets audit.
+- Verified on merged master `5b14f7309f0aaf78ce41ff9fb892e11ec5a87a23`: G1 live API/wrapper, manual G2/G3 matrix, and bounded genuine Meta support-agent slice. Master Actions 40870468023 passed. See G4_META_RUNTIME.md for original model traces and limitations.
+- Current branch: mocked-tool preflight and mandatory freeze/integrity gates implemented; verification pending. See PREFLIGHT_FREEZE_GATES.md.
+- Next: G5 read-only source/diff tools and genuine investigator-synthesized dialogue plus constrained fault rule, with bounded preflight repair before freeze. Do not call hand-selected M1/M2 rules autonomous discovery.
+- Then: repeated live trials, benign/partial-refund controls, stronger isolation and provenance, portable verified replay, fair C0/C2/C4 comparisons, and three-minute demo.
 
-## G4 implementation update
-
-The bounded Meta support-agent slice is implemented on the G4 branch; see [G4_META_RUNTIME.md](G4_META_RUNTIME.md). Live verification is pending until its dedicated Actions run is inspected. Full mocked-tool preflight, G5 investigation and G6/G7 evaluation remain outstanding.
-
-Execution update: the bounded G4 slice passed in Actions 40868779979 at c295b9d27072ee207cb5cf61cb52ad01efd24526. Six genuine Meta calls and both duplicate-effect counterfactuals are verified; see the G4 evidence document. Next engineering dependency is full mocked-tool preflight before G5 investigation. Merge the reviewed G4 PR into master before extending it.
+No working claim follows solely from checked-in code. Preserve failed attempts and unknowns. Do not copy the pre-event archive into public source or claim it as event-period implementation.
