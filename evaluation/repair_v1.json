@@ -1,0 +1,53 @@
+{
+  "admission": "model_proposed_single_condition_edit; repaired_bytes_must_equal_reviewed_healthy_baseline; not_general_patch_synthesis",
+  "caps": {
+    "automatic_retries": 0,
+    "max_completion_tokens": 2048,
+    "max_message_chars": 100000,
+    "model_requests": 1,
+    "patch_attempts": 1,
+    "worlds": 96
+  },
+  "case": "M1",
+  "editable_path": "services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundService.java",
+  "expected_healthy_sha256": "ee85defb2cb736769165dbda011e19d4042ad9bc13daae597a6c79109e9ac3b7",
+  "limitations": [
+    "known_seeded_defect",
+    "baseline_and_candidate_sources_given_to_model",
+    "only_reviewed_baseline_restoration_admitted",
+    "no_population_repair_success_rate",
+    "no_automatic_merge",
+    "runtime_hashes_recorded_without_binary_export"
+  ],
+  "old_text": "if (prior != null && request.amountMinorUnits() > 2500) {",
+  "origin": {
+    "artifact": 12958372454,
+    "commit": "477d4a16abe18b6201287a8fe5852cb4b544e50a",
+    "plan_sha256": "57f5c4621e924e59ed53dbc9b89cf2f5aa9e94f6cf29e38f9fe218d906cc3b98",
+    "run": 41009784244,
+    "zip_sha256": "7406e1a3387ddaf1e1df90cb1e1732aa61249843a1d0d8a49da94c7fbb0ca44f"
+  },
+  "protected_components": {
+    "docs/REPLAY_EVIDENCE_INDEX.json": "3d4c1581a762000de9c79ebab41992d183ceed6d30a7d7d8c58896488b945119",
+    "services/refund-api-java/pom.xml": "091dfc1515b820c9778801220141e4d2171c51ec22a68c8a4544fa941b4b6098",
+    "services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundEffect.java": "e5cdb18d44f90e18edb1be9d47e3cdf33605ff2a804ff72f4c9a66ec89c74132",
+    "services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundRequest.java": "7a1c01f7f47b3ebf8b0d73cbdb660e2bffb6acbd07ec7b3818801c4cd711e36c",
+    "services/refund-api-java/src/main/java/dev/codexwheel/refunds/web/RefundController.java": "bbd9ddd12ee3a64d5d818a89fcf07fb1419d5bf1526e926d46190ec968faeed5",
+    "services/support-agent-python/pyproject.toml": "e503d183828abb0a099f78bdd162aba7ac3cb72e18ae7ad589fd5359666231bf",
+    "wheel/g6.py": "b442acf41452a43e219ad0aa75b6d22dcb80a1aeac8c467f435097ebd042dc19",
+    "wheel/intake.py": "198873debbb1db9a505f7b9a915beb69e6aafb97b22db49e01019e51613fdaed",
+    "wheel/investigator.py": "a51963fa40e98a16e151a556b0b21ee6857de6074c489ed418ba3273f2a4d49e",
+    "wheel/isolation.py": "a06bf2e2e2e07d3e017b5cea4573b31f62f0718100b806ca12e8db5e68ad99ac",
+    "wheel/meta_agent.py": "01600cd85699e0b335764f67b4412d1ebc8643c0e959414be1d08a3c04880850",
+    "wheel/plan_guard.py": "5c08a39f1bdbb83725c80fa719d935cf23adcac92323c9f9aba7fedc7fe0de92",
+    "wheel/preflight.py": "57064d4fd82a89d517b704eb844f7da29d919e2410806bca29d4dd7391597f0d",
+    "wheel/proxy.py": "c4ebe2ed89744260d757c0342e20ec6490aec2466215d7f49ba98d430d5ba185",
+    "wheel/repeatability.py": "732c2b9f9a81ac24e9134fc41b3615fc30fedfc5e95344d8bbdc8efb3cffb0c3",
+    "wheel/replay.py": "518cd45cfa5ac6ad6a920c6b3581c654009f6f6c429bd26bd64fc211e0bc1f12",
+    "wheel/verifier.py": "258e3cdacae67a02aa0783d973e30563329025f5833c8ae510ae2d342f2613e7",
+    "wheel/wrapper_worker.py": "4cfc2a07ff4b67ae410a295aaa71107579de4780f37901c641422a38016fc507"
+  },
+  "schema": "bounded-m1-repair-v1",
+  "status": "not_run",
+  "verification": "reexecute_all_eight_origin_M1_plans_for_broken_and_repaired_stages; each_three_base_candidate_pairs; Java_tests_on_admitted_repair; all_other_source_unchanged"
+}
