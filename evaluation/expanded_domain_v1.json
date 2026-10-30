@@ -1,0 +1,90 @@
+{
+  "actions": [
+    "PASS_THROUGH",
+    "DROP_DOWNSTREAM_BEFORE_RESPONSE",
+    "REPLACE_DOWNSTREAM_STATUS_502"
+  ],
+  "base_commit": "e0db7e6377c19fabdd508920dab696a3f2732ae5",
+  "baseline_sha256": "ee85defb2cb736769165dbda011e19d4042ad9bc13daae597a6c79109e9ac3b7",
+  "candidate_sha256": "1c3ff411b5613cdc24e5ae2badea3e4777c973b3e4c5e57ee37c0c2420115f99",
+  "caps": {
+    "completion_tokens_per_request": 2048,
+    "investigator_requests": 6,
+    "message_chars_per_request": 100000,
+    "output_token_capacity": 12288,
+    "support_requests": 0,
+    "worlds": 120
+  },
+  "case": "U1",
+  "changed_side": "java",
+  "domain": {
+    "max": 10000,
+    "min": 1
+  },
+  "execution": "same deterministic authorized tool arguments for both methods; no support preflight or continuations; this differs from original C2/C4 and is reported separately",
+  "fixed_amounts": [
+    1,
+    2500,
+    5000,
+    7500,
+    9999,
+    10000
+  ],
+  "methods": {
+    "C0": "unchanged public-schema extractor; no business verdict",
+    "C2_budgeted": "six fixed public values crossed with three actions; no source-conditioned selection; no inference",
+    "C4_range": "one fresh bounded source investigation; one selected plan plus no-fault control; no fallback on abstention"
+  },
+  "model": {
+    "id": "muse-spark-1.3",
+    "investigator": {
+      "max_completion_tokens": 2048,
+      "reasoning_effort": "low"
+    },
+    "max_request_message_chars": 100000,
+    "max_retries": 0,
+    "provider_base_url": "https://api.meta.ai/v1",
+    "request_timeout_seconds": 60,
+    "support_agent": {
+      "max_completion_tokens": 1024,
+      "reasoning_effort": "minimal"
+    }
+  },
+  "mutation": {
+    "new": "if (prior != null && !(request.amountMinorUnits() > 5000 && request.amountMinorUnits() <= 6000)) {",
+    "old": "if (prior != null) {"
+  },
+  "protected_components": {
+    "docs/REPLAY_EVIDENCE_INDEX.json": "3d4c1581a762000de9c79ebab41992d183ceed6d30a7d7d8c58896488b945119",
+    "services/refund-api-java/pom.xml": "091dfc1515b820c9778801220141e4d2171c51ec22a68c8a4544fa941b4b6098",
+    "services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundEffect.java": "e5cdb18d44f90e18edb1be9d47e3cdf33605ff2a804ff72f4c9a66ec89c74132",
+    "services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundRequest.java": "7a1c01f7f47b3ebf8b0d73cbdb660e2bffb6acbd07ec7b3818801c4cd711e36c",
+    "services/refund-api-java/src/main/java/dev/codexwheel/refunds/web/RefundController.java": "bbd9ddd12ee3a64d5d818a89fcf07fb1419d5bf1526e926d46190ec968faeed5",
+    "services/support-agent-python/pyproject.toml": "e503d183828abb0a099f78bdd162aba7ac3cb72e18ae7ad589fd5359666231bf",
+    "wheel/g6.py": "b442acf41452a43e219ad0aa75b6d22dcb80a1aeac8c467f435097ebd042dc19",
+    "wheel/intake.py": "198873debbb1db9a505f7b9a915beb69e6aafb97b22db49e01019e51613fdaed",
+    "wheel/investigator.py": "a51963fa40e98a16e151a556b0b21ee6857de6074c489ed418ba3273f2a4d49e",
+    "wheel/isolation.py": "a06bf2e2e2e07d3e017b5cea4573b31f62f0718100b806ca12e8db5e68ad99ac",
+    "wheel/meta_agent.py": "01600cd85699e0b335764f67b4412d1ebc8643c0e959414be1d08a3c04880850",
+    "wheel/plan_guard.py": "5c08a39f1bdbb83725c80fa719d935cf23adcac92323c9f9aba7fedc7fe0de92",
+    "wheel/preflight.py": "57064d4fd82a89d517b704eb844f7da29d919e2410806bca29d4dd7391597f0d",
+    "wheel/proxy.py": "c4ebe2ed89744260d757c0342e20ec6490aec2466215d7f49ba98d430d5ba185",
+    "wheel/repeatability.py": "732c2b9f9a81ac24e9134fc41b3615fc30fedfc5e95344d8bbdc8efb3cffb0c3",
+    "wheel/replay.py": "518cd45cfa5ac6ad6a920c6b3581c654009f6f6c429bd26bd64fc211e0bc1f12",
+    "wheel/verifier.py": "258e3cdacae67a02aa0783d973e30563329025f5833c8ae510ae2d342f2613e7",
+    "wheel/wrapper_worker.py": "4cfc2a07ff4b67ae410a295aaa71107579de4780f37901c641422a38016fc507"
+  },
+  "provenance": "author_designed_known_threshold_challenge_not_blind; mechanism discussed before registration",
+  "repair": "separate stage; no patch execution authorized by this protocol",
+  "reporting": {
+    "abstention_is_safe": false,
+    "independent_blind_case": false,
+    "numeric_usd_cost": null,
+    "population_accuracy": "not_estimated",
+    "predetermined_winner": false,
+    "source_aware_non_llm_baseline": "not_evaluated"
+  },
+  "schema": "expanded-domain-v1",
+  "status": "not_run",
+  "trials": 3
+}
