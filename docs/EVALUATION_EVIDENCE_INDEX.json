@@ -1,0 +1,254 @@
+{
+  "schema": "codex-wheel-evaluation-evidence-v1",
+  "repository": "https://github.com/PrasathJaga/codex-wheel",
+  "implementation_commit": "477d4a16abe18b6201287a8fe5852cb4b544e50a",
+  "protocol_sha256": "911e8a5dca874967b52fd313e6f4e975f9813fe8b3f7f2750e0392f6538ef364",
+  "plan_sha256": "57f5c4621e924e59ed53dbc9b89cf2f5aa9e94f6cf29e38f9fe218d906cc3b98",
+  "live_run": 41009784244,
+  "live_run_url": "https://github.com/PrasathJaga/codex-wheel/actions/runs/41009784244",
+  "artifact_id": 12958372454,
+  "artifact_zip_sha256": "7406e1a3387ddaf1e1df90cb1e1732aa61249843a1d0d8a49da94c7fbb0ca44f",
+  "baseline_ci_run": 41009162465,
+  "run_status": "completed",
+  "metrics": {
+    "C0": {
+      "case_rows": 4,
+      "worlds_attempted": 0,
+      "worlds_completed": 0,
+      "request_attempts": 0,
+      "responses_received": 0,
+      "request_errors": 0,
+      "valid_plans": 0,
+      "proposed_plans": 0,
+      "runtime_seconds": 0,
+      "model_proposal_submissions": 0,
+      "baseline_passes": 0,
+      "candidate_failures": 0,
+      "supported_extractions": 4,
+      "schema_flags": 0,
+      "business_safety_verdict": null,
+      "provider_usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "selection_request_seconds": 0
+    },
+    "C2": {
+      "case_rows": 4,
+      "worlds_attempted": 108,
+      "worlds_completed": 108,
+      "request_attempts": 42,
+      "responses_received": 42,
+      "request_errors": 0,
+      "valid_plans": 18,
+      "proposed_plans": 18,
+      "runtime_seconds": 1521.8344813090014,
+      "model_proposal_submissions": 0,
+      "baseline_passes": 54,
+      "candidate_failures": 9,
+      "confirmed_breaking_cases": {
+        "numerator": 2,
+        "denominator": 2
+      },
+      "benign_cases_with_confirmed_finding": {
+        "numerator": 0,
+        "denominator": 2
+      },
+      "cases_runtime_evaluated": {
+        "numerator": 4,
+        "denominator": 4
+      },
+      "case_statuses": {
+        "reproduced_regression": 2,
+        "not_reproduced": 2,
+        "inconclusive": 0,
+        "abstained": 0,
+        "trigger_not_reached": 0,
+        "invalid_plan": 0,
+        "budget_exhausted": 0,
+        "analysis_error": 0
+      },
+      "provider_usage": {
+        "prompt_tokens": 35287,
+        "completion_tokens": 2887,
+        "total_tokens": 38174
+      },
+      "selection_request_seconds": 7.738011123000021
+    },
+    "C4": {
+      "case_rows": 4,
+      "worlds_attempted": 24,
+      "worlds_completed": 24,
+      "request_attempts": 25,
+      "responses_received": 25,
+      "request_errors": 0,
+      "valid_plans": 4,
+      "proposed_plans": 6,
+      "runtime_seconds": 323.79223168099975,
+      "model_proposal_submissions": 4,
+      "baseline_passes": 12,
+      "candidate_failures": 6,
+      "confirmed_breaking_cases": {
+        "numerator": 2,
+        "denominator": 2
+      },
+      "benign_cases_with_confirmed_finding": {
+        "numerator": 0,
+        "denominator": 2
+      },
+      "cases_runtime_evaluated": {
+        "numerator": 2,
+        "denominator": 4
+      },
+      "case_statuses": {
+        "reproduced_regression": 2,
+        "not_reproduced": 0,
+        "inconclusive": 0,
+        "abstained": 2,
+        "trigger_not_reached": 0,
+        "invalid_plan": 0,
+        "budget_exhausted": 0,
+        "analysis_error": 0
+      },
+      "provider_usage": {
+        "prompt_tokens": 56391,
+        "completion_tokens": 7693,
+        "total_tokens": 64084
+      },
+      "selection_request_seconds": 37.86104752700007
+    }
+  },
+  "case_method_results": [
+    {
+      "case": "M1",
+      "method": "C0",
+      "status": "schema_unchanged",
+      "worlds": 0
+    },
+    {
+      "case": "M1",
+      "method": "C2",
+      "status": "reproduced_regression",
+      "worlds": 36
+    },
+    {
+      "case": "M1",
+      "method": "C4",
+      "status": "reproduced_regression",
+      "worlds": 12
+    },
+    {
+      "case": "M2",
+      "method": "C0",
+      "status": "schema_unchanged",
+      "worlds": 0
+    },
+    {
+      "case": "M2",
+      "method": "C2",
+      "status": "reproduced_regression",
+      "worlds": 18
+    },
+    {
+      "case": "M2",
+      "method": "C4",
+      "status": "reproduced_regression",
+      "worlds": 12
+    },
+    {
+      "case": "B1",
+      "method": "C0",
+      "status": "schema_unchanged",
+      "worlds": 0
+    },
+    {
+      "case": "B1",
+      "method": "C2",
+      "status": "not_reproduced",
+      "worlds": 36
+    },
+    {
+      "case": "B1",
+      "method": "C4",
+      "status": "abstained",
+      "worlds": 0
+    },
+    {
+      "case": "B2",
+      "method": "C0",
+      "status": "schema_unchanged",
+      "worlds": 0
+    },
+    {
+      "case": "B2",
+      "method": "C2",
+      "status": "not_reproduced",
+      "worlds": 18
+    },
+    {
+      "case": "B2",
+      "method": "C4",
+      "status": "abstained",
+      "worlds": 0
+    }
+  ],
+  "selected_plans": [
+    {
+      "case": "M1",
+      "amount_minor_units": 2500,
+      "rule": {
+        "action": "DROP_DOWNSTREAM_BEFORE_RESPONSE",
+        "max": 2500,
+        "min": 2500
+      }
+    },
+    {
+      "case": "M2",
+      "amount_minor_units": 7500,
+      "rule": {
+        "action": "REPLACE_DOWNSTREAM_STATUS_502",
+        "max": 7500,
+        "min": 7500
+      }
+    }
+  ],
+  "model": "muse-spark-1.3",
+  "model_requests": {
+    "investigator": 15,
+    "support": 52,
+    "total": 67,
+    "errors": 0
+  },
+  "continuations": {
+    "fresh_trial_zero_replies": 44,
+    "deterministic_repeat_null_replies": 88
+  },
+  "runtime_seconds": {
+    "setup_seconds": 38.55952617199999,
+    "selection_seconds": 45.67708814199999,
+    "execution_seconds": 1846.009863827,
+    "wall_seconds": 1930.459282863
+  },
+  "confinement_probes_passed": 10,
+  "integrity_checkpoints": 445,
+  "numeric_usd_cost": null,
+  "C3": "not_evaluated",
+  "withheld_extension": "not_evaluated",
+  "archive": {
+    "file_name": "Codex_Wheel_Verified_Evidence_Archive_2026-10-30.zip",
+    "sha256": "c116ef71836bf68a0708cfe023c8d65549dc80bae3265ca06d31b8ef3c9cba9f",
+    "bytes": 438051728,
+    "original_artifact_count": 16,
+    "members": 46
+  },
+  "limits": [
+    "four_known_synthetic_cases_not_blind",
+    "unequal_method_budgets",
+    "deterministic_repeats_not_independent_model_resampling",
+    "trusted_host_and_producer_owned_ledger",
+    "full_order_refunds_only",
+    "comparison_runtime_hashes_recorded_but_its_binaries_and_images_not_exported",
+    "portable_archive_runtime_belongs_to_prior_replay_not_this_comparison"
+  ]
+}
