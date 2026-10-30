@@ -27,7 +27,7 @@ def evidence(tmp_path):
                  'seed_sha256':fingerprint(p['seed']),'policy':v.POLICY,'images':f['images'],'reset_empty':True,
                  'restart_recovered':True,'java_sha256':p['source_hashes']['java'][side],'python_sha256':'fixed',
                  'jar_sha256':'jar0' if side=='base' else 'jar1','label':label,'effects':effects,'events':events,
-                 'transport_errors':['ReadError'],'model_reply':{'content':'<script>alert("bad")</script>'}}
+                 'transport_errors':['ReadError'],'continuation':'genuine_Meta','model_reply':{'content':'<script>alert("bad")</script>'}}
             rows.append(row)
             (tmp_path/(label+'.tsv')).write_text(''.join('\t'.join([e['effect_id'],e['order_id'],str(e['amount_minor_units']),e['currency'],e['refund_scope'],e['idempotency_key_sha256'],e['committed_at']])+'\n' for e in effects))
     (tmp_path/'results.json').write_text(json.dumps(rows))
@@ -57,3 +57,29 @@ def test_wrong_plan_root_and_path_traversal_rejected(tmp_path):
     with pytest.raises(IntegrityError):v.inspect(tmp_path,'0'*64)
     rows[0]['label']='../outside';(tmp_path/'results.json').write_text(json.dumps(rows))
     with pytest.raises(IntegrityError):v.inspect(tmp_path,sha)
+
+
+def test_deterministic_record_is_not_labeled_as_fresh_model_reply(tmp_path):
+    sha,rows=evidence(tmp_path)
+    for row in rows:row['continuation']='deterministic_no_new_inference'
+    (tmp_path/'results.json').write_text(json.dumps(rows))
+    report=v.render(tmp_path,sha)
+    assert 'Recorded genuine Meta continuation' not in report
+    assert 'Recorded text; fresh inference is not asserted' in report
+
+
+def test_repair_stage_cannot_replace_parent_runtime_identity(tmp_path):
+    comparison=tmp_path/'comparison';comparison.mkdir();sha,_=evidence(comparison)
+    repair=tmp_path/'repair';repair.mkdir();broken=repair/'broken';broken.mkdir()
+    parent=json.loads((comparison/'locked-comparison.json').read_text())
+    parent['repair_sha256']=hashlib.sha256(b'reviewed healthy source').hexdigest()
+    raw=json.dumps(parent).encode();(repair/'locked-repair.json').write_bytes(raw)
+    (repair/'repaired-RefundService.java').write_bytes(b'reviewed healthy source')
+    (repair/'proposal.json').write_text(json.dumps({'reason':'restore guard'}))
+    (repair/'proposed.patch').write_text('reviewed patch')
+    stage=copy.deepcopy(parent)
+    for item in stage['plans']:item['method']='broken'
+    stage['images']={'java':'untrusted-image'}
+    (broken/'locked-comparison.json').write_text(json.dumps(stage))
+    with pytest.raises(IntegrityError,match='runtime drift'):
+        v.render(comparison,sha,repair=repair,repair_hash=hashlib.sha256(raw).hexdigest())
