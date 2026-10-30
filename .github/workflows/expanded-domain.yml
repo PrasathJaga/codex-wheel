@@ -1,0 +1,46 @@
+name: Expanded amount-domain evaluation
+on:
+  workflow_dispatch:
+  push:
+    branches: [hackathon/expanded-domain-live]
+    paths: ['wheel/**', 'evaluation/expanded_domain_v1.json', '.github/workflows/expanded-domain.yml']
+permissions:
+  contents: read
+concurrency:
+  group: expanded-domain
+  cancel-in-progress: false
+jobs:
+  evaluate:
+    if: github.repository == 'PrasathJaga/codex-wheel'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: services/refund-api-java/pom.xml
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -e './services/support-agent-python[test]' 'openai>=2,<3'
+      - name: Offline validation
+        env:
+          WHEEL_REQUIRE_BROKER_TEST: '1'
+        run: python -m pytest -q tests services/support-agent-python/tests
+      - name: Execute registered comparison
+        env:
+          MODEL_API_KEY: ${{ secrets.MODEL_API_KEY }}
+          EXPECTED_IMPLEMENTATION_COMMIT: ${{ github.sha }}
+        run: python -m wheel.expanded_domain --expected-implementation-commit "$EXPECTED_IMPLEMENTATION_COMMIT"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: expanded-domain-evidence
+          path: evidence-expanded/
+          retention-days: 90
