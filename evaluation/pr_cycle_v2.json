@@ -1,0 +1,36 @@
+{
+  "schema": "fresh-pr-cycle-v2",
+  "case": "M1",
+  "domain": {
+    "min": 1,
+    "max": 10000
+  },
+  "actions": [
+    "PASS_THROUGH",
+    "DROP_DOWNSTREAM_BEFORE_RESPONSE",
+    "REPLACE_DOWNSTREAM_STATUS_502"
+  ],
+  "caps": {
+    "model_requests": 8,
+    "investigation": 6,
+    "diagnosis": 1,
+    "repair": 1,
+    "worlds": 24,
+    "automatic_retries": 0,
+    "total_completion_token_capacity": 34336
+  },
+  "trials": 3,
+  "provenance": "author-seeded reviewed M1 PR, not blind",
+  "stop": "single attempt per stage; preserve failures; no outcome-seeking reruns",
+  "repair": "exact healthy-source baseline restoration; healthy answer supplied",
+  "controls": "same selected plan and no-fault plan before and after repair",
+  "claim": "fresh integration demonstration only, not independent transfer or superiority evaluation",
+  "role_completion_tokens": {
+    "investigation": 2048,
+    "diagnosis": 20000,
+    "repair": 2048
+  },
+  "prior_run": 41112435042,
+  "prior_outcome": "diagnosis_finish_reason_length_preserved",
+  "change": "Only diagnosis completion budget expands; fresh v2 run, not continuation or general comparison"
+}
