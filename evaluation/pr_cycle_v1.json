@@ -1,0 +1,13 @@
+{
+  "schema": "fresh-pr-cycle-v1",
+  "case": "M1",
+  "domain": {"min": 1, "max": 10000},
+  "actions": ["PASS_THROUGH", "DROP_DOWNSTREAM_BEFORE_RESPONSE", "REPLACE_DOWNSTREAM_STATUS_502"],
+  "caps": {"model_requests": 8, "investigation": 6, "diagnosis": 1, "repair": 1, "worlds": 24, "completion_tokens_per_call": 2048, "automatic_retries": 0},
+  "trials": 3,
+  "provenance": "author-seeded reviewed M1 PR, not blind",
+  "stop": "single attempt per stage; preserve failures; no outcome-seeking reruns",
+  "repair": "exact healthy-source baseline restoration; healthy answer supplied",
+  "controls": "same selected plan and no-fault plan before and after repair",
+  "claim": "fresh integration demonstration only, not independent transfer or superiority evaluation"
+}
