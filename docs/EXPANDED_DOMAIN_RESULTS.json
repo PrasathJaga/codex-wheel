@@ -1,0 +1,57 @@
+{
+  "implementation_commit": "73d476b3dadf75ab269752031199d78f424073da",
+  "protocol_sha256": "1b41c2c9cefdf8e392285226db6bcfc279cd744384ecc4381964b7f36c750971",
+  "workflow_run": 41023537477,
+  "artifact": 12963453214,
+  "artifact_sha256": "51e285f92fdcc0a4d16d611063130f8f63e9041c81535dd09b066aeade6bfd8a",
+  "plan_sha256": "83117febe05cd6c496709ca24be369f53b93ee34a019cb7862b8a7e3e10478af",
+  "methods": {
+    "C2_budgeted": {
+      "status": "not_reproduced",
+      "plans": 18,
+      "worlds": 108
+    },
+    "C4_range": {
+      "status": "inconclusive",
+      "plans": 0,
+      "worlds": 0
+    }
+  },
+  "selection": {
+    "status": "inconclusive",
+    "error_type": "InvestigationInconclusive"
+  },
+  "model_requests": 5,
+  "provider_tokens": 22073,
+  "worlds": 108,
+  "confinement_probes": {
+    "non_root": true,
+    "no_model_key": true,
+    "no_evaluator_token": true,
+    "no_docker_socket": true,
+    "no_host_fixture": true,
+    "no_capabilities": true,
+    "no_new_privileges": true,
+    "root_read_only": true,
+    "external_network_denied": true,
+    "producer_network_internal": true
+  },
+  "integrity_checkpoints": 326,
+  "wall_seconds": 1498.394850874,
+  "numeric_usd_cost": null,
+  "limits": {
+    "abstention_is_safe": false,
+    "independent_blind_case": false,
+    "numeric_usd_cost": null,
+    "population_accuracy": "not_estimated",
+    "predetermined_winner": false,
+    "source_aware_non_llm_baseline": "not_evaluated"
+  },
+  "failure_analysis": {
+    "final_peer_citation_version": "candidate",
+    "required_peer_citation_version": "base",
+    "peer_bytes_equal": true,
+    "prompt_explicitly_declared_base_citation_requirement": false,
+    "outcome": "inconclusive_no_accepted_plan"
+  }
+}
