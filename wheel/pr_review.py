@@ -30,7 +30,7 @@ def body(result, run_url):
     lines = [MARKER, '### Codex Wheel — reviewed synthetic fixture',
              '**Result: '+result['status']+'**',
              'Base: `'+result['base']+'` · Head: `'+result['head']+'`',
-             'Execution: fresh deterministic counterfactuals; no new Meta investigation or repair.',
+             'Execution: '+result.get('execution_mode', 'fresh deterministic counterfactuals')+'; no new Meta investigation or repair.',
              'Supported scope: exact reviewed refund variants only.']
     for row in result.get('observed',[]):
         lines.append(f"- Trial {row['trial']+1}: baseline {row['base_minor_units']} USD minor units; candidate {row['candidate_minor_units']} USD minor units.")
@@ -59,14 +59,18 @@ def publish(api, number, result, run_url):
     return {'status':result['status'],'comment_id':response['id']}
 
 
-def run(number, output, do_publish):
-    token = os.environ.pop('GH_TOKEN','')
+def github_api(token):
     def api(method,path,data=None):
         # /user verifies the authenticated actor, never persisted in raw API output.
         url = 'https://api.github.com/user' if path=='/user' else 'https://api.github.com/repos/'+REPO+path
         request=urllib.request.Request(url,method=method,data=json.dumps(data).encode() if data is not None else None,
             headers={'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json','Content-Type':'application/json'})
         with urllib.request.urlopen(request,timeout=30) as response: return json.load(response)
+    return api
+
+
+def run(number, output, do_publish):
+    api = github_api(os.environ.pop('GH_TOKEN',''))
     output=Path(output).absolute();output.mkdir(exist_ok=False)
     pr=api('GET',f'/pulls/{number}');base,head=identity(pr)
     result={'schema':'codex-wheel.pr-review.v1','pr':number,'base':base,'head':head,'status':'execution_error','new_meta_calls':0}
