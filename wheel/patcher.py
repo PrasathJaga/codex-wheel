@@ -3,6 +3,7 @@ import argparse
 import copy
 import difflib
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -20,6 +21,8 @@ from wheel.isolation import DockerRuntime
 from wheel.meta_agent import MetaAgent, MODEL
 from wheel.plan_guard import IntegrityError, PlanGuard
 from wheel.repeatability import POLICY
+
+RESUME_SHA='79107fb1b9a25388d532467efa23be9546b83f92064fc4f8e822141913fe2f2e'
 
 PROTOCOL_SHA='fd1296b11857e16b8873f8e6ab225fac06c5fb9501118fce3b9b4e7bde6d24eb'
 TOOL={'type':'function','function':{'name':'propose_repair','description':'Propose one minimal replacement of the deduplication condition. The trusted runner applies and validates it.',
@@ -99,7 +102,23 @@ def admitted_tests(repaired,scratch,out):
     if result.returncode: raise RuntimeError('Admitted repair tests failed')
 
 
-def run(expected,origin,output):
+def recorded_proposal(path):
+    path=Path(path)
+    if path.is_symlink() or digest(path.read_bytes())!=RESUME_SHA:
+        raise IntegrityError('Recorded proposal archive mismatch')
+    with zipfile.ZipFile(path) as z:
+        proposal=strict_json(z.read('proposal.json').decode())
+        attempts=json.loads(z.read('request-attempts.json'))
+        registered=json.loads(z.read('protocol.json'))
+    if registered!=protocol() or len(attempts)!=1 or attempts[0]['status']!='response_received' or attempts[0]['model']!=MODEL:
+        raise IntegrityError('Invalid recorded proposal provenance')
+    calls=attempts[0]['response']['choices'][0]['message'].get('tool_calls') or []
+    if len(calls)!=1 or calls[0]['function']['name']!='propose_repair' or strict_json(calls[0]['function']['arguments'])!=proposal:
+        raise IntegrityError('Proposal differs from recorded response')
+    return proposal,attempts
+
+
+def run(expected,origin,output,resume=None):
     p=protocol();out=Path(output).absolute();out.mkdir(exist_ok=False)
     started=time.monotonic();runtime=None
     try:
@@ -114,13 +133,20 @@ def run(expected,origin,output):
         guard=PlanGuard(out/'implementation-lock.json',(out/'implementation-lock.json').read_bytes(),paths)
         plans,view,failures=load_origin(origin,p)
         save(out,'protocol.json',p);save(out,'origin-failure.json',failures);save(out,'source-snapshots.json',view)
-        client=MetaAgent(max_calls=1).client
-        ledger=RequestLedger(client,out/'request-attempts.json');ledger.persist()
+        if resume:
+            os.environ.pop('MODEL_API_KEY',None)
+            proposal,recorded=recorded_proposal(resume)
+            ledger=RequestLedger(None,out/'request-attempts.json');ledger.attempts=recorded;ledger.persist()
+            save(out,'proposal-provenance.json',{'archive_sha256':RESUME_SHA,'original_run':41036173527,'new_model_requests':0})
+        else:
+            client=MetaAgent(max_calls=1).client
+            ledger=RequestLedger(client,out/'request-attempts.json');ledger.persist()
         with tempfile.TemporaryDirectory(prefix='wheel-repair-') as directory:
             scratch=Path(directory);runtime=DockerRuntime(ROOT,scratch)
             images=runtime.prepare();probes=runtime.probe()
             # One invocation only; no corrective model feedback or hidden retries.
-            proposal=propose(ledger.scoped('C4','investigator','repair-proposal'),view,failures)
+            if not resume:
+                proposal=propose(ledger.scoped('C4','investigator','repair-proposal'),view,failures)
             save(out,'proposal.json',proposal)
             repaired=apply_proposal(proposal,view[DOMAIN]['candidate'],p)
             (out/'proposed.patch').write_text(''.join(difflib.unified_diff(view[DOMAIN]['candidate'].splitlines(True),repaired.splitlines(True),fromfile='a/'+DOMAIN,tofile='b/'+DOMAIN)))
@@ -149,14 +175,14 @@ def run(expected,origin,output):
                 save(stage_out,'locked-comparison.json',stage_frozen)
                 guard.bind(stage_out/'locked-comparison.json',(stage_out/'locked-comparison.json').read_bytes())
                 manifest={**stage_frozen,'plan_hash':digest((stage_out/'locked-comparison.json').read_bytes())}
-                rows,outcomes=execute(stage_plans,{'trials':3,'caps':{'worlds':48}},runtime,stage_jars,stage_java,python,stage_out,stage_scratch,guard,manifest)
+                rows,outcomes=execute(stage_plans,{'case':'M1','trials':3,'caps':{'worlds':48}},runtime,stage_jars,stage_java,python,stage_out,stage_scratch,guard,manifest)
                 stages[stage]={'worlds':len(rows),'outcomes':outcomes};all_rows.extend(rows)
             selected=next(x['id'] for x in plans if x['mode']=='selected')
             if stages['broken']['outcomes'][selected]['verdict']!='reproduced_regression': raise IntegrityError('Original failure did not reproduce')
             if any(o['verdict']!='not_reproduced' for o in stages['repaired']['outcomes'].values()): raise IntegrityError('Repair failed a frozen experiment')
             if len(all_rows)!=96 or len(ledger.attempts)!=1 or revision()!=commit: raise IntegrityError('Repair inventory/revision drift')
             guard.publish(out/'summary.json',{'status':'verified_bounded_restoration','commit':commit,'stages':stages,
-                'requests':len(ledger.attempts),'usage':ledger.attempts[0]['usage'],'worlds':len(all_rows),
+                'requests':len(ledger.attempts),'new_model_requests':0 if resume else 1,'usage':ledger.attempts[0]['usage'],'worlds':len(all_rows),
                 'confinement':probes,'wall_seconds':time.monotonic()-started,'limits':p['limitations'],'numeric_usd_cost':None})
             save(out,'run-status.json',{'status':'completed','commit':commit})
     except BaseException as error:
@@ -171,4 +197,5 @@ if __name__=='__main__':
     parser.add_argument('--expected-implementation-commit',required=True)
     parser.add_argument('--origin',type=Path,required=True)
     parser.add_argument('--output',type=Path,default=ROOT/'evidence-repair')
-    a=parser.parse_args();run(a.expected_implementation_commit,a.origin,a.output)
+    parser.add_argument('--resume-proposal',type=Path)
+    a=parser.parse_args();run(a.expected_implementation_commit,a.origin,a.output,a.resume_proposal)

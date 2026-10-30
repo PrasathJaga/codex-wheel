@@ -37,12 +37,14 @@ jobs:
       - name: Download pinned original evidence
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh api repos/PrasathJaga/codex-wheel/actions/artifacts/12958372454/zip > "$RUNNER_TEMP/origin.zip"
+        run: |
+          gh api repos/PrasathJaga/codex-wheel/actions/artifacts/12958372454/zip > "$RUNNER_TEMP/origin.zip"
+          gh api repos/PrasathJaga/codex-wheel/actions/artifacts/12968267394/zip > "$RUNNER_TEMP/proposal.zip"
       - name: Propose and verify bounded repair
         env:
           MODEL_API_KEY: ${{ secrets.MODEL_API_KEY }}
           EXPECTED_IMPLEMENTATION_COMMIT: ${{ github.sha }}
-        run: python -m wheel.patcher --expected-implementation-commit "$EXPECTED_IMPLEMENTATION_COMMIT" --origin "$RUNNER_TEMP/origin.zip"
+        run: python -m wheel.patcher --expected-implementation-commit "$EXPECTED_IMPLEMENTATION_COMMIT" --origin "$RUNNER_TEMP/origin.zip" --resume-proposal "$RUNNER_TEMP/proposal.zip"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

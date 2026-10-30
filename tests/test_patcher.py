@@ -34,3 +34,45 @@ def test_incomplete_or_non_tool_proposal_is_rejected():
 def test_origin_hash_is_checked_before_parsing(tmp_path):
     file=tmp_path/'origin.zip';file.write_bytes(b'not an origin')
     with pytest.raises(IntegrityError):p.load_origin(file,p.protocol())
+
+
+def test_recorded_proposal_stage_wiring_without_model_or_containers(tmp_path,monkeypatch):
+    import json
+    from wheel import intake
+    java,python=variants()
+    source_view={p.DOMAIN:{'base':java['base'],'candidate':java['M1']},
+                 p.CLIENT:{'base':python['base'],'candidate':python['base']}}
+    plans=[{'id':'plan-'+str(i),'mode':'selected' if i==0 else 'fixed',
+            'source_hashes':{'java':{'base':'healthy','candidate':'broken'}}} for i in range(8)]
+    def lock(protocol,expected,out):
+        (out/'implementation-lock.json').write_text('{}')
+        return expected,[]
+    monkeypatch.setattr(p,'implementation_lock',lock)
+    monkeypatch.setattr(intake,'source',lambda root,commit,name:(root/name).read_text())
+    monkeypatch.setattr(p,'load_origin',lambda *a:(plans,source_view,[]))
+    monkeypatch.setattr(p,'recorded_proposal',lambda *a:(proposal(),[{'usage':{'total_tokens':8482}}]))
+    monkeypatch.setattr(p,'MetaAgent',lambda **kw:pytest.fail('Resume must not construct model client'))
+    class Runtime:
+        def __init__(self,*a):pass
+        def prepare(self):return {'java':'image'}
+        def probe(self):return {'probe':True}
+        def close(self):pass
+    monkeypatch.setattr(p,'DockerRuntime',Runtime)
+    monkeypatch.setattr(p,'admitted_tests',lambda *a:None)
+    def jars(java,scratch):
+        result={}
+        for name in java:
+            path=scratch/(name+'.jar');path.write_bytes(name.encode());result[name]=path
+        return result
+    monkeypatch.setattr(p,'build_jars',jars)
+    stages=[]
+    def execute(plans,policy,runtime,jars,java,python,out,scratch,guard,manifest):
+        assert policy['case']=='M1' and policy['trials']==3 and policy['caps']['worlds']==48
+        stage=out.name;stages.append(stage)
+        assert java['M1']==source_view[p.DOMAIN]['candidate'] if stage=='broken' else java['M1']==source_view[p.DOMAIN]['base']
+        return [{} for _ in range(48)],{item['id']:{'verdict':'reproduced_regression' if stage=='broken' and item['mode']=='selected' else 'not_reproduced'} for item in plans}
+    monkeypatch.setattr(p,'execute',execute)
+    monkeypatch.setattr(p,'revision',lambda:'a'*40)
+    output=tmp_path/'out';p.run('a'*40,tmp_path/'unused',output,tmp_path/'recorded')
+    assert stages==['broken','repaired']
+    assert json.loads((output/'summary.json').read_text())['new_model_requests']==0
