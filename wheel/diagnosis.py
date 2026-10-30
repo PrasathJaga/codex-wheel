@@ -88,12 +88,14 @@ def validate(document, result):
     return result
 
 
-def request_diagnosis(client, document, output):
+def request_diagnosis(client, document, output, max_completion_tokens=2048):
     """One request, no repair loop. Preserve response/rejection; no credentials/errors bodies.
 
     Reference validation is mechanical. It does not certify the semantic correctness
     of free-text explanation; human review remains required.
     """
+    if type(max_completion_tokens) is not int or not 1 <= max_completion_tokens <= 20000:
+        raise ValueError('Invalid diagnosis completion budget')
     from pathlib import Path
     output = Path(output)
     encoded = canonical(document)
@@ -103,6 +105,7 @@ def request_diagnosis(client, document, output):
               'evidence_sha256': hashlib.sha256(encoded.encode()).hexdigest(),
               'packet': document, 'model': MODEL, 'new_model_calls': 1,
               'numeric_usd_cost': None, 'semantic_review': 'required',
+              'max_completion_tokens': max_completion_tokens,
               'protected_verdict': copy.deepcopy(document['verdict'])}
     # Never overwrite an earlier attempt; persist before making any request.
     with output.open('x') as stream:
@@ -110,7 +113,7 @@ def request_diagnosis(client, document, output):
     try:
         response = client.chat.completions.create(model=MODEL,
             messages=[{'role': 'developer', 'content': PROMPT}, {'role': 'user', 'content': encoded}],
-            max_completion_tokens=2048, reasoning_effort='low')
+            max_completion_tokens=max_completion_tokens, reasoning_effort='low')
         record.update(response_id=response.id, response_model=response.model,
                       usage=response.usage.model_dump() if response.usage else None)
         record['response'] = response.model_dump(exclude_none=True)

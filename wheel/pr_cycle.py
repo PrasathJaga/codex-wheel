@@ -9,14 +9,15 @@ from types import SimpleNamespace
 
 
 class CycleLedger:
-    def __init__(self,client,path):
+    def __init__(self,client,path,completion_limits=None):
         self.client=client;self.path=Path(path);self.attempts=[]
+        self.completion_limits=completion_limits or {r:2048 for r in ('investigation','diagnosis','repair')}
     def scoped(self,role):
         limits={'investigation':6,'diagnosis':1,'repair':1}
         if role not in limits:raise ValueError('Unknown role')
         def create(**kwargs):
             if len(self.attempts)>=8 or sum(a['role']==role for a in self.attempts)>=limits[role]:raise RuntimeError('Cycle request cap reached')
-            if kwargs.get('model')!='muse-spark-1.3' or kwargs.get('max_completion_tokens')!=2048 or kwargs.get('reasoning_effort')!='low':raise ValueError('Unexpected request policy')
+            if kwargs.get('model')!='muse-spark-1.3' or kwargs.get('max_completion_tokens')!=self.completion_limits[role] or kwargs.get('reasoning_effort')!='low':raise ValueError('Unexpected request policy')
             if len(json.dumps(kwargs['messages']))>100000:raise ValueError('Request character cap')
             row={'role':role,'ordinal':len(self.attempts)+1,'status':'attempted','request':copy.deepcopy(kwargs)}
             self.attempts.append(row);self.persist()
@@ -33,7 +34,7 @@ class CycleLedger:
     def persist(self):self.path.write_text(json.dumps(self.attempts,indent=2))
 
 
-def run(number,expected,output):
+def run(number,expected,output,version='v1'):
     from wheel.experiment import ROOT,DOMAIN,CLIENT,digest
     from wheel.intake import inspect,git
     from wheel.pr_review import github_api,identity
@@ -59,15 +60,19 @@ def run(number,expected,output):
         admission=inspect(ROOT,base,head,'java')
         if admission['case']!='M1':raise IntegrityError('Cycle supports exact M1 only')
         save(out,'admission.json',admission)
-        protocol=json.loads((ROOT/'evaluation/pr_cycle_v1.json').read_text())
+        if version not in ('v1','v2'):raise ValueError('Unsupported cycle version')
+        protocol_path='evaluation/pr_cycle_'+version+'.json'
+        protocol=json.loads((ROOT/protocol_path).read_text())
+        state['protocol_version']=version
+        save(out,'protocol.json',protocol)
         commit,paths=implementation_lock({'core_budget':protocol['caps']},expected,out)
         guard=PlanGuard(out/'implementation-lock.json',(out/'implementation-lock.json').read_bytes(),paths)
-        for name in ['evaluation/pr_cycle_v1.json','.github/workflows/pr-cycle.yml']:
+        for name in [protocol_path,'.github/workflows/pr-cycle.yml' if version=='v1' else '.github/workflows/pr-cycle-v2.yml']:
             guard.bind(ROOT/name,(ROOT/name).read_bytes())
         view={DOMAIN:admission['java'],CLIENT:admission['python']}
         save(out,'source-snapshots.json',view)
         guard.bind(out/'source-snapshots.json',(out/'source-snapshots.json').read_bytes())
-        client=MetaAgent(max_calls=8).client;ledger=CycleLedger(client,out/'request-attempts.json')
+        client=MetaAgent(max_calls=8).client;ledger=CycleLedger(client,out/'request-attempts.json',protocol.get('role_completion_tokens'))
         spec=investigate(prompt_client(ledger.scoped('investigation'),interface_protocol()['arms'][1]['developer_prompt']),view,protocol,out/'investigator-traces.json')
         save(out,'proposal.json',spec);guard.bind(out/'proposal.json',(out/'proposal.json').read_bytes())
         plans=[plan(protocol,view,spec,'C4',0),plan(protocol,view,spec,'C4',1,True)]
@@ -92,7 +97,7 @@ def run(number,expected,output):
             export={'frozen':frozen,'plans':[{'id':k,'verdict':v} for k,v in outcomes.items()], 'worlds':rows,
                     'provenance':{'activity':'fresh_current_cycle','plan_sha256':plan_sha},'supporting_records':{'source-snapshots.json':view},'limits':state['limits']}
             doc=diagnosis.packet(export,plans[0]['id'])
-            explanation=diagnosis.request_diagnosis(ledger.scoped('diagnosis'),doc,out/'diagnosis.json')
+            explanation=diagnosis.request_diagnosis(ledger.scoped('diagnosis'),doc,out/'diagnosis.json',max_completion_tokens=ledger.completion_limits['diagnosis'])
             if explanation['status']!='explained':raise IntegrityError('Diagnosis was not admitted; preserved without retry')
             guard.bind(out/'diagnosis.json',(out/'diagnosis.json').read_bytes())
             failures=[r for r in rows if r['plan_id']==plans[0]['id'] and r['world']=='candidate']
@@ -130,4 +135,5 @@ def run(number,expected,output):
 
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--pr',type=int,required=True);p.add_argument('--expected',required=True);p.add_argument('--output',type=Path,required=True)
-    a=p.parse_args();run(a.pr,a.expected,a.output)
+    p.add_argument('--version',choices=['v1','v2'],default='v1')
+    a=p.parse_args();run(a.pr,a.expected,a.output,a.version)
