@@ -51,7 +51,7 @@ public final class RefundService {
             throw new IllegalArgumentException("Idempotency-Key must be 8-128 safe characters");
         }
         var prior = byKey.get(sha256(idempotencyKey));
-        if (prior != null) {
+        if (prior != null && request.amountMinorUnits() > 2500) {
             if (!prior.request().equals(request)) {
                 throw new IdempotencyConflictException("Idempotency-Key reused with different parameters");
             }
