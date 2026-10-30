@@ -1,0 +1,38 @@
+name: Bounded recorded-evidence diagnosis
+on:
+  push:
+    branches: [hackathon/evidence-diagnosis-live-once]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: bounded-diagnosis-live
+  cancel-in-progress: false
+jobs:
+  diagnose:
+    if: github.repository == 'PrasathJaga/codex-wheel'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -e './services/support-agent-python[test]' 'openai>=2,<3'
+      - name: Offline checks
+        run: python -m pytest -q tests/test_diagnosis.py tests/test_evidence_export.py
+      - name: Download authenticated case archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api repos/PrasathJaga/codex-wheel/actions/artifacts/12971639214/zip > "$RUNNER_TEMP/case.zip"
+      - name: One authorized paid diagnosis
+        env:
+          MODEL_API_KEY: ${{ secrets.MODEL_API_KEY }}
+        run: python -m wheel.diagnosis_live --archive "$RUNNER_TEMP/case.zip" --output evidence-diagnosis
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bounded-diagnosis-evidence
+          path: evidence-diagnosis/
