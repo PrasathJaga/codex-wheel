@@ -1,0 +1,44 @@
+name: Verify business evidence dashboard
+on:
+  pull_request:
+    branches: [master]
+    paths: ['wheel/business_dashboard.py', 'tests/test_business_dashboard.py', 'tests/dashboard_browser.cjs', '.github/workflows/business-dashboard.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  dashboard:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -e './services/support-agent-python[test]'
+      - run: python -m pytest -q tests/test_business_dashboard.py tests/test_diagnosis.py tests/test_evidence_export.py
+      - name: Download preserved evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/PrasathJaga/codex-wheel/actions/artifacts/12971639214/zip > "$RUNNER_TEMP/v2.zip"
+          gh api repos/PrasathJaga/codex-wheel/actions/artifacts/12992110116/zip > "$RUNNER_TEMP/diagnosis.zip"
+          gh api repos/PrasathJaga/codex-wheel/actions/artifacts/12963453214/zip > "$RUNNER_TEMP/v1.zip"
+      - name: Authenticate and build dashboard
+        run: |
+          mkdir dashboard-output
+          python -m wheel.business_dashboard --archive "$RUNNER_TEMP/v2.zip" --archive-sha 611728f172308ef43344347ad87a797b32169d47179380a0a9c55f3d685a55c8 --plan clarified_interface-0 --diagnosis "$RUNNER_TEMP/diagnosis.zip" --diagnosis-sha 50542b5d5236fe255d4be3e24e065a4d4ea149f28d9561ffd05d1a403a404e15 --historical "$RUNNER_TEMP/v1.zip" --historical-sha 51e285f92fdcc0a4d16d611063130f8f63e9041c81535dd09b066aeade6bfd8a --output dashboard-output/dashboard.html
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - run: node tests/dashboard_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: business-dashboard-preview
+          path: dashboard-output/
