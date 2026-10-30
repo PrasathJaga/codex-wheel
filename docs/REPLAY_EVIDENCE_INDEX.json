@@ -1,0 +1,355 @@
+{
+  "code_commit": "d9801353f28df4a35d8d56e4ed9757628e6f45b1",
+  "workflow_run": 40974431811,
+  "bundle_artifact": 12942032169,
+  "replay_artifact": 12941334841,
+  "manifest_sha256": "614c53b29dbc03640d261dca94dce5414bcc9105f59f93b61a99207bcc01ede9",
+  "bundle_zip_sha256": "1088d78ed52c20d7bf1e4a8a5c0fbd30a3f13ed1009bbdbadea8a34b1b3f17f7",
+  "replay_zip_sha256": "52defefb02fe3ff565c88455d25b29d1d5768c2a4060ab0cc29a05b888525397",
+  "mode": "deterministic_tool_backend_replay",
+  "worlds": 48,
+  "new_investigator_calls": 0,
+  "new_support_agent_calls": 0,
+  "outcomes": {
+    "M1-selected": {
+      "verdict": "reproduced_regression",
+      "reason": "repeatable_baseline_pass_candidate_fail",
+      "pairs": [
+        {
+          "trial": 0,
+          "baseline_pass": true,
+          "candidate_pass": false,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 1,
+          "baseline_pass": true,
+          "candidate_pass": false,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 2,
+          "baseline_pass": true,
+          "candidate_pass": false,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        }
+      ],
+      "baseline_passes": 3,
+      "candidate_passes": 0,
+      "paired_trials": 3
+    },
+    "M1-no_fault": {
+      "verdict": "not_reproduced",
+      "reason": "no_violation_under_tested_conditions",
+      "pairs": [
+        {
+          "trial": 0,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 1,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 2,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        }
+      ],
+      "baseline_passes": 3,
+      "candidate_passes": 3,
+      "paired_trials": 3
+    },
+    "M2-selected": {
+      "verdict": "reproduced_regression",
+      "reason": "repeatable_baseline_pass_candidate_fail",
+      "pairs": [
+        {
+          "trial": 0,
+          "baseline_pass": true,
+          "candidate_pass": false,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 1,
+          "baseline_pass": true,
+          "candidate_pass": false,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 2,
+          "baseline_pass": true,
+          "candidate_pass": false,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        }
+      ],
+      "baseline_passes": 3,
+      "candidate_passes": 0,
+      "paired_trials": 3
+    },
+    "M2-no_fault": {
+      "verdict": "not_reproduced",
+      "reason": "no_violation_under_tested_conditions",
+      "pairs": [
+        {
+          "trial": 0,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 1,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 2,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        }
+      ],
+      "baseline_passes": 3,
+      "candidate_passes": 3,
+      "paired_trials": 3
+    },
+    "B1-selected": {
+      "verdict": "not_reproduced",
+      "reason": "no_violation_under_tested_conditions",
+      "pairs": [
+        {
+          "trial": 0,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 1,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 2,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        }
+      ],
+      "baseline_passes": 3,
+      "candidate_passes": 3,
+      "paired_trials": 3
+    },
+    "B1-no_fault": {
+      "verdict": "not_reproduced",
+      "reason": "no_violation_under_tested_conditions",
+      "pairs": [
+        {
+          "trial": 0,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 1,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 2,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        }
+      ],
+      "baseline_passes": 3,
+      "candidate_passes": 3,
+      "paired_trials": 3
+    },
+    "B2-selected": {
+      "verdict": "not_reproduced",
+      "reason": "no_violation_under_tested_conditions",
+      "pairs": [
+        {
+          "trial": 0,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 1,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 2,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        }
+      ],
+      "baseline_passes": 3,
+      "candidate_passes": 3,
+      "paired_trials": 3
+    },
+    "B2-no_fault": {
+      "verdict": "not_reproduced",
+      "reason": "no_violation_under_tested_conditions",
+      "pairs": [
+        {
+          "trial": 0,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 1,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        },
+        {
+          "trial": 2,
+          "baseline_pass": true,
+          "candidate_pass": true,
+          "baseline_status": "completed",
+          "candidate_status": "completed"
+        }
+      ],
+      "baseline_passes": 3,
+      "candidate_passes": 3,
+      "paired_trials": 3
+    }
+  },
+  "source_pairs": {
+    "B1": {
+      "admission": "exact_reviewed_source_bytes",
+      "base_commit": "367626239f7acc703e9e0c693117a0c8718377e9",
+      "candidate_commit": "cb3fad55639efa8db676c118d9be3986509d9068",
+      "case": "B1",
+      "changed_path": "services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundService.java",
+      "changed_side": "java",
+      "fixed_peer_commit": "367626239f7acc703e9e0c693117a0c8718377e9",
+      "limit": "not_general_or_hostile_repository_support",
+      "provenance": "caller_supplied_reviewed_commit_pair; author_origin_not_verified",
+      "schema": "reviewed-refund-intake-v1",
+      "source_hashes": {
+        "java": {
+          "base": "ee85defb2cb736769165dbda011e19d4042ad9bc13daae597a6c79109e9ac3b7",
+          "candidate": "8e5632a9c7527f376b6f3fcc3914555c0bb035299059cd1c8dcb6836dbd6f8b4"
+        },
+        "python": {
+          "base": "11ba76581d7333215c4d352cb07cdf2eaa9b0b9e767b5a328507794c2667fb55",
+          "candidate": "11ba76581d7333215c4d352cb07cdf2eaa9b0b9e767b5a328507794c2667fb55"
+        }
+      }
+    },
+    "B2": {
+      "admission": "exact_reviewed_source_bytes",
+      "base_commit": "367626239f7acc703e9e0c693117a0c8718377e9",
+      "candidate_commit": "bdb93561d327e70d1bdc776aebf1be3abc4505f6",
+      "case": "B2",
+      "changed_path": "services/support-agent-python/refund_tool/client.py",
+      "changed_side": "python",
+      "fixed_peer_commit": "367626239f7acc703e9e0c693117a0c8718377e9",
+      "limit": "not_general_or_hostile_repository_support",
+      "provenance": "caller_supplied_reviewed_commit_pair; author_origin_not_verified",
+      "schema": "reviewed-refund-intake-v1",
+      "source_hashes": {
+        "java": {
+          "base": "ee85defb2cb736769165dbda011e19d4042ad9bc13daae597a6c79109e9ac3b7",
+          "candidate": "ee85defb2cb736769165dbda011e19d4042ad9bc13daae597a6c79109e9ac3b7"
+        },
+        "python": {
+          "base": "11ba76581d7333215c4d352cb07cdf2eaa9b0b9e767b5a328507794c2667fb55",
+          "candidate": "092fe3f89bef30cb598363ae97466d58405f7d036b9d9f78f547f81d2903b0f6"
+        }
+      }
+    },
+    "M1": {
+      "admission": "exact_reviewed_source_bytes",
+      "base_commit": "367626239f7acc703e9e0c693117a0c8718377e9",
+      "candidate_commit": "0f1d6ba7a81eed2cea3665b70fd0327869467df8",
+      "case": "M1",
+      "changed_path": "services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundService.java",
+      "changed_side": "java",
+      "fixed_peer_commit": "367626239f7acc703e9e0c693117a0c8718377e9",
+      "limit": "not_general_or_hostile_repository_support",
+      "provenance": "caller_supplied_reviewed_commit_pair; author_origin_not_verified",
+      "schema": "reviewed-refund-intake-v1",
+      "source_hashes": {
+        "java": {
+          "base": "ee85defb2cb736769165dbda011e19d4042ad9bc13daae597a6c79109e9ac3b7",
+          "candidate": "2b12c49d88ebda564478e885fed691da599e3c1a3d7364aa4b37ce84381b5278"
+        },
+        "python": {
+          "base": "11ba76581d7333215c4d352cb07cdf2eaa9b0b9e767b5a328507794c2667fb55",
+          "candidate": "11ba76581d7333215c4d352cb07cdf2eaa9b0b9e767b5a328507794c2667fb55"
+        }
+      }
+    },
+    "M2": {
+      "admission": "exact_reviewed_source_bytes",
+      "base_commit": "367626239f7acc703e9e0c693117a0c8718377e9",
+      "candidate_commit": "99f784979aad4b765da0fbee6bb7454edc9755ab",
+      "case": "M2",
+      "changed_path": "services/support-agent-python/refund_tool/client.py",
+      "changed_side": "python",
+      "fixed_peer_commit": "367626239f7acc703e9e0c693117a0c8718377e9",
+      "limit": "not_general_or_hostile_repository_support",
+      "provenance": "caller_supplied_reviewed_commit_pair; author_origin_not_verified",
+      "schema": "reviewed-refund-intake-v1",
+      "source_hashes": {
+        "java": {
+          "base": "ee85defb2cb736769165dbda011e19d4042ad9bc13daae597a6c79109e9ac3b7",
+          "candidate": "ee85defb2cb736769165dbda011e19d4042ad9bc13daae597a6c79109e9ac3b7"
+        },
+        "python": {
+          "base": "11ba76581d7333215c4d352cb07cdf2eaa9b0b9e767b5a328507794c2667fb55",
+          "candidate": "1ca2a288dabc7b635d2254ef920f883d77186968c82c2619a95c4e2c588ba74c"
+        }
+      }
+    }
+  },
+  "runtime_images": {
+    "java": "sha256:3cfdbb0f75d10b24e237c078910bd0340cb75828e1c91e2a0b770a8408dae0ad",
+    "python": "sha256:d73cb3dab34cbafaacc8f35e68fb5db91ca31e66108b258069f709a8d5b78e3b"
+  },
+  "original_meta_evidence": {
+    "run": 40881599825,
+    "model": "muse-spark-1.3",
+    "investigator_calls": 18,
+    "support_agent_calls": 52
+  }
+}

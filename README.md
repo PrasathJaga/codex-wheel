@@ -1,10 +1,14 @@
 # Codex Wheel — Meta Hackathon 2026
 
-**Current master evidence:** G1 live Java/Python, the manual G2/G3 matrix, genuine Meta support-agent/preflight and bounded source-reading G5 investigator are demonstrated in linked Actions runs. PR #7 merged as `ec55072fede610c26265e9660828f9530cf1a4f6`.
+**Current master:** bounded G6 analysis plus portable replay/reviewed pinned-source intake are merged through PR #9 as `de85302d434c8e4ba45f7d3de8d9d3a08098f907`. Both source-code regression workflows and the separate clean-runner replay passed before merge; the merge regression workflow was still running at this documentation refresh.
 
-Codex Wheel uses a Meta-powered investigator to choose source-grounded experiments and independently validates committed business effects in a **synthetic refund workflow**. G5 covers two disclosed seeded cases, one selected paired trial each. It does not establish general bug-finding accuracy or superiority over deterministic methods.
+Codex Wheel uses **Meta's Model API and `muse-spark-1.3`** to read source/diffs, propose constrained behavioral experiments, select a support-agent refund tool, and produce real post-tool responses. An independent ledger oracle verifies the resulting business effects.
 
-The G6 branch adds repeated live-plan trials, benign/no-fault controls, strict parity and constrained Docker execution. See [G6_REPEATABILITY.md](docs/G6_REPEATABILITY.md) for protocol, evidence status and limitations. See [NEXT_STEPS.md](docs/NEXT_STEPS.md) for the remaining replay/evaluation/demo work.
+**Verified Meta use:** [G6 Actions 40881599825](https://github.com/PrasathJaga/codex-wheel/actions/runs/40881599825) recorded **18 genuine investigator calls and 52 genuine support-agent calls**. All 70 archived responses identify `muse-spark-1.3` and include provider IDs and usage. The client points to `https://api.meta.ai/v1`. See [META_MODEL_USAGE.md](docs/META_MODEL_USAGE.md) for roles, source links and evidence.
+
+**Analysis and replay are different phases.** Analysis uses genuine Meta inference to choose and freeze an experiment. Default replay reuses that saved plan with zero new inference to check reproducibility. Recorded model messages remain labeled as recorded; replay is not presented as fresh model execution.
+
+The demonstrated domain is a **synthetic full-order refund workflow** with two disclosed seeded defects. G6 verified three paired executions per frozen plan and benign/no-fault controls; it does not measure independent investigator resampling or general bug-finding superiority. See [G6_REPEATABILITY.md](docs/G6_REPEATABILITY.md), [REPLAY_AND_INTAKE.md](docs/REPLAY_AND_INTAKE.md) and [NEXT_STEPS.md](docs/NEXT_STEPS.md) for exact scope and remaining work.
 
 ## Source history
 
@@ -51,4 +55,4 @@ No real payment system, customer orders or money are involved. The fixture optio
 
 ## Next engineering gates
 
-G0: provenance and pinned commits. G1: real Java HTTP and Python tool integration with a protected one-effect assertion. G2: post-commit fault gateway. G3: manually frozen M1/M2 experiments and oracle. G4–G7: actual Meta agent/investigator, freeze-before-comparison, controlled trials, honest baselines, replay evidence and demo.
+G0–G6 have evidence within the disclosed synthetic scope. PR #9 adds verified deterministic replay and reviewed pinned revision intake. Remaining G7 work includes fair C0/C2/C4 evaluation, a withheld variant where feasible, evidence/report preservation and an accessible three-minute demo/submission. The conditional stretch plan remains inactive.
