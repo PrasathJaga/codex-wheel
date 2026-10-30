@@ -1,0 +1,47 @@
+name: Manual reviewed-fixture PR review
+on:
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: Same-repository PR number to inspect
+        required: true
+        default: '22'
+  push:
+    branches: [hackathon/pr-review-live-once]
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+concurrency:
+  group: manual-reviewed-fixture-review
+  cancel-in-progress: false
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -e './services/support-agent-python[test]'
+      - run: python -m pytest -q tests/test_pr_review.py tests/test_replay.py
+      - name: Manually authorized reviewed-fixture review
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_PR: ${{ inputs.pr || '22' }}
+        run: python -m wheel.pr_review --pr "$TARGET_PR" --output pr-review-output --publish
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pr-review-evidence
+          path: |
+            pr-review-output/
+            evidence/
