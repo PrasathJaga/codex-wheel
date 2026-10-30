@@ -300,6 +300,8 @@ def run(expected_commit, output):
             if len(records) > 156 or len(ledger.attempts) > 86:
                 raise IntegrityError('Core execution cap exceeded')
             guard.verify('before_case_aggregation')
+            if revision() != commit:
+                raise IntegrityError('Implementation revision changed before aggregation')
             if json.loads((out / 'results.json').read_text()) != records:
                 raise IntegrityError('Result evidence drift')
             if json.loads((out / 'request-attempts.json').read_text()) != ledger.attempts:

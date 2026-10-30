@@ -224,6 +224,7 @@ def test_full_orchestration_freezes_all_selections_before_worlds(monkeypatch, tm
         evaluation.save(out, 'implementation-lock.json', {'commit': expected})
         return expected, []
     monkeypatch.setattr(evaluation, 'implementation_lock', lock)
+    monkeypatch.setattr(evaluation, 'revision', lambda: 'a' * 40)
     monkeypatch.setattr(evaluation, 'MetaAgent', lambda **kw: SimpleNamespace(client=Mock()))
     class Runtime:
         def __init__(self, *args): self.closed = False
@@ -250,3 +251,56 @@ def test_full_orchestration_freezes_all_selections_before_worlds(monkeypatch, tm
     assert summary['metrics']['C4']['case_statuses']['abstained'] == 2
     assert summary['numeric_usd_cost'] is None
     assert json.loads((out / 'run-status.json').read_text())['status'] == 'completed'
+
+
+def test_real_preflight_and_continuation_through_successful_request_ledger(tmp_path):
+    class Data:
+        def __init__(self, data): self.data = data
+        def model_dump(self, **kw): return copy.deepcopy(self.data)
+    class Response:
+        model = MODEL
+        _request_id = 'synthetic-request'
+        def __init__(self, ordinal, assistant, finish):
+            self.id = 'synthetic-' + str(ordinal)
+            self.usage = Data({'prompt_tokens': 10, 'completion_tokens': 5, 'total_tokens': 15})
+            self.choices = [SimpleNamespace(message=Data(assistant), finish_reason=finish)]
+            self.data = {'id': self.id, 'model': self.model, 'usage': self.usage.model_dump(),
+                         'choices': [{'message': assistant, 'finish_reason': finish}]}
+        def model_dump(self, **kw): return copy.deepcopy(self.data)
+    args = {'order_id': 'ORD-SYN-TRIAL', 'amount_minor_units': 2500,
+            'currency': 'USD', 'refund_scope': 'full_order'}
+    assistant = {'role': 'assistant', 'tool_calls': [{'id': 'synthetic-tool', 'type': 'function',
+                 'function': {'name': 'issue_refund', 'arguments': json.dumps(args)}}]}
+    provider = Mock()
+    provider.chat.completions.create.side_effect = [Response(1, assistant, 'tool_calls'),
+        Response(2, {'role': 'assistant', 'content': 'Synthetic refund committed.'}, 'stop')]
+    ledger = RequestLedger(provider, tmp_path / 'attempts.json')
+    agent, seed = evaluation.preflight(ledger, tmp_path, 'C2', 'opaque', 2500,
+                                      'Please refund my entire order ORD-SYN-TRIAL for USD 25.00.')
+    assert seed['payload']['arguments'] == args
+    ledger.phase = 'worlds'
+    result = agent.continue_world('opaque', {'status': 'committed'})
+    assert result['content'] == 'Synthetic refund committed.'
+    assert [a['phase'] for a in ledger.attempts] == ['selection', 'worlds']
+    assert all(a['status'] == 'response_received' for a in ledger.attempts)
+    assert agent.frozen == {'opaque': seed}
+    assert provider.chat.completions.create.call_count == 2
+
+
+def test_failed_representative_continuation_is_null_and_invalidates_plan(monkeypatch, tmp_path):
+    _, (plans, selections, agents), _ = fake_selection(monkeypatch, tmp_path)
+    plan = plans[0]; agent, _ = agents[plan['id']]
+    agent.continue_world.side_effect = RuntimeError('synthetic failure')
+    def world(runtime, plan, trial, which, *args):
+        return {'plan_id': plan['id'], 'case': plan['case'], 'trial': trial, 'world': which,
+                'status': 'completed', 'oracle_pass': True, 'receipt': {'status': 'committed'}}
+    monkeypatch.setattr(evaluation, 'world', world)
+    monkeypatch.setattr(evaluation, 'validate_pair', lambda *args: None)
+    lock = tmp_path / 'lock'; lock.write_bytes(b'frozen')
+    records, outcomes = evaluation.execute_plans([plan], agents, None, {}, {}, {}, tmp_path,
+                                                tmp_path, PlanGuard(lock, b'frozen', []), {})
+    assert len(records) == 6
+    assert all(r['model_reply'] is None for r in records)
+    assert sum(r['status'] == 'analysis_error' for r in records) == 2
+    assert outcomes[plan['id']]['verdict'] == 'analysis_error'
+    assert agent.continue_world.call_count == 2
