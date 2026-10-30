@@ -1,0 +1,53 @@
+name: Bounded M1 repair verification
+on:
+  workflow_dispatch:
+  push:
+    branches: [hackathon/bounded-repair-live]
+    paths: ['wheel/**', 'evaluation/repair_v1.json', '.github/workflows/bounded-repair.yml']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: bounded-repair
+  cancel-in-progress: false
+jobs:
+  repair:
+    if: github.repository == 'PrasathJaga/codex-wheel'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: services/refund-api-java/pom.xml
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -e './services/support-agent-python[test]' 'openai>=2,<3'
+      - name: Offline validation
+        env:
+          WHEEL_REQUIRE_BROKER_TEST: '1'
+        run: python -m pytest -q tests services/support-agent-python/tests
+      - name: Download pinned original evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/PrasathJaga/codex-wheel/actions/artifacts/12958372454/zip > "$RUNNER_TEMP/origin.zip"
+          gh api repos/PrasathJaga/codex-wheel/actions/artifacts/12968267394/zip > "$RUNNER_TEMP/proposal.zip"
+      - name: Propose and verify bounded repair
+        env:
+          MODEL_API_KEY: ${{ secrets.MODEL_API_KEY }}
+          EXPECTED_IMPLEMENTATION_COMMIT: ${{ github.sha }}
+        run: python -m wheel.patcher --expected-implementation-commit "$EXPECTED_IMPLEMENTATION_COMMIT" --origin "$RUNNER_TEMP/origin.zip" --resume-proposal "$RUNNER_TEMP/proposal.zip"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bounded-repair-evidence
+          path: evidence-repair/
+          retention-days: 90
