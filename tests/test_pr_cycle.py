@@ -19,6 +19,15 @@ class CycleTests(unittest.TestCase):
             self.assertEqual(len(ledger.attempts),8)
             self.assertNotIn('SECRET_BODY',path.read_text())
             self.assertEqual(client.chat.completions.create.call_count,8)
+    def test_v2_accepts_20k_diagnosis_and_still_allows_one_request(self):
+        client=Mock();client.chat.completions.create.side_effect=RuntimeError('provider')
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger=CycleLedger(client,Path(tmp)/'attempts.json',{'investigation':2048,'diagnosis':20000,'repair':2048})
+            request={'model':'muse-spark-1.3','max_completion_tokens':20000,'reasoning_effort':'low','messages':[]}
+            with self.assertRaises(RuntimeError):ledger.scoped('diagnosis').chat.completions.create(**request)
+            with self.assertRaises(RuntimeError):ledger.scoped('diagnosis').chat.completions.create(**request)
+            self.assertEqual(client.chat.completions.create.call_count,1)
+            self.assertEqual(client.chat.completions.create.call_args.kwargs['max_completion_tokens'],20000)
     def test_bad_policy_never_calls_provider(self):
         client=Mock()
         with tempfile.TemporaryDirectory() as tmp:
