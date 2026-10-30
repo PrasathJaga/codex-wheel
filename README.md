@@ -55,4 +55,9 @@ No real payment system, customer orders or money are involved. The fixture optio
 
 ## Next engineering gates
 
-G0–G6 have evidence within the disclosed synthetic scope. PR #9 adds verified deterministic replay and reviewed pinned revision intake. Remaining G7 work includes fair C0/C2/C4 evaluation, a withheld variant where feasible, evidence/report preservation and an accessible three-minute demo/submission. The conditional stretch plan remains inactive.
+G0–G6 have evidence within the disclosed synthetic scope. PR #9 adds verified deterministic replay and reviewed pinned revision intake. Step 1 is specified in [EVALUATION_PROTOCOL.md](docs/EVALUATION_PROTOCOL.md); its comparison has not run. Remaining G7 work includes implementing/executing fair C0/C2/C4 evaluation, a withheld variant where feasible, evidence/report preservation and an accessible three-minute demo/submission. The conditional stretch plan remains inactive.
+
+
+## Baseline CI events
+
+Baseline verification runs on pull requests targeting `master`, pushes to `master` (including merges), and manual dispatch. It does not run on every feature-branch push. These baseline tests are separate from the bounded genuine Meta workflows.

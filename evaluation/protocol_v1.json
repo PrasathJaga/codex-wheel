@@ -1,0 +1,376 @@
+{
+  "budget_fairness": {
+    "C2_breadth": "18 fixed plans; exhaustive over allowed public amounts and 3 actions",
+    "C4_breadth": "up_to_4_selected_and_4_diagnostic_no_fault_plans",
+    "equal_world_or_selection_budget_claim": false,
+    "required_reporting": "publish_actual_plans_worlds_calls_tokens_setup_and_runtime; report_ties_or_losses; no_equal_budget_superiority_claim"
+  },
+  "case_order": [
+    "M1",
+    "M2",
+    "B1",
+    "B2"
+  ],
+  "cases": [
+    {
+      "changed_side": "java",
+      "id": "M1",
+      "provenance": "disclosed_synthetic_reviewed_fixture; fixed_test_author_and_timestamp",
+      "public_fixture": {
+        "allowed_amount_minor_units": [
+          2500,
+          7500
+        ],
+        "currency": "USD",
+        "order_id": "ORD-SYN-TRIAL",
+        "refund_scope": "full_order"
+      },
+      "source": {
+        "base_commit": "367626239f7acc703e9e0c693117a0c8718377e9",
+        "candidate_commit": "0f1d6ba7a81eed2cea3665b70fd0327869467df8",
+        "changed_path": "services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundService.java",
+        "fixed_peer_commit": "367626239f7acc703e9e0c693117a0c8718377e9",
+        "source_hashes": {
+          "java": {
+            "base": "ee85defb2cb736769165dbda011e19d4042ad9bc13daae597a6c79109e9ac3b7",
+            "candidate": "2b12c49d88ebda564478e885fed691da599e3c1a3d7364aa4b37ce84381b5278"
+          },
+          "python": {
+            "base": "11ba76581d7333215c4d352cb07cdf2eaa9b0b9e767b5a328507794c2667fb55",
+            "candidate": "11ba76581d7333215c4d352cb07cdf2eaa9b0b9e767b5a328507794c2667fb55"
+          }
+        }
+      }
+    },
+    {
+      "changed_side": "python",
+      "id": "M2",
+      "provenance": "disclosed_synthetic_reviewed_fixture; fixed_test_author_and_timestamp",
+      "public_fixture": {
+        "allowed_amount_minor_units": [
+          7500
+        ],
+        "currency": "USD",
+        "order_id": "ORD-SYN-TRIAL",
+        "refund_scope": "full_order"
+      },
+      "source": {
+        "base_commit": "367626239f7acc703e9e0c693117a0c8718377e9",
+        "candidate_commit": "99f784979aad4b765da0fbee6bb7454edc9755ab",
+        "changed_path": "services/support-agent-python/refund_tool/client.py",
+        "fixed_peer_commit": "367626239f7acc703e9e0c693117a0c8718377e9",
+        "source_hashes": {
+          "java": {
+            "base": "ee85defb2cb736769165dbda011e19d4042ad9bc13daae597a6c79109e9ac3b7",
+            "candidate": "ee85defb2cb736769165dbda011e19d4042ad9bc13daae597a6c79109e9ac3b7"
+          },
+          "python": {
+            "base": "11ba76581d7333215c4d352cb07cdf2eaa9b0b9e767b5a328507794c2667fb55",
+            "candidate": "1ca2a288dabc7b635d2254ef920f883d77186968c82c2619a95c4e2c588ba74c"
+          }
+        }
+      }
+    },
+    {
+      "changed_side": "java",
+      "id": "B1",
+      "provenance": "disclosed_synthetic_reviewed_fixture; fixed_test_author_and_timestamp",
+      "public_fixture": {
+        "allowed_amount_minor_units": [
+          2500,
+          7500
+        ],
+        "currency": "USD",
+        "order_id": "ORD-SYN-TRIAL",
+        "refund_scope": "full_order"
+      },
+      "source": {
+        "base_commit": "367626239f7acc703e9e0c693117a0c8718377e9",
+        "candidate_commit": "cb3fad55639efa8db676c118d9be3986509d9068",
+        "changed_path": "services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundService.java",
+        "fixed_peer_commit": "367626239f7acc703e9e0c693117a0c8718377e9",
+        "source_hashes": {
+          "java": {
+            "base": "ee85defb2cb736769165dbda011e19d4042ad9bc13daae597a6c79109e9ac3b7",
+            "candidate": "8e5632a9c7527f376b6f3fcc3914555c0bb035299059cd1c8dcb6836dbd6f8b4"
+          },
+          "python": {
+            "base": "11ba76581d7333215c4d352cb07cdf2eaa9b0b9e767b5a328507794c2667fb55",
+            "candidate": "11ba76581d7333215c4d352cb07cdf2eaa9b0b9e767b5a328507794c2667fb55"
+          }
+        }
+      }
+    },
+    {
+      "changed_side": "python",
+      "id": "B2",
+      "provenance": "disclosed_synthetic_reviewed_fixture; fixed_test_author_and_timestamp",
+      "public_fixture": {
+        "allowed_amount_minor_units": [
+          7500
+        ],
+        "currency": "USD",
+        "order_id": "ORD-SYN-TRIAL",
+        "refund_scope": "full_order"
+      },
+      "source": {
+        "base_commit": "367626239f7acc703e9e0c693117a0c8718377e9",
+        "candidate_commit": "bdb93561d327e70d1bdc776aebf1be3abc4505f6",
+        "changed_path": "services/support-agent-python/refund_tool/client.py",
+        "fixed_peer_commit": "367626239f7acc703e9e0c693117a0c8718377e9",
+        "source_hashes": {
+          "java": {
+            "base": "ee85defb2cb736769165dbda011e19d4042ad9bc13daae597a6c79109e9ac3b7",
+            "candidate": "ee85defb2cb736769165dbda011e19d4042ad9bc13daae597a6c79109e9ac3b7"
+          },
+          "python": {
+            "base": "11ba76581d7333215c4d352cb07cdf2eaa9b0b9e767b5a328507794c2667fb55",
+            "candidate": "092fe3f89bef30cb598363ae97466d58405f7d036b9d9f78f547f81d2903b0f6"
+          }
+        }
+      }
+    }
+  ],
+  "core_budget": {
+    "max_investigator_requests": 24,
+    "max_model_requests": 86,
+    "max_output_token_capacity": 112640,
+    "max_support_requests": 62,
+    "max_worlds": 156,
+    "no_automatic_paid_evaluation_in_this_step": true,
+    "numeric_usd_cost": null,
+    "remaining_credit_balance": "not_verified"
+  },
+  "design_disclosure": "retrospective_known_case_design; M1_M2_mechanisms_and_prior_results_already_public",
+  "evaluator_only_labels": {
+    "B1": "benign",
+    "B2": "benign",
+    "M1": "breaking",
+    "M2": "breaking"
+  },
+  "execution_status": "not_run",
+  "freeze_policy": {
+    "adoption": "merge_this_protocol_and_pin_expected_sha256_in_the_evaluation_run_manifest",
+    "amendments": "new_version_with_reason_before_new_runs; preserve_old_protocol_results_and_hashes",
+    "implementation_lock": "pin_actual_evaluator_extractor_and_method_implementation_commit_before_comparative_execution",
+    "never_rewrite_after_outcomes_to_make_Meta_win": true
+  },
+  "method_order": [
+    "C0",
+    "C2",
+    "C4"
+  ],
+  "methods": {
+    "C0": {
+      "business_safety_claim": false,
+      "contract_inputs": [
+        "services/refund-api-java/src/main/java/dev/codexwheel/refunds/web/RefundController.java",
+        "services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundRequest.java",
+        "services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundEffect.java",
+        "wheel/meta_agent.py"
+      ],
+      "extraction": "deterministic_read_only_snapshot_from_each_pinned_revision; no_constant_unchanged_answer",
+      "kind": "public_schema_only",
+      "new_model_requests": 0,
+      "outcomes": [
+        "schema_unchanged",
+        "schema_changed",
+        "unsupported",
+        "analysis_error"
+      ],
+      "surface": [
+        "POST /refunds",
+        "Idempotency-Key header",
+        "RefundPayload JSON field types",
+        "committed refund response fields",
+        "issue_refund tool name and parameter schema"
+      ],
+      "unsupported_extraction": "unsupported; never_schema_pass",
+      "worlds": 0
+    },
+    "C2": {
+      "actions": [
+        "PASS_THROUGH",
+        "DROP_DOWNSTREAM_BEFORE_RESPONSE",
+        "REPLACE_DOWNSTREAM_STATUS_502"
+      ],
+      "amount_usd_format": "integer_minor_units_divmod_100; two_decimal_places; no_eval",
+      "amounts": "each_case_public_fixture.allowed_amount_minor_units",
+      "customer_template": "Please refund my entire order ORD-SYN-TRIAL for USD {amount_usd}.",
+      "failed_amount_preflight": "mark_that_amount_plans_trigger_not_reached; continue_only_other_predeclared_amounts_without_replanning",
+      "kind": "fixed_cartesian_regression_suite",
+      "max_investigator_requests": 0,
+      "max_plans": 18,
+      "max_support_continuation_requests": 36,
+      "max_support_initial_requests": 6,
+      "max_support_requests": 42,
+      "max_worlds": 108,
+      "preflight": "one_genuine_support_selection_per_case_amount_reused_across_its_rules",
+      "read_diff": false,
+      "rule_bounds": "min_equals_max_equals_selected_amount",
+      "source_conditioned_selection": false
+    },
+    "C3": {
+      "required": false,
+      "status": "not_evaluated"
+    },
+    "C4": {
+      "abstention": "abstained; no_primary_worlds; no_inherited_plan_or_manual_fallback",
+      "abstention_runs_worlds": false,
+      "allowed_source_files": [
+        "services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundService.java",
+        "services/support-agent-python/refund_tool/client.py"
+      ],
+      "case_labels_or_prior_outcomes_in_model_context": false,
+      "failed_trigger_runs_worlds": false,
+      "fresh_genuine_investigation": true,
+      "include_no_fault_control": true,
+      "inherit_stress_plan_on_abstention": false,
+      "kind": "genuine_Meta_source_grounded_selection",
+      "max_accepted_selected_plans_per_case": 1,
+      "max_initial_investigations_per_case": 1,
+      "max_investigator_requests": 24,
+      "max_plans": 8,
+      "max_rejected_proposals_per_case": 3,
+      "max_support_continuation_requests": 16,
+      "max_support_initial_requests": 4,
+      "max_support_requests": 20,
+      "max_tool_calls_per_turn": 4,
+      "max_turns_per_case": 6,
+      "max_worlds": 48,
+      "no_fault_control": "one_separate_predeclared_PASS_THROUGH_plan_for_each_accepted_case; same_amount_seed",
+      "tools": [
+        "read_diff",
+        "read_source",
+        "propose_experiment",
+        "abstain"
+      ],
+      "trigger_failure": "trigger_not_reached; no_worlds_or_post_outcome_repair",
+      "use_saved_G6_plans_as_new_selection": false
+    }
+  },
+  "model": {
+    "id": "muse-spark-1.3",
+    "investigator": {
+      "max_completion_tokens": 2048,
+      "reasoning_effort": "low"
+    },
+    "max_request_message_chars": 100000,
+    "max_retries": 0,
+    "provider_base_url": "https://api.meta.ai/v1",
+    "request_timeout_seconds": 60,
+    "support_agent": {
+      "max_completion_tokens": 1024,
+      "reasoning_effort": "minimal"
+    }
+  },
+  "protected_components": {
+    "docs/REPLAY_EVIDENCE_INDEX.json": "3d4c1581a762000de9c79ebab41992d183ceed6d30a7d7d8c58896488b945119",
+    "services/refund-api-java/pom.xml": "091dfc1515b820c9778801220141e4d2171c51ec22a68c8a4544fa941b4b6098",
+    "services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundEffect.java": "e5cdb18d44f90e18edb1be9d47e3cdf33605ff2a804ff72f4c9a66ec89c74132",
+    "services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundRequest.java": "7a1c01f7f47b3ebf8b0d73cbdb660e2bffb6acbd07ec7b3818801c4cd711e36c",
+    "services/refund-api-java/src/main/java/dev/codexwheel/refunds/web/RefundController.java": "bbd9ddd12ee3a64d5d818a89fcf07fb1419d5bf1526e926d46190ec968faeed5",
+    "services/support-agent-python/pyproject.toml": "e503d183828abb0a099f78bdd162aba7ac3cb72e18ae7ad589fd5359666231bf",
+    "wheel/g6.py": "b442acf41452a43e219ad0aa75b6d22dcb80a1aeac8c467f435097ebd042dc19",
+    "wheel/intake.py": "198873debbb1db9a505f7b9a915beb69e6aafb97b22db49e01019e51613fdaed",
+    "wheel/investigator.py": "a51963fa40e98a16e151a556b0b21ee6857de6074c489ed418ba3273f2a4d49e",
+    "wheel/isolation.py": "a06bf2e2e2e07d3e017b5cea4573b31f62f0718100b806ca12e8db5e68ad99ac",
+    "wheel/meta_agent.py": "01600cd85699e0b335764f67b4412d1ebc8643c0e959414be1d08a3c04880850",
+    "wheel/plan_guard.py": "5c08a39f1bdbb83725c80fa719d935cf23adcac92323c9f9aba7fedc7fe0de92",
+    "wheel/preflight.py": "57064d4fd82a89d517b704eb844f7da29d919e2410806bca29d4dd7391597f0d",
+    "wheel/proxy.py": "c4ebe2ed89744260d757c0342e20ec6490aec2466215d7f49ba98d430d5ba185",
+    "wheel/repeatability.py": "732c2b9f9a81ac24e9134fc41b3615fc30fedfc5e95344d8bbdc8efb3cffb0c3",
+    "wheel/replay.py": "518cd45cfa5ac6ad6a920c6b3581c654009f6f6c429bd26bd64fc211e0bc1f12",
+    "wheel/verifier.py": "258e3cdacae67a02aa0783d973e30563329025f5833c8ae510ae2d342f2613e7",
+    "wheel/wrapper_worker.py": "4cfc2a07ff4b67ae410a295aaa71107579de4780f37901c641422a38016fc507"
+  },
+  "reporting": {
+    "C0_metrics": "schema_flags_and_supported_extractions_only; no_unexecuted_business_verdict",
+    "abstention_is_verified_safe": false,
+    "empty_tables_or_unknowns": "not_evaluated_or_null; never_invent_zero_performance",
+    "metrics": [
+      "confirmed_breaking_cases / 2",
+      "benign_cases_with_confirmed_finding / 2",
+      "cases_runtime_evaluated / 4",
+      "abstentions_and_trigger_failures_and_errors / 4",
+      "valid_plans / proposed_plans",
+      "baseline_passes_and_candidate_failures / executed_worlds",
+      "actual_request_attempts_and_responses_and_usage",
+      "setup_and_execution_wall_seconds"
+    ],
+    "no_dropped_attempts": true,
+    "no_fault_or_inherited_controls_are_model_selected": false,
+    "no_percent_accuracy_or_production_reliability_from_four_cases": true,
+    "required_case_method_rows": 12
+  },
+  "schema": "codex-wheel-evaluation-protocol-v1",
+  "scope": "original_hackathon_plan; conditional_stretch_inactive",
+  "shared_execution": {
+    "business_oracle": "wheel.verifier.check",
+    "continuation_worlds": [
+      "base",
+      "candidate"
+    ],
+    "fixed_peer_policy_and_oracle": true,
+    "freeze_all_methods_before_any_comparative_worlds": true,
+    "freeze_before_worlds": true,
+    "fresh_state_per_world": true,
+    "isolation": "constrained_Docker_and_refund_only_broker; trusted_host_and_producer_owned_ledger_limit_retained",
+    "other_trials_model_reply": "null; deterministic_tool_backend_execution; never_copy_recorded_text_as_fresh",
+    "post_outcome_plan_revision": false,
+    "representative_continuation_trials": [
+      0
+    ],
+    "reuse_prior_verdicts_as_new_results": false,
+    "support_initial_seed": "one_genuine_preflight_per_method_case_amount; exact_authorized_args; immutable_within_each_plan",
+    "support_prompt_and_tool_schema": "unchanged_MetaAgent.prepare_and_TOOL",
+    "trials_per_plan": 3,
+    "unavailable_representative_continuation": "null_and_explicit_error; no_post_outcome_substitution_or_fabricated_message",
+    "world_order": [
+      "base",
+      "candidate"
+    ]
+  },
+  "source_bundle": {
+    "artifact_id": 12942032169,
+    "manifest_sha256": "614c53b29dbc03640d261dca94dce5414bcc9105f59f93b61a99207bcc01ede9",
+    "workflow_run": 40974431811,
+    "zip_sha256": "1088d78ed52c20d7bf1e4a8a5c0fbd30a3f13ed1009bbdbadea8a34b1b3f17f7"
+  },
+  "source_engine_revision": "e8ee44da1788a6ad2a14f1fcbf575e54a843a080",
+  "verdicts": {
+    "case_aggregation": "any_valid_reproduced_plan_flags_case; preserve_all_other_outcomes; otherwise_analysis_error_then_inconclusive_then_trigger_failure_then_not_reproduced; abstention_remains_abstained",
+    "confirmed_regression": "3_of_3_baseline_pass_and_candidate_fail_with_stable_causal_signature_and_valid_integrity",
+    "executed_plan": [
+      "reproduced_regression",
+      "not_reproduced",
+      "inconclusive",
+      "analysis_error"
+    ],
+    "infrastructure_or_hash_error": "analysis_error; not_a_product_finding",
+    "mixed_or_failed_baseline": "inconclusive; never_confirmed_regression",
+    "model_prose_is_oracle": false,
+    "selection": [
+      "accepted",
+      "abstained",
+      "trigger_not_reached",
+      "invalid_plan",
+      "budget_exhausted",
+      "unsupported",
+      "analysis_error"
+    ]
+  },
+  "withheld_extension": {
+    "activation": "separate_versioned_case_admission_and_budget_locked_before_any_new_case_execution",
+    "included_in_core_budget": false,
+    "no_conditional_stretch_activation": true,
+    "requirements": [
+      "same_C2_algorithm_and_C4_policy",
+      "reviewed_supported_paths_and_oracle_unchanged",
+      "case_source_hashes_and_evaluator_labels_sealed_before_analysis",
+      "independent_human_if_available; otherwise_disclose_author_and_call_investigator_withheld",
+      "preserve_abstentions_failures_and_all_attempts"
+    ],
+    "status": "not_evaluated"
+  }
+}
