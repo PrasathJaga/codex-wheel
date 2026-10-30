@@ -1,0 +1,125 @@
+[
+  {
+    "turn": 0,
+    "assistant": {
+      "tool_calls": [
+        {
+          "id": "call_8cd20912-1772-4e13-ac2b-77fe6e75b28e",
+          "function": {
+            "arguments": "{}",
+            "name": "read_diff"
+          },
+          "type": "function"
+        }
+      ]
+    },
+    "tool_results": []
+  },
+  {
+    "turn": 1,
+    "assistant": {
+      "tool_calls": [
+        {
+          "id": "call_0a1ae2c8-3ac1-4f2b-9d20-e920dbab3c57",
+          "function": {
+            "arguments": "{\"path\":\"services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundService.java\",\"version\":\"base\"}",
+            "name": "read_source"
+          },
+          "type": "function"
+        },
+        {
+          "id": "call_f64f5738-f728-4c1d-9de2-707e4276ddd4",
+          "function": {
+            "arguments": "{\"path\":\"services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundService.java\",\"version\":\"candidate\"}",
+            "name": "read_source"
+          },
+          "type": "function"
+        },
+        {
+          "id": "call_7a067da6-4721-42ab-a09e-a510d6160275",
+          "function": {
+            "arguments": "{\"path\":\"services/support-agent-python/refund_tool/client.py\",\"version\":\"candidate\"}",
+            "name": "read_source"
+          },
+          "type": "function"
+        }
+      ]
+    },
+    "tool_results": []
+  },
+  {
+    "turn": 2,
+    "assistant": {
+      "tool_calls": [
+        {
+          "id": "call_63476227-7b5a-4c82-9d28-c74d02e0f8b3",
+          "function": {
+            "arguments": "{\"amount_minor_units\":5500,\"customer_message\":\"test duplicate guard in 5001-6000 range\",\"fault\":{\"action\":\"DROP_DOWNSTREAM_BEFORE_RESPONSE\",\"max\":1,\"min\":1},\"hypothesis\":\"Same Idempotency-Key plus identical request must return prior effect without new ledger entry; candidate skips idempotency guard when amount is 5001-6000, so a gateway-dropped first response followed by client retry with same key will commit a duplicate effect.\",\"source_refs\":[{\"end_line\":59,\"path\":\"services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundService.java\",\"quote\":\"        var prior = byKey.get(sha256(idempotencyKey));\\n        if (prior != null && !(request.amountMinorUnits() > 5000 && request.amountMinorUnits() <= 6000)) {\",\"start_line\":53,\"version\":\"candidate\"},{\"end_line\":38,\"path\":\"services/support-agent-python/refund_tool/client.py\",\"quote\":\"        key = str(uuid.uuid4())\\n        last_exception: Exception | None = None\\n        for attempt in range(1,max_attempts+1):\\n            try:\\n                response = self.client.post(\\\"/refunds\\\",headers={\\\"Idempotency-Key\\\":key},json=payload)\\n            except httpx.TransportError as exc:\\n                last_exception=exc\\n                if attempt<max_attempts:\\n                    continue\",\"start_line\":30,\"version\":\"candidate\"}]}",
+            "name": "propose_experiment"
+          },
+          "type": "function"
+        }
+      ]
+    },
+    "tool_results": [
+      {
+        "name": "rejected",
+        "tool_call_id": "call_63476227-7b5a-4c82-9d28-c74d02e0f8b3",
+        "result": {
+          "rejected": "ProposalError",
+          "reason": "Fault bounds must include selected amount"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 3,
+    "assistant": {
+      "tool_calls": [
+        {
+          "id": "call_3623c2ac-eed4-41e5-8982-37590fca4a75",
+          "function": {
+            "arguments": "{\"amount_minor_units\":5500,\"customer_message\":\"test duplicate guard in 5001-6000 range\",\"fault\":{\"action\":\"DROP_DOWNSTREAM_BEFORE_RESPONSE\",\"max\":5500,\"min\":5500},\"hypothesis\":\"Same Idempotency-Key plus identical request must return prior effect without new ledger entry; candidate skips idempotency guard when amount is 5001-6000, so a gateway-dropped first response followed by client retry with same key will commit a duplicate effect.\",\"source_refs\":[{\"end_line\":59,\"path\":\"services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundService.java\",\"quote\":\"        var prior = byKey.get(sha256(idempotencyKey));\\n        if (prior != null && !(request.amountMinorUnits() > 5000 && request.amountMinorUnits() <= 6000)) {\",\"start_line\":53,\"version\":\"candidate\"},{\"end_line\":38,\"path\":\"services/support-agent-python/refund_tool/client.py\",\"quote\":\"        key = str(uuid.uuid4())\\n        last_exception: Exception | None = None\\n        for attempt in range(1,max_attempts+1):\\n            try:\\n                response = self.client.post(\\\"/refunds\\\",headers={\\\"Idempotency-Key\\\":key},json=payload)\\n            except httpx.TransportError as exc:\\n                last_exception=exc\\n                if attempt<max_attempts:\\n                    continue\",\"start_line\":30,\"version\":\"candidate\"}]}",
+            "name": "propose_experiment"
+          },
+          "type": "function"
+        }
+      ]
+    },
+    "tool_results": [
+      {
+        "name": "rejected",
+        "tool_call_id": "call_3623c2ac-eed4-41e5-8982-37590fca4a75",
+        "result": {
+          "rejected": "ProposalError",
+          "reason": "Quote does not match source span"
+        }
+      }
+    ]
+  },
+  {
+    "turn": 4,
+    "assistant": {
+      "tool_calls": [
+        {
+          "id": "call_8836cf63-8639-4e59-bb98-8319de9222d3",
+          "function": {
+            "arguments": "{\"amount_minor_units\":5500,\"customer_message\":\"test duplicate guard in 5001-6000 range\",\"fault\":{\"action\":\"DROP_DOWNSTREAM_BEFORE_RESPONSE\",\"max\":5500,\"min\":5500},\"hypothesis\":\"Same Idempotency-Key plus identical request must return prior effect without new ledger entry; candidate skips idempotency guard when amount is 5001-6000, so a gateway-dropped first response followed by client retry with same key will commit a duplicate effect.\",\"source_refs\":[{\"end_line\":54,\"path\":\"services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundService.java\",\"quote\":\"        if (prior != null && !(request.amountMinorUnits() > 5000 && request.amountMinorUnits() <= 6000)) {\",\"start_line\":54,\"version\":\"candidate\"},{\"end_line\":34,\"path\":\"services/support-agent-python/refund_tool/client.py\",\"quote\":\"                response = self.client.post(\\\"/refunds\\\",headers={\\\"Idempotency-Key\\\":key},json=payload)\",\"start_line\":34,\"version\":\"candidate\"}]}",
+            "name": "propose_experiment"
+          },
+          "type": "function"
+        }
+      ]
+    },
+    "tool_results": [
+      {
+        "name": "rejected",
+        "tool_call_id": "call_8836cf63-8639-4e59-bb98-8319de9222d3",
+        "result": {
+          "rejected": "ProposalError",
+          "reason": "Cite changed candidate and unchanged peer source"
+        }
+      }
+    ]
+  }
+]
