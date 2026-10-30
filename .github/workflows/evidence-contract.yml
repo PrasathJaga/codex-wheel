@@ -1,0 +1,38 @@
+name: Verify archived evidence contract
+on:
+  pull_request:
+    branches: [master]
+    paths: ['wheel/evidence_export.py', 'tests/test_evidence*', '.github/workflows/evidence-contract.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  authenticated-archives:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -e './services/support-agent-python[test]'
+      - name: Download preserved archives
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/wheel-archives"
+          gh api repos/PrasathJaga/codex-wheel/actions/artifacts/12958372454/zip > "$RUNNER_TEMP/wheel-archives/comparison.zip"
+          gh api repos/PrasathJaga/codex-wheel/actions/artifacts/12963453214/zip > "$RUNNER_TEMP/wheel-archives/expanded.zip"
+          gh api repos/PrasathJaga/codex-wheel/actions/artifacts/12971639214/zip > "$RUNNER_TEMP/wheel-archives/interface-v2.zip"
+      - name: Authenticate and reconcile exports
+        env:
+          WHEEL_ARCHIVE_DIR: ${{ runner.temp }}/wheel-archives
+        run: python -m pytest -q tests/test_evidence_export.py tests/test_evidence_archives.py
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: authenticated-evidence-exports
+          path: ${{ runner.temp }}/wheel-archives/*-export.json
