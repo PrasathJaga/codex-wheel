@@ -1,7 +1,10 @@
 name: Verify baseline
 on:
-  push:
   pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+  workflow_dispatch:
 jobs:
   java-domain-and-spring:
     runs-on: ubuntu-latest
