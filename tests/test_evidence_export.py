@@ -16,6 +16,7 @@ def bundle(tmp_path):
     (source / 'results.json').write_text(json.dumps(rows))
     selections = [{'status': 'abstained'}, {'status': 'error', 'error_type': 'Example'}]
     (source / 'selections.json').write_text(json.dumps(selections))
+    (source / 'investigator-traces.json').write_text(json.dumps([{'status': 'rejected', 'reason': None}]))
     archive = tmp_path / 'evidence.zip'
     with zipfile.ZipFile(archive, 'w') as output:
         for path in source.iterdir():
@@ -28,6 +29,7 @@ def test_preserves_outcomes_unknowns_and_recorded_text(tmp_path):
     result = export_archive(archive, digest)
     assert result['worlds'] == rows
     assert result['selections'] == selections
+    assert result['supporting_records']['investigator-traces.json'] == [{'status': 'rejected', 'reason': None}]
     assert result['plans'][0]['verdict']['verdict'] == 'reproduced_regression'
     assert result['provenance']['new_model_calls'] == 0
 

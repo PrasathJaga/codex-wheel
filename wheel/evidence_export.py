@@ -51,6 +51,8 @@ def export_archive(archive, expected_sha256):
             'selections': selections,
             'plans': [{'id': plan['id'], 'verdict': outcome} for plan, _, outcome in groups],
             'worlds': records,
+            'supporting_records': {path.name: json.loads(read(root, path.name))
+                                   for path in sorted(root.glob('*.json'))},
             'limits': ['Supported archived paired experiments only; not a fresh execution.',
                        'No production frequency, financial saving or general repair claim.'],
         }

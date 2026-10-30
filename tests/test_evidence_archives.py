@@ -23,6 +23,9 @@ def test_historical_export_matches_preserved_records(name, digest, worlds):
     result = export_archive(archive, digest)
     with zipfile.ZipFile(archive) as bundle:
         assert result['worlds'] == json.loads(bundle.read('results.json'))
+        for entry in bundle.namelist():
+            if entry.endswith('.json') and '/' not in entry:
+                assert result['supporting_records'][entry] == json.loads(bundle.read(entry))
         outcomes = json.loads(bundle.read('outcomes.json'))
         assert {p['id']: p['verdict'] for p in result['plans']} == outcomes
         if 'selections.json' in bundle.namelist():
