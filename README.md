@@ -1,6 +1,6 @@
 # Codex Wheel — Meta Hackathon 2026
 
-**Current master:** bounded G6 analysis plus portable replay/reviewed pinned-source intake are merged through PR #9 as `de85302d434c8e4ba45f7d3de8d9d3a08098f907`. Both source-code regression workflows and the separate clean-runner replay passed before merge; the merge regression workflow was still running at this documentation refresh.
+**Verified milestone:** the fresh bounded PR investigation, diagnosis and repair cycle is integrated through PR #29. [Master verification 41125462586](https://github.com/PrasathJaga/codex-wheel/actions/runs/41125462586) passed. Start with [the current evidence and onboarding guide](docs/CURRENT_WORKFLOW.md).
 
 Codex Wheel uses **Meta's Model API and `muse-spark-1.3`** to read source/diffs, propose constrained behavioral experiments, select a support-agent refund tool, and produce real post-tool responses. An independent ledger oracle verifies the resulting business effects.
 
@@ -55,8 +55,7 @@ No real payment system, customer orders or money are involved. The fixture optio
 
 ## Next engineering gates
 
-G0–G6 have evidence within the disclosed synthetic scope. PR #9 adds verified deterministic replay and reviewed pinned revision intake. Step 1 is specified in [EVALUATION_PROTOCOL.md](docs/EVALUATION_PROTOCOL.md); its comparison has not run. Remaining G7 work includes implementing/executing fair C0/C2/C4 evaluation, a withheld variant where feasible, evidence/report preservation and an accessible three-minute demo/submission. The conditional stretch plan remains inactive.
-
+The known seeded M1 case has completed a fresh end-to-end cycle: five Meta requests, 24 fresh execution worlds, an evidence-referenced diagnosis, a bounded healthy-baseline restoration, and a GitHub result comment. This demonstrates integration under the tested conditions. Independent unfamiliar-change evaluation, a comparable source-aware conventional baseline, and external developer onboarding remain unverified. See [CURRENT_WORKFLOW.md](docs/CURRENT_WORKFLOW.md) for receipts, limits and the next evaluation gates.
 
 ## Baseline CI events
 
