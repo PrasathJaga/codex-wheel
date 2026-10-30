@@ -2,7 +2,7 @@ name: Verify business evidence dashboard
 on:
   pull_request:
     branches: [master]
-    paths: ['wheel/business_dashboard.py', 'tests/test_business_dashboard.py', 'tests/dashboard_browser.cjs', '.github/workflows/business-dashboard.yml']
+    paths: ['wheel/business_dashboard.py', 'wheel/financial_impact.py', 'wheel/exposure_calculator.js', 'tests/test_financial_impact.py', 'tests/test_exposure_calculator.cjs', 'tests/test_business_dashboard.py', 'tests/dashboard_browser.cjs', '.github/workflows/business-dashboard.yml']
 permissions:
   contents: read
   actions: read
@@ -19,7 +19,7 @@ jobs:
         with:
           python-version: '3.13'
       - run: python -m pip install -e './services/support-agent-python[test]'
-      - run: python -m pytest -q tests/test_business_dashboard.py tests/test_diagnosis.py tests/test_evidence_export.py
+      - run: python -m pytest -q tests/test_business_dashboard.py tests/test_financial_impact.py tests/test_diagnosis.py tests/test_evidence_export.py
       - name: Download preserved evidence
         env:
           GH_TOKEN: ${{ github.token }}
@@ -36,6 +36,7 @@ jobs:
           node-version: '22'
       - run: npm install --no-save playwright@1.58.2
       - run: npx playwright install --with-deps chromium
+      - run: node tests/test_exposure_calculator.cjs
       - run: node tests/dashboard_browser.cjs
       - uses: actions/upload-artifact@v4
         if: always()
