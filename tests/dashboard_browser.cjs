@@ -8,6 +8,13 @@ const {chromium}=require('playwright');
   for(const text of ['USD 55.00','USD 110.00','Deterministic execution','inconclusive']){
    if(!(await page.locator('body').innerText()).includes(text))throw Error('Missing '+text);
   }
+  if(await page.locator('#operations').inputValue()!=='' || await page.locator('#affected').inputValue()!=='')throw Error('Assumptions must start blank');
+  await page.locator('#operations').fill('10000');await page.locator('#affected').fill('1.6');
+  await page.locator('button[type=submit]').click();
+  if(!(await page.locator('#exposure-result').innerText()).includes('USD 8800.00/day'))throw Error('Wrong projection');
+  await page.locator('#affected').fill('101');await page.locator('button[type=submit]').click();
+  if(!(await page.locator('#exposure-result').innerText()).includes('must not exceed'))throw Error('Invalid percentage accepted');
+  await page.locator('#affected').fill('1.6');await page.locator('button[type=submit]').click();
   await page.screenshot({path:'dashboard-output/'+name+'.png',fullPage:true});
   await page.locator('a[href="#ref-0"]').click();
   await page.locator('#ref-0 summary').click();

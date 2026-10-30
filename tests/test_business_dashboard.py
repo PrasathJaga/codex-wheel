@@ -13,7 +13,7 @@ class DashboardTests(unittest.TestCase):
     def setUp(self):
         self.doc={'plan':{'fixture':{'amount_minor_units':5500},'rule':{'action':'REPLACE_DOWNSTREAM_STATUS_502'}},
                   'verdict':{'verdict':'reproduced_regression'},'provenance':{}, 'source_snapshots':{},
-                  'worlds':[{'status':'completed','world':side,'trial':0,'effects':[{'effect_id':str(i),'amount_minor_units':5500} for i in range(count)], 'events':[], 'model_reply':None} for side,count in [('base',1),('candidate',2)]]}
+                  'worlds':[{'status':'completed','world':side,'trial':0,'effects':[{'effect_id':str(i),'amount_minor_units':5500,'currency':'USD'} for i in range(count)], 'events':[], 'model_reply':None} for side,count in [('base',1),('candidate',2)]]}
         self.record={'status':'explained','packet':self.doc,'protected_verdict':self.doc['verdict'],
                      'evidence_sha256':hashlib.sha256(canonical(self.doc).encode()).hexdigest(),
                      'diagnosis':{'status':'explained','explanation':'<script>bad()</script>', 'references':[{'pointer':'/'+k,'value':self.doc[k]} for k in ['plan','verdict','worlds','source_snapshots']]}}
@@ -23,7 +23,8 @@ class DashboardTests(unittest.TestCase):
         self.assertIn('USD 55.00',page);self.assertIn('USD 110.00',page)
         self.assertIn('no agent conversation recorded',page)
         self.assertIn('inconclusive',page)
-        self.assertNotIn('<script>',page)
+        self.assertNotIn('<script>bad()',page)
+        self.assertEqual(page.count('<script>'),1)
         self.assertIn('&lt;script&gt;',page)
         self.assertIn('href="#ref-0"',page)
 
