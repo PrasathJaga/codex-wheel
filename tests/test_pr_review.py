@@ -1,5 +1,5 @@
 import unittest
-from wheel.pr_review import verdict,publish,MARKER
+from wheel.pr_review import verdict,publish,MARKER,body
 
 class ReviewTests(unittest.TestCase):
     def test_verdicts_and_missing_trials(self):
@@ -20,6 +20,10 @@ class ReviewTests(unittest.TestCase):
         self.assertEqual(result['status'],'stale')
         self.assertEqual(calls[-1][0],'PATCH')
         self.assertNotIn('Result: reproduced_regression',calls[-1][2]['body'])
+    def test_unsupported_never_claims_execution(self):
+        text=body({'base':'b','head':'h','status':'unsupported'},'url')
+        self.assertIn('not executed',text)
+        self.assertNotIn('fresh deterministic',text)
     def test_permission_failure_propagates(self):
         def api(*args):raise PermissionError()
         with self.assertRaises(PermissionError):publish(api,1,{},'url')

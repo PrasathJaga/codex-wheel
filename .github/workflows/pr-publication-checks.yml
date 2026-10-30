@@ -1,0 +1,71 @@
+name: Manual PR publication integration checks
+on:
+  push:
+    branches: [hackathon/pr-publication-checks-live-once, hackathon/pr-publication-unsupported-once]
+permissions:
+  contents: read
+jobs:
+  publication:
+    permissions:
+      contents: read
+      actions: read
+      issues: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -e './services/support-agent-python[test]'
+      - run: python -m pytest -q tests/test_pr_review.py tests/test_replay.py
+      - name: Fetch historical evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api repos/PrasathJaga/codex-wheel/actions/artifacts/12997661803/zip > "$RUNNER_TEMP/pr-evidence.zip"
+      - name: Publish twice and check single comment identity
+        if: github.ref_name == 'hackathon/pr-publication-checks-live-once'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python -m wheel.pr_publication_checks publish --archive "$RUNNER_TEMP/pr-evidence.zip" --output publication-checks --pr 24
+      - name: Wait for actual test head change and reject old evidence
+        if: github.ref_name == 'hackathon/pr-publication-checks-live-once'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python -m wheel.pr_publication_checks stale --output publication-checks --pr 24
+      - name: Exercise unsupported implementation PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python -m wheel.pr_publication_checks unsupported --output publication-checks --pr 24
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pr-publication-checks
+          path: publication-checks/
+  denied-write:
+    needs: publication
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Confirm read-only token cannot update comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python -m wheel.pr_publication_checks permission --output permission-check --pr 24
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pr-permission-check
+          path: permission-check/
