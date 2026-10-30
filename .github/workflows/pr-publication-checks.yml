@@ -1,7 +1,7 @@
 name: Manual PR publication integration checks
 on:
   push:
-    branches: [hackathon/pr-publication-checks-live-once]
+    branches: [hackathon/pr-publication-checks-live-once, hackathon/pr-publication-unsupported-once]
 permissions:
   contents: read
 jobs:
@@ -28,10 +28,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: gh api repos/PrasathJaga/codex-wheel/actions/artifacts/12997661803/zip > "$RUNNER_TEMP/pr-evidence.zip"
       - name: Publish twice and check single comment identity
+        if: github.ref_name == 'hackathon/pr-publication-checks-live-once'
         env:
           GH_TOKEN: ${{ github.token }}
         run: python -m wheel.pr_publication_checks publish --archive "$RUNNER_TEMP/pr-evidence.zip" --output publication-checks --pr 24
       - name: Wait for actual test head change and reject old evidence
+        if: github.ref_name == 'hackathon/pr-publication-checks-live-once'
         env:
           GH_TOKEN: ${{ github.token }}
         run: python -m wheel.pr_publication_checks stale --output publication-checks --pr 24

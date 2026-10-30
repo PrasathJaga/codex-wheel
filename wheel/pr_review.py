@@ -30,7 +30,7 @@ def body(result, run_url):
     lines = [MARKER, '### Codex Wheel — reviewed synthetic fixture',
              '**Result: '+result['status']+'**',
              'Base: `'+result['base']+'` · Head: `'+result['head']+'`',
-             'Execution: '+result.get('execution_mode', 'fresh deterministic counterfactuals')+'; no new Meta investigation or repair.',
+             'Execution: '+('not executed; input outside supported scope' if result['status']=='unsupported' else result.get('execution_mode', 'fresh deterministic counterfactuals'))+'; no new Meta investigation or repair.',
              'Supported scope: exact reviewed refund variants only.']
     for row in result.get('observed',[]):
         lines.append(f"- Trial {row['trial']+1}: baseline {row['base_minor_units']} USD minor units; candidate {row['candidate_minor_units']} USD minor units.")
