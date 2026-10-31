@@ -1,3 +1,5 @@
+> **Current two-domain update:** inventory investigation and bounded restoration are now integrated through PR #36. Read [TWO_DOMAIN_DELIVERY.md](TWO_DOMAIN_DELIVERY.md) and [the evidence index](TWO_DOMAIN_EVIDENCE_INDEX.json). The refund receipts below retain their own historical scope.
+
 # Current workflow and evidence — 2026-10-31
 
 Codex Wheel investigates a supported code change, executes a constrained counterfactual experiment, compares committed business effects, and helps verify a bounded repair. The demonstrated workflow is synthetic Java refund logic plus an unchanged Python retrying client.

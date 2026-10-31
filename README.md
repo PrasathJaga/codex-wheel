@@ -1,6 +1,6 @@
 # Codex Wheel — Meta Hackathon 2026
 
-**Verified milestone:** the fresh bounded PR investigation, diagnosis and repair cycle is integrated through PR #29. [Master verification 41125462586](https://github.com/PrasathJaga/codex-wheel/actions/runs/41125462586) passed. Start with [the current evidence and onboarding guide](docs/CURRENT_WORKFLOW.md).
+**Verified milestone:** refund and inventory investigation/verification/bounded restoration are integrated through PR #36. Post-merge master baseline and inventory checks passed at `bbd23f1f07d65db7cb7e4f329a9db60af721f81b`. See [two-domain evidence and onboarding](docs/TWO_DOMAIN_DELIVERY.md) for actual results, report viewing and remaining evaluation gates.
 
 Codex Wheel uses **Meta's Model API and `muse-spark-1.3`** to read source/diffs, propose constrained behavioral experiments, select a support-agent refund tool, and produce real post-tool responses. An independent ledger oracle verifies the resulting business effects.
 
