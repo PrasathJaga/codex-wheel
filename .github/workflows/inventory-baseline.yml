@@ -1,0 +1,44 @@
+name: Inventory healthy baseline
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inventory-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Java baseline tests and package
+        run: mvn -B -f services/inventory-api-java/pom.xml verify
+      - name: Python client and independent verifier tests
+        env:
+          PYTHONPATH: services/checkout-agent-python
+        run: python -m unittest discover -s services/checkout-agent-python/tests -v
+      - name: Real Java and Python baseline contract checks
+        env:
+          PYTHONPATH: services/checkout-agent-python
+          WHEEL_INVENTORY_LIVE: '1'
+          WHEEL_INVENTORY_JAR: services/inventory-api-java/target/inventory-api-java-0.1.0-SNAPSHOT.jar
+          WHEEL_INVENTORY_OUTPUT: inventory-baseline-evidence
+        run: python -m unittest discover -s services/checkout-agent-python/tests -p test_live_inventory.py -v
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: inventory-healthy-baseline
+          path: |
+            inventory-baseline-evidence/
+            services/inventory-api-java/target/surefire-reports/
