@@ -1,0 +1,32 @@
+{
+  "schema": "codex-wheel.inventory-candidate-result.v1",
+  "baseline_commit": "128282473303e313182e5ef20a76527ff88d76a9",
+  "candidate_commit": "961f71df68c0bd5ad0b1579f376eaf50dec27fe4",
+  "candidate_pr": 34,
+  "run": 41175358503,
+  "artifact": 13031649758,
+  "artifact_sha256": "f55f912348b1b5be07c607c6d00c27c8ff303cd13985f8a4c05d6f418eb76048",
+  "unchanged_tests": true,
+  "java": {
+    "tests": 18,
+    "failures": 5,
+    "errors": 1,
+    "skipped": 0
+  },
+  "outcome": "caught_by_existing_junit",
+  "new_model_calls": 0,
+  "live_python_scenarios": "not_reached_after_java_test_failure",
+  "observations": [
+    "Controller test expected HTTP409 after expiry; received HTTP200",
+    "Release test expected rejection but confirmation returned",
+    "Reallocation/restart paths rejected invalid commits through existing conservation checks",
+    "Duplicate/concurrent confirmation paths rejected invalid allocations"
+  ],
+  "not_established": [
+    "oversold persisted state",
+    "Meta discovery",
+    "added coverage beyond JUnit",
+    "unfamiliar-case transfer"
+  ],
+  "next": "Bounded inventory investigator/DSL remains future work; any paid use on this case must be labeled investigation of an already-test-caught known defect"
+}
