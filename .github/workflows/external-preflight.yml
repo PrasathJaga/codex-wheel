@@ -7,6 +7,10 @@ on:
       - 'evaluation/external_preflight_v1.json'
       - 'preflight_tests/test_external_preflight_policy.py'
       - 'docs/EXTERNAL_REPOSITORY_PREFLIGHT.md'
+      - 'preflight/**'
+      - 'preflight_tests/**'
+      - 'evaluation/petclinic_contract_v1.json'
+      - 'docs/PETCLINIC_CONTRACT.md'
   workflow_dispatch:
 permissions:
   contents: read
@@ -19,7 +23,7 @@ jobs:
         with:
           persist-credentials: false
       - run: python -m pip install PyYAML==6.0.3
-      - run: python -m unittest discover -s preflight_tests -p test_external_preflight_policy.py -v
+      - run: python -m unittest discover -s preflight_tests -v
   external-baseline:
     needs: policy
     runs-on: ubuntu-latest
@@ -40,6 +44,8 @@ jobs:
           printf '%s\n' "$UPSTREAM_REVISION" > "$RUNNER_TEMP/preflight-evidence/upstream-revision.txt"
           docker pull maven:3.9.9-eclipse-temurin-17
           docker pull python:3.13-slim
+          docker pull postgres:17-bookworm
+          docker image inspect postgres:17-bookworm --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/preflight-evidence/postgres-image.txt"
           docker image inspect maven:3.9.9-eclipse-temurin-17 --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/preflight-evidence/build-image.txt"
           docker image inspect python:3.13-slim --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/preflight-evidence/probe-image.txt"
       - name: Build unchanged upstream only inside restricted container
@@ -125,6 +131,216 @@ jobs:
           cmp "$RUNNER_TEMP/preflight-evidence/probe-1.json" "$RUNNER_TEMP/preflight-evidence/probe-2.json"
           printf '%s\n' 'build-and-startup-only; independent business-contract verification pending' \
             > "$RUNNER_TEMP/preflight-evidence/scope.txt"
+      - name: Independent committed-state contract checks
+        shell: bash
+        run: |
+          python - <<'PY_CONTRACT'
+          """Trusted host check; never mount this module or Wheel into the service."""
+          import copy
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          from secrets import token_hex
+          import subprocess
+          import time
+          import urllib.error
+          import urllib.request
+          
+          
+          class ContractFailure(ValueError):
+              pass
+          
+          
+          def verify_update(before, after, pet_id, expected):
+              """Require exact row preservation except three explicitly editable columns."""
+              if set(before) != {"owners", "pets", "visits", "types"} or set(after) != set(before):
+                  raise ContractFailure("Incomplete evidence tables")
+              for table in before:
+                  rows = before[table]
+                  if not isinstance(rows, list) or not isinstance(after[table], list):
+                      raise ContractFailure("Unknown rows are not empty rows")
+                  for values in (rows, after[table]):
+                      ids = [r["id"] for r in values]
+                      if len(ids) != len(set(ids)):
+                          raise ContractFailure("Duplicate evidence identities")
+              if not before["owners"] or not before["visits"]:
+                  raise ContractFailure("Missing non-vacuous owner/visit controls")
+              targets = [p for p in before["pets"] if p["id"] == pet_id]
+              if len(targets) != 1 or not any(v["pet_id"] == pet_id for v in before["visits"]):
+                  raise ContractFailure("Target must have existing visit history")
+              if len(before["pets"]) < 2:
+                  raise ContractFailure("Missing unrelated pet control")
+              if set(expected) != {"name", "birth_date", "type_id"}:
+                  raise ContractFailure("Unapproved edited columns")
+              wanted = copy.deepcopy(before)
+              target = next(p for p in wanted["pets"] if p["id"] == pet_id)
+              if all(target[k] == v for k, v in expected.items()):
+                  raise ContractFailure("Vacuous update")
+              target.update(expected)
+              if after != wanted:
+                  raise ContractFailure("Committed state violates profile-update preservation")
+              return {"verdict": "healthy_contract_observed", "pet_id": pet_id,
+                      "preserved_visits": len(before["visits"]), "preserved_owners": len(before["owners"])}
+          
+          
+          def command(args, *, data=None, env=None, check=True):
+              return subprocess.run(args, input=data, text=True, capture_output=True,
+                                    env=env, check=check, timeout=180)
+          
+          
+          def sql(database, statement, role="postgres", check=True):
+              return command(["docker", "exec", "-i", database, "psql", "-X", "-qAt",
+                              "-v", "ON_ERROR_STOP=1", "-U", role, "-d", "petclinic"],
+                             data=statement, check=check)
+          
+          
+          def snapshot(database):
+              # One consistent committed-state snapshot, using SELECT privileges only.
+              parts = []
+              for table in ("owners", "pets", "visits", "types"):
+                  parts.append("'%s', (SELECT coalesce(json_agg(t ORDER BY id), '[]'::json) "
+                               "FROM (SELECT * FROM %s) t)" % (table, table))
+              query = "BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY; SELECT json_build_object(" + ",".join(parts) + "); COMMIT;"
+              return json.loads(sql(database, query, role="wheel_verify").stdout)
+          
+          
+          def request(method, path, body=None):
+              data = None if body is None else json.dumps(body).encode()
+              req = urllib.request.Request("http://127.0.0.1:19966/petclinic" + path,
+                                           data=data, method=method,
+                                           headers={"Content-Type": "application/json"})
+              try:
+                  with urllib.request.urlopen(req, timeout=10) as response:
+                      return response.status, response.read().decode()
+              except urllib.error.HTTPError as error:
+                  return error.code, error.read().decode()
+          
+          
+          def main():
+              evidence = Path(os.environ["RUNNER_TEMP"]) / "preflight-evidence"
+              image = (evidence / "build-image.txt").read_text().strip()
+              pg_image = (evidence / "postgres-image.txt").read_text().strip()
+              suffix = os.environ["GITHUB_RUN_ID"] + "-" + os.environ["GITHUB_RUN_ATTEMPT"]
+              volume = "petclinic-preflight-" + suffix
+              outcomes = []
+              for trial in (1, 2):
+                  network = "petclinic-contract-" + suffix + "-" + str(trial)
+                  database, service = network + "-db", network + "-api"
+                  folder = evidence / ("contract-" + str(trial))
+                  folder.mkdir()
+                  record = {"scope": "healthy-profile-update-only", "trial": trial,
+                            "status": "execution_error", "requests": []}
+                  try:
+                      command(["docker", "network", "create", "--internal", network])
+                      admin_password, app_password = token_hex(24), token_hex(24)
+                      db_env = {**os.environ, "POSTGRES_PASSWORD": admin_password}
+                      command(["docker", "run", "-d", "--name", database, "--network", network,
+                               "--network-alias", "database", "--user", "999:999", "--read-only",
+                               "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
+                               "--memory", "512m", "--pids-limit", "128",
+                               "--tmpfs", "/var/lib/postgresql/data:rw,uid=999,gid=999,size=512m",
+                               "--tmpfs", "/var/run/postgresql:rw,uid=999,gid=999,size=16m",
+                               "--tmpfs", "/tmp:rw,uid=999,gid=999,size=16m",
+                               "--env", "POSTGRES_PASSWORD", "--env", "POSTGRES_DB=petclinic", pg_image], env=db_env)
+                      for attempt in range(60):
+                          ready = command(["docker", "exec", database, "pg_isready", "-h", "127.0.0.1", "-U", "postgres", "-d", "petclinic"], check=False)
+                          if ready.returncode == 0:
+                              break
+                          time.sleep(1)
+                      else:
+                          raise RuntimeError("PostgreSQL readiness timeout")
+                      # Temporary application role can initialize its own disposable schema;
+                      # it does not know the admin password or verifier role credentials.
+                      sql(database, "CREATE ROLE petclinic LOGIN PASSWORD '" + app_password + "';"
+                          "GRANT ALL ON SCHEMA public TO petclinic;"
+                          "CREATE ROLE wheel_verify LOGIN;"
+                          "ALTER ROLE wheel_verify SET default_transaction_read_only=on;")
+                      service_env = {**os.environ, "POSTGRES_PASS": app_password}
+                      command(["docker", "run", "-d", "--name", service, "--network", network,
+                               "--publish", "127.0.0.1:19966:9966", "--entrypoint", "java",
+                               "--user", "1000:1000", "--read-only", "--cap-drop", "ALL",
+                               "--security-opt", "no-new-privileges", "--memory", "2g", "--pids-limit", "256",
+                               "--tmpfs", "/tmp:rw,uid=1000,gid=1000,size=256m",
+                               "--mount", "type=volume,src=" + volume + ",dst=/work,readonly",
+                               "--env", "SPRING_PROFILES_ACTIVE=postgres,spring-data-jpa",
+                               "--env", "POSTGRES_URL=jdbc:postgresql://database:5432/petclinic",
+                               "--env", "POSTGRES_USER=petclinic", "--env", "POSTGRES_PASS",
+                               image, "-jar", "/work/target/spring-petclinic-rest-4.0.2.jar"], env=service_env)
+                      for attempt in range(120):
+                          try:
+                              status, body = request("GET", "/actuator/health")
+                              if status == 200 and json.loads(body).get("status") == "UP":
+                                  break
+                          except (OSError, ValueError):
+                              pass
+                          time.sleep(1)
+                      else:
+                          raise RuntimeError("PetClinic PostgreSQL readiness timeout")
+                      sql(database, "GRANT USAGE ON SCHEMA public TO wheel_verify;"
+                          "GRANT SELECT ON ALL TABLES IN SCHEMA public TO wheel_verify;")
+                      role = sql(database, "SELECT current_user; SHOW default_transaction_read_only;", role="wheel_verify").stdout.splitlines()
+                      if role != ["wheel_verify", "on"]:
+                          raise RuntimeError("Verifier identity/read-only configuration mismatch")
+                      denied = sql(database, "DELETE FROM pets WHERE false;", role="wheel_verify", check=False)
+                      if denied.returncode == 0 or "read-only" not in denied.stderr:
+                          raise RuntimeError("Verifier write restriction was not enforced")
+                      (folder / "verifier-access.json").write_text(json.dumps({"role": role[0], "read_only": True, "write_rejected": True}))
+                      before = snapshot(database)
+                      visited = {v["pet_id"] for v in before["visits"]}
+                      pet = next(p for p in before["pets"] if p["id"] in visited)
+                      kind = next(t for t in before["types"] if t["id"] != pet["type_id"])
+                      body = {"name": "WheelProfile", "birthDate": "2020-01-02", "type": kind}
+                      expected = {"name": body["name"], "birth_date": body["birthDate"], "type_id": kind["id"]}
+                      (folder / "before.json").write_text(json.dumps(before, sort_keys=True))
+                      for label, path, payload, expected_status in (
+                          ("invalid-profile", "/api/pets/" + str(pet["id"]), {**body, "name": ""}, 400),
+                          ("missing-pet", "/api/pets/2147483647", body, 404),
+                          ("valid-profile", "/api/pets/" + str(pet["id"]), body, 204),
+                      ):
+                          status, response = request("PUT", path, payload)
+                          record["requests"].append({"label": label, "method": "PUT", "path": path,
+                                                     "body": payload, "status": status, "response": response})
+                          current = snapshot(database)
+                          (folder / (label + "-state.json")).write_text(json.dumps(current, sort_keys=True))
+                          if status != expected_status:
+                              raise ContractFailure(label + " unexpected HTTP status " + str(status))
+                          if label != "valid-profile":
+                              if current != before:
+                                  raise ContractFailure("Rejected operation changed committed state")
+                          else:
+                              record["contract"] = verify_update(before, current, pet["id"], expected)
+                      command(["docker", "stop", "--timeout", "10", service])
+                      stopped = snapshot(database)
+                      record["contract"] = verify_update(before, stopped, pet["id"], expected)
+                      (folder / "after-service-stop.json").write_text(json.dumps(stopped, sort_keys=True))
+                      record["status"] = "healthy_contract_observed"
+                      record["seed_sha256"] = hashlib.sha256(json.dumps(before, sort_keys=True).encode()).hexdigest()
+                      outcomes.append(record["seed_sha256"])
+                  except ContractFailure as error:
+                      record["status"], record["error"] = "baseline_contract_failure", str(error)
+                      raise
+                  except Exception as error:
+                      record["error"] = type(error).__name__ + ": " + str(error)
+                      raise
+                  finally:
+                      (folder / "result.json").write_text(json.dumps(record, indent=2, sort_keys=True))
+                      for name, label in ((service, "service"), (database, "database")):
+                          logs = command(["docker", "logs", name], check=False)
+                          (folder / (label + ".log")).write_text(logs.stdout + logs.stderr)
+                          command(["docker", "rm", "-f", name], check=False)
+                      command(["docker", "network", "rm", network], check=False)
+              if len(set(outcomes)) != 1:
+                  raise ContractFailure("Fresh database seeds differed")
+              (evidence / "contract-summary.json").write_text(json.dumps({
+                  "status": "healthy_contract_observed", "trials": 2,
+                  "independent_sql_verifier": True, "paid_calls": 0,
+                  "scope": "single-profile-update-and-rejection-controls; no candidate or repair"}, indent=2))
+          
+          
+          if __name__ == "__main__":
+              main()
+          PY_CONTRACT
       - name: Stop and remove only this run's disposable resources
         if: always()
         shell: bash
