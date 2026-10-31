@@ -2,6 +2,7 @@
 import copy
 import hashlib
 import json
+import ipaddress
 import os
 from pathlib import Path
 from secrets import token_hex
@@ -68,13 +69,13 @@ def snapshot(database):
     return json.loads(sql(database, query, role="wheel_verify").stdout)
 
 
-def request(method, path, body=None):
+def request(method, path, body=None, *, base_url, timeout=10):
     data = None if body is None else json.dumps(body).encode()
-    req = urllib.request.Request("http://127.0.0.1:19966/petclinic" + path,
+    req = urllib.request.Request(base_url + path,
                                  data=data, method=method,
                                  headers={"Content-Type": "application/json"})
     try:
-        with urllib.request.urlopen(req, timeout=10) as response:
+        with urllib.request.build_opener(urllib.request.ProxyHandler({})).open(req, timeout=timeout) as response:
             return response.status, response.read().decode()
     except urllib.error.HTTPError as error:
         return error.code, error.read().decode()
@@ -121,7 +122,7 @@ def main():
                 "ALTER ROLE wheel_verify SET default_transaction_read_only=on;")
             service_env = {**os.environ, "POSTGRES_PASS": app_password}
             command(["docker", "run", "-d", "--name", service, "--network", network,
-                     "--publish", "127.0.0.1:19966:9966", "--entrypoint", "java",
+                     "--entrypoint", "java",
                      "--user", "1000:1000", "--read-only", "--cap-drop", "ALL",
                      "--security-opt", "no-new-privileges", "--memory", "2g", "--pids-limit", "256",
                      "--tmpfs", "/tmp:rw,uid=1000,gid=1000,size=256m",
@@ -130,9 +131,17 @@ def main():
                      "--env", "POSTGRES_URL=jdbc:postgresql://database:5432/petclinic",
                      "--env", "POSTGRES_USER=petclinic", "--env", "POSTGRES_PASS",
                      image, "-jar", "/work/target/spring-petclinic-rest-4.0.2.jar"], env=service_env)
-            for attempt in range(120):
+            info = json.loads(command(["docker", "inspect", service]).stdout)[0]
+            address = info["NetworkSettings"]["Networks"][network]["IPAddress"]
+            if not ipaddress.ip_address(address).is_private:
+                raise RuntimeError("Unexpected non-private container address")
+            api_base = "http://" + address + ":9966/petclinic"
+            (folder / "runtime-config.json").write_text(json.dumps(info["HostConfig"], sort_keys=True))
+            deadline = time.monotonic() + 120
+            while time.monotonic() < deadline:
                 try:
-                    status, body = request("GET", "/actuator/health")
+                    status, body = request("GET", "/actuator/health", base_url=api_base, timeout=2)
+                    record["readiness"] = {"last_status": status, "last_response": body}
                     if status == 200 and json.loads(body).get("status") == "UP":
                         break
                 except (OSError, ValueError):
@@ -161,7 +170,7 @@ def main():
                 ("missing-pet", "/api/pets/2147483647", body, 404),
                 ("valid-profile", "/api/pets/" + str(pet["id"]), body, 204),
             ):
-                status, response = request("PUT", path, payload)
+                status, response = request("PUT", path, payload, base_url=api_base)
                 record["requests"].append({"label": label, "method": "PUT", "path": path,
                                            "body": payload, "status": status, "response": response})
                 current = snapshot(database)

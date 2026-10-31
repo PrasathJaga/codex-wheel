@@ -12,8 +12,8 @@ receives only upstream build output and randomly generated disposable applicatio
 database credentials. The build keeps its earlier no-private-input boundary.
 
 Each of two trials creates a fresh PostgreSQL database and internal Docker network.
-Only the service API is published on host loopback. PostgreSQL has no published
-port. There is no outbound runtime network, Docker socket or host/Wheel bind mount.
+Neither service nor PostgreSQL publishes a host port. The trusted host
+addresses the service through its inspected private bridge address. There is no outbound runtime network, Docker socket or host/Wheel bind mount.
 The host/kernel and reviewed database image remain trusted. Internal networking
 is a change from the network-none H2 smoke test, required for service/database
 communication. It does not provide a general hostile multi-tenant sandbox.
@@ -40,3 +40,18 @@ Local verification covers the oracle's rejection of owner changes, visit loss,
 visit reassignment/content corruption, unrelated writes, missing evidence and
 HTTP-success-without-effect. Real Docker/PostgreSQL verification requires GitHub
 execution because the authoring workspace lacks Docker/Maven.
+
+## Preserved first execution
+
+Run 41221978757 at head 42f55c7def7a36142f2cb55dbae313f488ace93e
+built successfully and passed both H2 probes. The first PostgreSQL trial was an
+execution error: service readiness timed out before contract requests. Artifact
+13050686617 (ZIP SHA-256
+542e0ade4d280f2159ddbcc4de3ed5b6a6a506af69b651d67c1387397c66af80)
+records the failure. Inspection showed PostgreSQL connected and PetClinic fully
+started; the host health probe still timed out, consistent with a transport
+problem rather than an application startup failure. The precise loopback failure
+mechanism is not established by those logs. The harness now uses the
+container's inspected private bridge address, with no published port. This changes
+transport only, not upstream source, expectations, validation or oracle. The new
+execution must pass independently; the earlier failure is not overwritten.
