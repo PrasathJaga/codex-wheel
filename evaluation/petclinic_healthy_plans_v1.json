@@ -1,0 +1,76 @@
+[
+  {
+    "plan": {
+      "protocol": "petclinic-profile-v1",
+      "actions": [
+        {
+          "op": "READ_PET",
+          "pet": "visited_pet"
+        },
+        {
+          "op": "UPDATE_PET_PROFILE",
+          "pet": "visited_pet",
+          "name": "",
+          "birth_date": "2020-01-02",
+          "type": "alternate_type"
+        },
+        {
+          "op": "UPDATE_PET_PROFILE",
+          "pet": "missing_pet",
+          "name": "WheelProbe",
+          "birth_date": "2020-01-02",
+          "type": "alternate_type"
+        },
+        {
+          "op": "UPDATE_PET_PROFILE",
+          "pet": "visited_pet",
+          "name": "WheelProbe",
+          "birth_date": "2020-01-02",
+          "type": "alternate_type"
+        },
+        {
+          "op": "READ_PET",
+          "pet": "unrelated_pet"
+        }
+      ]
+    },
+    "sha256": "2002f25be48cd97998ca2c650136769f6d80b2c2725171a892f3012937c41895"
+  },
+  {
+    "plan": {
+      "protocol": "petclinic-profile-v1",
+      "actions": [
+        {
+          "op": "UPDATE_PET_PROFILE",
+          "pet": "visited_pet",
+          "name": "WheelRepeat",
+          "birth_date": "2020-01-02",
+          "type": "alternate_type"
+        },
+        {
+          "op": "UPDATE_PET_PROFILE",
+          "pet": "visited_pet",
+          "name": "WheelRepeat",
+          "birth_date": "2020-01-02",
+          "type": "alternate_type"
+        },
+        {
+          "op": "READ_PET",
+          "pet": "visited_pet"
+        },
+        {
+          "op": "UPDATE_PET_PROFILE",
+          "pet": "visited_pet",
+          "name": "WheelFinal",
+          "birth_date": "2020-01-02",
+          "type": "original_type"
+        },
+        {
+          "op": "READ_PET",
+          "pet": "missing_pet"
+        }
+      ]
+    },
+    "sha256": "1b250d4f7b53f63fb803ed9d614a6521d5f2385b406dfede1ed22308ca76214d"
+  }
+]

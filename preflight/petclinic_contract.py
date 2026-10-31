@@ -12,6 +12,10 @@ import urllib.error
 import urllib.request
 
 
+if "__WHEEL_EMBEDDED_ADAPTER__" not in globals():
+    from preflight.petclinic_adapter import authenticate_plan, execute_plan, ExperimentViolation
+
+
 class ContractFailure(ValueError):
     pass
 
@@ -87,8 +91,21 @@ def main():
     pg_image = (evidence / "postgres-image.txt").read_text().strip()
     suffix = os.environ["GITHUB_RUN_ID"] + "-" + os.environ["GITHUB_RUN_ATTEMPT"]
     volume = "petclinic-preflight-" + suffix
+    if "PUBLIC_HEALTHY_PLANS" in globals():
+        healthy_plans = PUBLIC_HEALTHY_PLANS
+        expected_hashes = PUBLIC_PLAN_HASHES
+    else:
+        root = Path(__file__).resolve().parents[1]
+        healthy_plans = json.loads((root / "evaluation/petclinic_healthy_plans_v1.json").read_text())
+        lock = json.loads((root / "evaluation/petclinic_adapter_lock_v1.json").read_text())
+        expected_hashes = lock["public_plan_sha256"]
+    if len(healthy_plans) != 2 or len(expected_hashes) != 2:
+        raise ValueError("Expected exactly two public healthy adapter controls")
+    for frozen, expected_hash in zip(healthy_plans, expected_hashes):
+        authenticate_plan(frozen, expected_hash)
+    (evidence / "plan-admission.json").write_text(json.dumps({"accepted_plan_sha256": expected_hashes}))
     outcomes = []
-    for trial in (1, 2):
+    for trial, (frozen, plan_hash) in enumerate(zip(healthy_plans, expected_hashes), 1):
         network = "petclinic-contract-" + suffix + "-" + str(trial)
         database, service = network + "-db", network + "-api"
         folder = evidence / ("contract-" + str(trial))
@@ -159,37 +176,24 @@ def main():
                 raise RuntimeError("Verifier write restriction was not enforced")
             (folder / "verifier-access.json").write_text(json.dumps({"role": role[0], "read_only": True, "write_rejected": True}))
             before = snapshot(database)
-            visited = {v["pet_id"] for v in before["visits"]}
-            pet = next(p for p in before["pets"] if p["id"] in visited)
-            kind = next(t for t in before["types"] if t["id"] != pet["type_id"])
-            body = {"name": "WheelProfile", "birthDate": "2020-01-02", "type": kind}
-            expected = {"name": body["name"], "birth_date": body["birthDate"], "type_id": kind["id"]}
             (folder / "before.json").write_text(json.dumps(before, sort_keys=True))
-            for label, path, payload, expected_status in (
-                ("invalid-profile", "/api/pets/" + str(pet["id"]), {**body, "name": ""}, 400),
-                ("missing-pet", "/api/pets/2147483647", body, 404),
-                ("valid-profile", "/api/pets/" + str(pet["id"]), body, 204),
-            ):
-                status, response = request("PUT", path, payload, base_url=api_base)
-                record["requests"].append({"label": label, "method": "PUT", "path": path,
-                                           "body": payload, "status": status, "response": response})
-                current = snapshot(database)
-                (folder / (label + "-state.json")).write_text(json.dumps(current, sort_keys=True))
-                if status != expected_status:
-                    raise ContractFailure(label + " unexpected HTTP status " + str(status))
-                if label != "valid-profile":
-                    if current != before:
-                        raise ContractFailure("Rejected operation changed committed state")
-                else:
-                    record["contract"] = verify_update(before, current, pet["id"], expected)
+            record["frozen_plan"] = frozen
+            plan_result = execute_plan(
+                frozen, before,
+                lambda method, path, body: request(method, path, body, base_url=api_base),
+                lambda: snapshot(database), record["requests"], expected_sha256=plan_hash)
+            record["plan_sha256"] = plan_result["plan_sha256"]
+            target_id = plan_result["pet_id"]
+            desired = next(p for p in plan_result["final_state"]["pets"] if p["id"] == target_id)
+            expected = {k: desired[k] for k in ("name", "birth_date", "type_id")}
             command(["docker", "stop", "--timeout", "10", service])
             stopped = snapshot(database)
-            record["contract"] = verify_update(before, stopped, pet["id"], expected)
+            record["contract"] = verify_update(before, stopped, target_id, expected)
             (folder / "after-service-stop.json").write_text(json.dumps(stopped, sort_keys=True))
             record["status"] = "healthy_contract_observed"
             record["seed_sha256"] = hashlib.sha256(json.dumps(before, sort_keys=True).encode()).hexdigest()
             outcomes.append(record["seed_sha256"])
-        except ContractFailure as error:
+        except (ContractFailure, ExperimentViolation) as error:
             record["status"], record["error"] = "baseline_contract_failure", str(error)
             raise
         except Exception as error:
@@ -207,7 +211,7 @@ def main():
     (evidence / "contract-summary.json").write_text(json.dumps({
         "status": "healthy_contract_observed", "trials": 2,
         "independent_sql_verifier": True, "paid_calls": 0,
-        "scope": "single-profile-update-and-rejection-controls; no candidate or repair"}, indent=2))
+        "scope": "two-public-bounded-plans; no candidate or repair"}, indent=2))
 
 
 if __name__ == "__main__":
