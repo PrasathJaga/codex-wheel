@@ -50,17 +50,17 @@ jobs:
           work_volume="petclinic-preflight-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           docker volume create "$work_volume"
           # Trusted image initialization only; no upstream bytes mounted here.
-          docker run --rm --network none --read-only --cap-drop ALL --cap-add CHOWN \
+          docker run --rm --entrypoint chown --network none --read-only --cap-drop ALL --cap-add CHOWN \
             --security-opt no-new-privileges --mount "type=volume,src=$work_volume,dst=/work" \
-            "$build_image" chown 1000:1000 /work
+            "$build_image" 1000:1000 /work
           set +e
           docker run --name "petclinic-build-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
-            --user 1000:1000 --read-only --cap-drop ALL --security-opt no-new-privileges \
+            --entrypoint /bin/sh --user 1000:1000 --read-only --cap-drop ALL --security-opt no-new-privileges \
             --cpus 2 --memory 3g --pids-limit 256 --network bridge \
             --tmpfs /tmp:rw,nosuid,nodev,size=1g,uid=1000,gid=1000 \
             --mount "type=bind,src=$RUNNER_TEMP/public-input/source.tar.gz,dst=/input/source.tar.gz,readonly" \
             --mount "type=volume,src=$work_volume,dst=/work" \
-            "$build_image" sh -eu -c '
+            "$build_image" -eu -c '
               tar -xzf /input/source.tar.gz -C /work --strip-components=1
               cd /work
               java -version
@@ -82,12 +82,12 @@ jobs:
           work_volume="petclinic-preflight-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           for trial in 1 2; do
             service_name="petclinic-service-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-$trial"
-            docker run -d --name "$service_name" --user 1000:1000 --read-only \
+            docker run -d --name "$service_name" --entrypoint java --user 1000:1000 --read-only \
               --cap-drop ALL --security-opt no-new-privileges --network none \
               --cpus 2 --memory 2g --pids-limit 256 \
               --tmpfs /tmp:rw,nosuid,nodev,size=256m,uid=1000,gid=1000 \
               --mount "type=volume,src=$work_volume,dst=/work,readonly" \
-              "$build_image" java -jar /work/target/spring-petclinic-rest-4.0.2.jar
+              "$build_image" -jar /work/target/spring-petclinic-rest-4.0.2.jar
             docker inspect "$service_name" --format '{{json .HostConfig}}' \
               > "$RUNNER_TEMP/preflight-evidence/runtime-config-$trial.json"
             set +e
