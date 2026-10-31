@@ -126,6 +126,9 @@ def details(title,value,identifier=''):
 
 
 def money(minor):return f'USD {minor//100:,}.{minor%100:02d}'
+def order_count(row):
+    count=len(row['snapshot']['orders'])
+    return str(count)+(' order' if count==1 else ' orders')
 
 
 def domain_card(name,title,subtitle,before,after,reason,sequence,refs,limits):
@@ -162,7 +165,7 @@ def render(document):
         for trial in range(3):
             values=[next(x for x in rows if x['trial']==trial and x['side']==side) for side in ('base','candidate')]
             trials.append(tuple(str(len(x['snapshot']['orders']))+' order(s) · '+('checkout rejected' if x['trace'][-1]['status']=='rejected' else 'checkout accepted') for x in values))
-        inventory_views[stage]={'cards':[('Reservation','Expired','Checkout must be rejected'),('Baseline committed',str(len(base['snapshot']['orders']))+' orders','Checkout rejected'),('Changed version committed',str(len(candidate['snapshot']['orders']))+' orders','Checkout accepted after expiry' if stage=='broken' else 'Checkout correctly rejected')],
+        inventory_views[stage]={'cards':[('Reservation','Expired','Checkout must be rejected'),('Baseline committed',order_count(base),'Checkout rejected'),('Changed version committed',order_count(candidate),'Checkout accepted after expiry' if stage=='broken' else 'Checkout correctly rejected')],
                                'trials':trials,'evidence':{'baseline':base,'candidate':candidate},'verdict':'Invalid lifecycle transition reproduced in 3/3 pairs' if stage=='broken' else 'Restoration passed all selected and control worlds'}
     body=domain_card('refund','One refund authorized. Two effects committed.','A lost post-commit response triggers a retry; the changed producer permits a second refund.',refund_views['broken'],refund_views['repaired'],r['proposal'].get('hypothesis',str(r['proposal'])),['First refund commits','Response is lost','Python client retries','Second refund commits'],r['proposal'].get('source_refs',r['proposal']),
                      'Known author-seeded M1. Healthy repair answer supplied. The earlier 2048-token diagnosis failed and remains preserved below.')
