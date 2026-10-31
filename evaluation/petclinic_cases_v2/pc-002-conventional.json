@@ -1,0 +1,164 @@
+{
+  "case_input_sha256": "f3bb2fd7ed54f348c0ac92c2c385bf677f4044a1f7d71060c8ea4b844072e6bf",
+  "preparation": {
+    "kind": "AI_assisted",
+    "author": "Codex assistant; source-aware conventional plan set, not an independent human baseline",
+    "provenance_sha256": "680d186824a317eaede1e2ec39b2b47010e552fb18d5de0fdbfd3be6d51dea71"
+  },
+  "experiments": [
+    {
+      "status": "propose",
+      "hypothesis": "Source-aware contract check: map only editable profile values; persisted owner and visit relationships must survive both original/alternate type updates and rejected input.",
+      "source_refs": [
+        {
+          "side": "candidate",
+          "path": "src/main/java/org/springframework/samples/petclinic/rest/controller/v1/PetRestControllerV1.java",
+          "line_start": 80,
+          "line_end": 85
+        },
+        {
+          "side": "baseline",
+          "path": "src/main/java/org/springframework/samples/petclinic/mapper/PetMapper.java",
+          "line_start": 29,
+          "line_end": 30
+        }
+      ],
+      "plan": {
+        "protocol": "petclinic-profile-v1",
+        "actions": [
+          {
+            "op": "READ_PET",
+            "pet": "visited_pet"
+          },
+          {
+            "op": "UPDATE_PET_PROFILE",
+            "pet": "visited_pet",
+            "name": "Aurora",
+            "birth_date": "2020-02-29",
+            "type": "alternate_type"
+          },
+          {
+            "op": "READ_PET",
+            "pet": "visited_pet"
+          }
+        ]
+      }
+    },
+    {
+      "status": "propose",
+      "hypothesis": "Source-aware contract check: map only editable profile values; persisted owner and visit relationships must survive both original/alternate type updates and rejected input.",
+      "source_refs": [
+        {
+          "side": "candidate",
+          "path": "src/main/java/org/springframework/samples/petclinic/rest/controller/v1/PetRestControllerV1.java",
+          "line_start": 80,
+          "line_end": 85
+        },
+        {
+          "side": "baseline",
+          "path": "src/main/java/org/springframework/samples/petclinic/mapper/PetMapper.java",
+          "line_start": 29,
+          "line_end": 30
+        }
+      ],
+      "plan": {
+        "protocol": "petclinic-profile-v1",
+        "actions": [
+          {
+            "op": "UPDATE_PET_PROFILE",
+            "pet": "visited_pet",
+            "name": "Milo Prime",
+            "birth_date": "2007-05-06",
+            "type": "original_type"
+          },
+          {
+            "op": "READ_PET",
+            "pet": "unrelated_pet"
+          }
+        ]
+      }
+    },
+    {
+      "status": "propose",
+      "hypothesis": "Source-aware contract check: map only editable profile values; persisted owner and visit relationships must survive both original/alternate type updates and rejected input.",
+      "source_refs": [
+        {
+          "side": "candidate",
+          "path": "src/main/java/org/springframework/samples/petclinic/rest/controller/v1/PetRestControllerV1.java",
+          "line_start": 80,
+          "line_end": 85
+        },
+        {
+          "side": "baseline",
+          "path": "src/main/java/org/springframework/samples/petclinic/mapper/PetMapper.java",
+          "line_start": 29,
+          "line_end": 30
+        }
+      ],
+      "plan": {
+        "protocol": "petclinic-profile-v1",
+        "actions": [
+          {
+            "op": "UPDATE_PET_PROFILE",
+            "pet": "visited_pet",
+            "name": "",
+            "birth_date": "2020-02-29",
+            "type": "alternate_type"
+          },
+          {
+            "op": "UPDATE_PET_PROFILE",
+            "pet": "visited_pet",
+            "name": "Nova",
+            "birth_date": "2020-02-29",
+            "type": "alternate_type"
+          },
+          {
+            "op": "READ_PET",
+            "pet": "visited_pet"
+          }
+        ]
+      }
+    },
+    {
+      "status": "propose",
+      "hypothesis": "Source-aware contract check: map only editable profile values; persisted owner and visit relationships must survive both original/alternate type updates and rejected input.",
+      "source_refs": [
+        {
+          "side": "candidate",
+          "path": "src/main/java/org/springframework/samples/petclinic/rest/controller/v1/PetRestControllerV1.java",
+          "line_start": 80,
+          "line_end": 85
+        },
+        {
+          "side": "baseline",
+          "path": "src/main/java/org/springframework/samples/petclinic/mapper/PetMapper.java",
+          "line_start": 29,
+          "line_end": 30
+        }
+      ],
+      "plan": {
+        "protocol": "petclinic-profile-v1",
+        "actions": [
+          {
+            "op": "READ_PET",
+            "pet": "missing_pet"
+          },
+          {
+            "op": "UPDATE_PET_PROFILE",
+            "pet": "missing_pet",
+            "name": "Orion",
+            "birth_date": "2020-02-29",
+            "type": "alternate_type"
+          },
+          {
+            "op": "UPDATE_PET_PROFILE",
+            "pet": "visited_pet",
+            "name": "Orion",
+            "birth_date": "2020-02-29",
+            "type": "original_type"
+          }
+        ]
+      }
+    }
+  ]
+}
