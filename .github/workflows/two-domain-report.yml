@@ -1,0 +1,49 @@
+name: Verify two-domain evidence report
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -e './services/support-agent-python[test]'
+      - run: python -m unittest discover -s tests -p test_two_domain_report.py -v
+      - name: Download pinned archives (no new inference)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p two-domain-output
+          gh api repos/PrasathJaga/codex-wheel/actions/artifacts/13006180773/zip > refund.zip
+          gh api repos/PrasathJaga/codex-wheel/actions/artifacts/13003967836/zip > refund-failure.zip
+          gh api repos/PrasathJaga/codex-wheel/actions/artifacts/13036779161/zip > inventory.zip
+      - name: Authenticate, recompute and render both loops
+        run: python -m wheel.two_domain_report --refund refund.zip --inventory inventory.zip --failure refund-failure.zip --output two-domain-output/dashboard.html
+      - name: Reject tampered archive
+        run: |
+          printf 'tampered' > invalid.zip
+          if python -m wheel.two_domain_report --refund invalid.zip --inventory inventory.zip --failure refund-failure.zip --output two-domain-output/invalid.html; then
+            exit 1
+          fi
+          test ! -e two-domain-output/invalid.html
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - name: Desktop, narrow screen and actual report interaction
+        run: node tests/two_domain_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: two-domain-evidence-report
+          path: two-domain-output/

@@ -1,0 +1,13 @@
+{
+  "schema": "codex-wheel.two-domain-evidence.v1",
+  "as_of": "2026-10-31",
+  "verified_master": "bbd23f1f07d65db7cb7e4f329a9db60af721f81b",
+  "post_merge_runs": {"baseline": 41186211669, "inventory": 41186211646, "observed_status": "completed_success"},
+  "refund_success": {"run": 41114220238, "artifact": 13006180773, "sha256": "0f8d0d0256b3c47541c9537a9418ba19bba6ecc7964db7cca94ca8eea291d802", "model_requests": 5, "provider_tokens": 31814, "fresh_worlds": 24},
+  "refund_preserved_failure": {"run": 41112435042, "artifact": 13003967836, "sha256": "eb932a3d5bd0f1a91ab3d98af45ebf251de5455baa878928b40a8cee1ed5bf79", "model_requests": 4, "provider_tokens": 22763, "fresh_worlds": 12, "outcome": "diagnosis_truncated_and_rejected"},
+  "inventory_investigation": {"run": 41181104497, "artifact": 13035465732, "sha256": "374f1053fb2400eb8b3923baf08fb8f6af9498fc5197b3df4735caaada830b3e", "model_requests": 1, "provider_tokens": 8593, "fresh_worlds": 12},
+  "inventory_repair": {"run": 41185855021, "artifact": 13036779161, "sha256": "564c41a4e03d55366231f823f759fafe2db11949822909654b12841f785cb6ae", "new_model_requests": 1, "provider_tokens": 7338, "fresh_worlds": 24, "historical_parent_worlds": 12, "parent_request_is_historical": true, "java_tests": 18},
+  "inventory_conventional_catch": {"run": 41175358503, "artifact": 13031649758, "sha256": "f55f912348b1b5be07c607c6d00c27c8ff303cd13985f8a4c05d6f418eb76048", "java_tests": 18, "failures": 5, "errors": 1},
+  "limits": ["Known author-prepared fixtures", "Healthy repair answers supplied", "Independent transfer and comparative advantage unproven", "External onboarding pending", "No production incidence, measured loss or guaranteed savings", "Explicit expiry events, not physical time or distributed race proof"],
+  "intentionally_defective_prs_never_merge": [27, 34]
+}
