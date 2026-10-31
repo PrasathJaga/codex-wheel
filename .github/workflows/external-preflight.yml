@@ -1,0 +1,146 @@
+name: External repository isolated preflight
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - '.github/workflows/external-preflight.yml'
+      - 'evaluation/external_preflight_v1.json'
+      - 'tests/test_external_preflight_policy.py'
+      - 'docs/EXTERNAL_REPOSITORY_PREFLIGHT.md'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - run: python -m pip install PyYAML==6.0.3
+      - run: python -m unittest discover -s tests -p test_external_preflight_policy.py -v
+  external-baseline:
+    needs: policy
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions: {}
+    env:
+      UPSTREAM_REVISION: e1987d2b4715b30f8b97050b3a399fdcadf92cb3
+    steps:
+      - name: Acquire public input without checking out Wheel
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/public-input" "$RUNNER_TEMP/preflight-evidence"
+          curl --fail --location --proto '=https' --tlsv1.2 --max-time 120 \
+            "https://codeload.github.com/spring-petclinic/spring-petclinic-rest/tar.gz/$UPSTREAM_REVISION" \
+            --output "$RUNNER_TEMP/public-input/source.tar.gz"
+          sha256sum "$RUNNER_TEMP/public-input/source.tar.gz" > "$RUNNER_TEMP/preflight-evidence/source.sha256"
+          printf '%s\n' "$UPSTREAM_REVISION" > "$RUNNER_TEMP/preflight-evidence/upstream-revision.txt"
+          docker pull maven:3.9.9-eclipse-temurin-17
+          docker pull python:3.13-slim
+          docker image inspect maven:3.9.9-eclipse-temurin-17 --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/preflight-evidence/build-image.txt"
+          docker image inspect python:3.13-slim --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/preflight-evidence/probe-image.txt"
+      - name: Build unchanged upstream only inside restricted container
+        shell: bash
+        run: |
+          set -euo pipefail
+          build_image="$(cat "$RUNNER_TEMP/preflight-evidence/build-image.txt")"
+          work_volume="petclinic-preflight-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          docker volume create "$work_volume"
+          # Trusted image initialization only; no upstream bytes mounted here.
+          docker run --rm --network none --read-only --cap-drop ALL --cap-add CHOWN \
+            --security-opt no-new-privileges --mount "type=volume,src=$work_volume,dst=/work" \
+            "$build_image" chown 1000:1000 /work
+          set +e
+          docker run --name "petclinic-build-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --user 1000:1000 --read-only --cap-drop ALL --security-opt no-new-privileges \
+            --cpus 2 --memory 3g --pids-limit 256 --network bridge \
+            --tmpfs /tmp:rw,nosuid,nodev,size=1g,uid=1000,gid=1000 \
+            --mount "type=bind,src=$RUNNER_TEMP/public-input/source.tar.gz,dst=/input/source.tar.gz,readonly" \
+            --mount "type=volume,src=$work_volume,dst=/work" \
+            "$build_image" sh -eu -c '
+              tar -xzf /input/source.tar.gz -C /work --strip-components=1
+              cd /work
+              java -version
+              mvn -version
+              mvn -B -ntp -Dmaven.repo.local=/tmp/m2 verify
+            ' > "$RUNNER_TEMP/preflight-evidence/build.log" 2>&1
+          build_status=$?
+          set -e
+          printf '%s\n' "$build_status" > "$RUNNER_TEMP/preflight-evidence/build-exit.txt"
+          docker inspect "petclinic-build-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --format '{{json .State}}' > "$RUNNER_TEMP/preflight-evidence/build-state.json"
+          exit "$build_status"
+      - name: Verify fresh startup and reset twice without outbound networking
+        shell: bash
+        run: |
+          set -euo pipefail
+          build_image="$(cat "$RUNNER_TEMP/preflight-evidence/build-image.txt")"
+          probe_image="$(cat "$RUNNER_TEMP/preflight-evidence/probe-image.txt")"
+          work_volume="petclinic-preflight-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          for trial in 1 2; do
+            service_name="petclinic-service-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-$trial"
+            docker run -d --name "$service_name" --user 1000:1000 --read-only \
+              --cap-drop ALL --security-opt no-new-privileges --network none \
+              --cpus 2 --memory 2g --pids-limit 256 \
+              --tmpfs /tmp:rw,nosuid,nodev,size=256m,uid=1000,gid=1000 \
+              --mount "type=volume,src=$work_volume,dst=/work,readonly" \
+              "$build_image" java -jar /work/target/spring-petclinic-rest-4.0.2.jar
+            docker inspect "$service_name" --format '{{json .HostConfig}}' \
+              > "$RUNNER_TEMP/preflight-evidence/runtime-config-$trial.json"
+            set +e
+            docker run --rm -i --user 1000:1000 --read-only --cap-drop ALL \
+              --security-opt no-new-privileges --memory 128m --pids-limit 32 \
+              --network "container:$service_name" "$probe_image" python - > \
+              "$RUNNER_TEMP/preflight-evidence/probe-$trial.json" 2> \
+              "$RUNNER_TEMP/preflight-evidence/probe-$trial.log" <<'PY'
+          import json, time, urllib.request
+          base = "http://127.0.0.1:9966/petclinic"
+          for attempt in range(120):
+              try:
+                  with urllib.request.urlopen(base + "/actuator/health", timeout=2) as response:
+                      health = json.load(response)
+                  if health.get("status") == "UP":
+                      break
+              except (OSError, ValueError):
+                  pass
+              time.sleep(1)
+          else:
+              raise SystemExit("Startup health timeout")
+          with urllib.request.urlopen(base + "/api/owners", timeout=10) as response:
+              owners = json.load(response)
+          if not isinstance(owners, list) or not owners:
+              raise SystemExit("Expected seeded owners list")
+          print(json.dumps({"health": health, "owners": owners}, sort_keys=True))
+          PY
+            probe_status=$?
+            set -e
+            docker logs "$service_name" > "$RUNNER_TEMP/preflight-evidence/service-$trial.log" 2>&1
+            docker stop --time 10 "$service_name"
+            printf '%s\n' "$probe_status" > "$RUNNER_TEMP/preflight-evidence/probe-exit-$trial.txt"
+            if [ "$probe_status" -ne 0 ]; then exit "$probe_status"; fi
+          done
+          cmp "$RUNNER_TEMP/preflight-evidence/probe-1.json" "$RUNNER_TEMP/preflight-evidence/probe-2.json"
+          printf '%s\n' 'build-and-startup-only; independent business-contract verification pending' \
+            > "$RUNNER_TEMP/preflight-evidence/scope.txt"
+      - name: Stop and remove only this run's disposable resources
+        if: always()
+        shell: bash
+        run: |
+          for name in "petclinic-build-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            "petclinic-service-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-1" \
+            "petclinic-service-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-2"; do
+            docker rm -f "$name" >/dev/null 2>&1 || true
+          done
+          docker volume rm "petclinic-preflight-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >/dev/null 2>&1 || true
+      - name: Preserve preflight evidence including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: external-petclinic-preflight
+          path: ${{ runner.temp }}/preflight-evidence/
+          if-no-files-found: error
+          retention-days: 14
+

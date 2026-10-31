@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "repository": "spring-petclinic/spring-petclinic-rest",
+  "revision": "e1987d2b4715b30f8b97050b3a399fdcadf92cb3",
+  "stage": "baseline-build-and-startup-only",
+  "mandatory_non_exposure": true,
+  "external_job_has_wheel_checkout": false,
+  "build_image": "maven:3.9.9-eclipse-temurin-17",
+  "probe_image": "python:3.13-slim",
+  "image_policy": "resolve-pull-to-repodigest-record-and-execute-digest",
+  "build_network": "bridge-for-public-dependencies-only-no-private-inputs",
+  "runtime_network": "none",
+  "runtime_read_only": true,
+  "paid_calls": 0,
+  "contract_verification": "pending-independent-committed-state-adapter",
+  "stop_on_baseline_failure": true
+}
