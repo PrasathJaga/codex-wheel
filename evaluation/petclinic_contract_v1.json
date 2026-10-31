@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "upstream_revision": "e1987d2b4715b30f8b97050b3a399fdcadf92cb3",
+  "contract": "Updating name, birth date and type preserves identity, owner, all visits, unrelated pets and type records",
+  "database": "PostgreSQL 17; image resolved to digest at acquisition",
+  "healthy_trials": 2,
+  "requests_per_trial": ["invalid-profile", "missing-pet", "valid-profile"],
+  "oracle": "host-side repeatable-read SQL snapshot using wheel_verify role",
+  "post_stop_snapshot": true,
+  "external_code_receives_wheel_source": false,
+  "paid_calls": 0,
+  "candidate_mutations": 0,
+  "status": "implementation-awaiting-live-verification"
+}
