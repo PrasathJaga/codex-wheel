@@ -1,0 +1,10 @@
+{
+  "preparation_kind": "internal_transfer",
+  "author": "Codex assistant",
+  "prepared_after_runner_merge": "63c0b8e27072d6955a336d185795bbb8b7964eb8",
+  "protocol_sha256": "15a493eceaa73c71c89a64b9e1ed15fc0e0d60f597646388f32c1838f63a282e",
+  "date": "2026-11-01",
+  "independent_preparer": false,
+  "runtime_outcomes_known_at_preparation": false,
+  "description": "Two DTO-mapping refactors prepared after runner freeze; labels are prospective expectations, not measured results."
+}

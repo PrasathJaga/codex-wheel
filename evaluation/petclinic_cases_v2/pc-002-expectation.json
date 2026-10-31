@@ -1,0 +1,8 @@
+{
+  "expected_label": "violating",
+  "reason": "Copying the DTO-mapped owner onto a persisted pet can clear ownership when the read-only ownerId is omitted. Predict valid profile update rejection/rollback, not an observed reassignment or production incident.",
+  "reference_repair_sha256": "992a9bff9f2737884d152cbca47e76194e5380fb6ff8d45bfbe7bd9cedf7d861",
+  "oracle_sha256": "bc72c0a8278b67aebab02f3c9b093bc554ad7605aeac5d002cd60df9e6e248e9",
+  "execution_status": "not_yet_measured",
+  "source_of_label": "same internal preparer; not independently adjudicated"
+}
