@@ -49,9 +49,10 @@ unsupported. An unchanged pair is admitted as a control. The caller must build
 the COMPLETE maps from verified source bytes; model-supplied/subset maps are not
 trusted. Symlink/file-type handling belongs to that source collector.
 
-Candidate fetching, source-map collection, isolated candidate builds and PR intake
-are NOT wired into this version. The helper alone does not establish safe arbitrary
-PR support. Those are the next gate before fresh candidate preparation.
+Complete source collection, normalization and separate candidate builds are added
+by the source-intake work package; see PETCLINIC_SOURCE_INTAKE.md. Its live case is
+an unchanged-source control. External fork acquisition and arbitrary PR intake
+remain disabled. A passing control does not establish changed-pair investigation.
 
 ## Execution and non-exposure
 

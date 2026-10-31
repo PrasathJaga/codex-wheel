@@ -13,6 +13,8 @@ on:
       - 'evaluation/petclinic_adapter*'
       - 'evaluation/petclinic_healthy_plans_v1.json'
       - 'docs/PETCLINIC_ADAPTER.md'
+      - 'evaluation/petclinic_source_input_v1.json'
+      - 'docs/PETCLINIC_SOURCE_INTAKE.md'
       - 'docs/PETCLINIC_CONTRACT.md'
   workflow_dispatch:
 permissions:
@@ -40,10 +42,11 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/public-input" "$RUNNER_TEMP/preflight-evidence"
-          curl --fail --location --proto '=https' --tlsv1.2 --max-time 120 \
+          curl --fail --location --proto '=https' --tlsv1.2 --max-time 120 --max-filesize 33554432 \
             "https://codeload.github.com/spring-petclinic/spring-petclinic-rest/tar.gz/$UPSTREAM_REVISION" \
-            --output "$RUNNER_TEMP/public-input/source.tar.gz"
-          sha256sum "$RUNNER_TEMP/public-input/source.tar.gz" > "$RUNNER_TEMP/preflight-evidence/source.sha256"
+            --output "$RUNNER_TEMP/public-input/upstream.tar.gz"
+          cp "$RUNNER_TEMP/public-input/upstream.tar.gz" "$RUNNER_TEMP/public-input/candidate-input.tar.gz"
+          sha256sum "$RUNNER_TEMP/public-input/upstream.tar.gz" > "$RUNNER_TEMP/preflight-evidence/source.sha256"
           printf '%s\n' "$UPSTREAM_REVISION" > "$RUNNER_TEMP/preflight-evidence/upstream-revision.txt"
           docker pull maven:3.9.9-eclipse-temurin-17
           docker pull python:3.13-slim
@@ -51,6 +54,296 @@ jobs:
           docker image inspect postgres:17-bookworm --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/preflight-evidence/postgres-image.txt"
           docker image inspect maven:3.9.9-eclipse-temurin-17 --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/preflight-evidence/build-image.txt"
           docker image inspect python:3.13-slim --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/preflight-evidence/probe-image.txt"
+      - name: Admit complete source archives before any upstream execution
+        shell: bash
+        run: |
+          python - <<'PY_INTAKE'
+          """Bounded profile-update experiment interface; trusted host code only."""
+          import copy
+          from datetime import date
+          import hashlib
+          import json
+          import re
+          
+          PROTOCOL = "petclinic-profile-v1"
+          MAX_ACTIONS = 8
+          EDIT_PATHS = frozenset({
+              "src/main/java/org/springframework/samples/petclinic/rest/controller/v1/PetRestControllerV1.java",
+              "src/main/java/org/springframework/samples/petclinic/mapper/PetMapper.java",
+              "src/main/java/org/springframework/samples/petclinic/model/Pet.java",
+              "src/main/java/org/springframework/samples/petclinic/service/ClinicServiceImpl.java",
+          })
+          
+          
+          class AdmissionError(ValueError):
+              pass
+          
+          
+          class ExperimentViolation(ValueError):
+              pass
+          
+          
+          def canonical(value):
+              return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode()
+          
+          
+          def digest(value):
+              return hashlib.sha256(canonical(value)).hexdigest()
+          
+          
+          def exact(value, keys):
+              if type(value) is not dict or set(value) != set(keys):
+                  raise AdmissionError("Unknown or missing fields")
+          
+          
+          def validate_plan(plan):
+              exact(plan, {"protocol", "actions"})
+              if plan["protocol"] != PROTOCOL:
+                  raise AdmissionError("Unsupported protocol")
+              actions = plan["actions"]
+              if type(actions) is not list or not 1 <= len(actions) <= MAX_ACTIONS:
+                  raise AdmissionError("Action budget exceeded or empty")
+              meaningful = False
+              for action in actions:
+                  if type(action) is not dict:
+                      raise AdmissionError("Action must be an object")
+                  op = action.get("op")
+                  if op == "READ_PET":
+                      exact(action, {"op", "pet"})
+                  elif op == "UPDATE_PET_PROFILE":
+                      exact(action, {"op", "pet", "name", "birth_date", "type"})
+                      if type(action["name"]) is not str or not re.fullmatch(r"[A-Za-z0-9 ]{0,30}", action["name"]):
+                          raise AdmissionError("Name outside declared input domain")
+                      if type(action["birth_date"]) is not str:
+                          raise AdmissionError("Birth date must be ISO text")
+                      try:
+                          birth = date.fromisoformat(action["birth_date"])
+                      except ValueError as error:
+                          raise AdmissionError("Invalid birth date") from error
+                      if birth.isoformat() != action["birth_date"] or not date(2000, 1, 1) <= birth <= date(2025, 12, 31):
+                          raise AdmissionError("Date outside frozen input domain")
+                      if action["type"] not in ("original_type", "alternate_type"):
+                          raise AdmissionError("Unsupported type reference")
+                      if action["pet"] not in ("visited_pet", "missing_pet"):
+                          raise AdmissionError("Only declared target can be edited")
+                      meaningful |= action["pet"] == "visited_pet" and bool(action["name"])
+                  else:
+                      raise AdmissionError("Unsupported action")
+                  if action["pet"] not in ("visited_pet", "unrelated_pet", "missing_pet"):
+                      raise AdmissionError("Unsupported pet reference")
+              if not meaningful:
+                  raise AdmissionError("Plan has no valid target-update experiment")
+              return copy.deepcopy(plan)
+          
+          
+          def freeze_plan(plan):
+              validated = validate_plan(plan)
+              return {"plan": validated, "sha256": digest(validated)}
+          
+          
+          def authenticate_plan(frozen, expected_sha256):
+              exact(frozen, {"plan", "sha256"})
+              plan = validate_plan(frozen["plan"])
+              if type(expected_sha256) is not str or not re.fullmatch(r"[0-9a-f]{64}", expected_sha256):
+                  raise AdmissionError("Missing trusted plan digest")
+              if type(frozen["sha256"]) is not str or digest(plan) != frozen["sha256"] or frozen["sha256"] != expected_sha256:
+                  raise AdmissionError("Frozen plan changed")
+              return plan
+          
+          
+          def admit_pair(baseline, candidate):
+              """Compare COMPLETE trusted path/content-hash maps; no model-provided maps."""
+              for tree in (baseline, candidate):
+                  if type(tree) is not dict or not tree:
+                      raise AdmissionError("Complete nonempty source maps required")
+                  for path, value in tree.items():
+                      if type(path) is not str or path.startswith("/") or ".." in path.split("/") or "\\" in path:
+                          raise AdmissionError("Unsafe source path")
+                      if type(value) is not str or not re.fullmatch(r"[0-9a-f]{64}", value):
+                          raise AdmissionError("Expected SHA-256 source identity")
+              if baseline.keys() != candidate.keys():
+                  raise AdmissionError("File additions/deletions are unsupported")
+              changed = sorted(p for p in baseline if baseline[p] != candidate[p])
+              if not set(changed) <= EDIT_PATHS:
+                  raise AdmissionError("Unsupported changed path")
+              return {"baseline_map_sha256": digest(baseline), "candidate_map_sha256": digest(candidate),
+                      "changed_paths": changed, "unchanged_control": not changed}
+          
+          
+          def execute_plan(frozen, initial, request_fn, snapshot_fn, events, *, expected_sha256):
+              """URLs and expected effects derive from validated actions, never model prose."""
+              plan = authenticate_plan(frozen, expected_sha256)
+              visited_ids = {v["pet_id"] for v in initial["visits"]}
+              target = next((p for p in initial["pets"] if p["id"] in visited_ids), None)
+              if target is None:
+                  raise AdmissionError("Seed lacks visited target")
+              unrelated = next((p for p in initial["pets"] if p["id"] != target["id"]), None)
+              alternate = next((t for t in initial["types"] if t["id"] != target["type_id"]), None)
+              original = next((t for t in initial["types"] if t["id"] == target["type_id"]), None)
+              if unrelated is None or alternate is None or original is None:
+                  raise AdmissionError("Seed lacks required controls")
+              if any(p["id"] == 2147483647 for p in initial["pets"]):
+                  raise AdmissionError("Missing-target sentinel exists")
+              ids = {"visited_pet": target["id"], "unrelated_pet": unrelated["id"], "missing_pet": 2147483647}
+              kinds = {"original_type": original, "alternate_type": alternate}
+              expected = copy.deepcopy(initial)
+              changed = False
+              for action in plan["actions"]:
+                  pet_id = ids[action["pet"]]
+                  path = "/api/pets/" + str(pet_id)
+                  body = None
+                  if action["op"] == "READ_PET":
+                      method, expected_status = "GET", 404 if action["pet"] == "missing_pet" else 200
+                  else:
+                      method = "PUT"
+                      body = {"name": action["name"], "birthDate": action["birth_date"], "type": kinds[action["type"]]}
+                      expected_status = 400 if not action["name"] else 404 if action["pet"] == "missing_pet" else 204
+                      if expected_status == 204:
+                          row = next(p for p in expected["pets"] if p["id"] == pet_id)
+                          fields = {"name": action["name"], "birth_date": action["birth_date"], "type_id": kinds[action["type"]]["id"]}
+                          changed |= any(row[k] != v for k, v in fields.items())
+                          row.update(fields)
+                  status, response = request_fn(method, path, body)
+                  event = {"action": copy.deepcopy(action), "method": method, "path": path,
+                           "body": body, "status": status, "response": response}
+                  events.append(event)
+                  state = snapshot_fn()
+                  event["committed_state"] = state
+                  if status != expected_status:
+                      raise ExperimentViolation("Unexpected HTTP outcome at action " + str(len(events)))
+                  if state != expected:
+                      raise ExperimentViolation("Committed effects violate contract at action " + str(len(events)))
+              if not changed:
+                  raise AdmissionError("Selected input produces no non-vacuous profile change")
+              return {"verdict": "healthy_contract_observed", "plan_sha256": frozen["sha256"],
+                      "actions": len(events), "pet_id": target["id"], "final_state": expected}
+          
+          __WHEEL_EMBEDDED_ADAPTER__ = True
+          """Bounded archive collection on the trusted host, with no source execution."""
+          import gzip
+          import hashlib
+          import io
+          import json
+          from pathlib import Path
+          import tarfile
+          
+          if "__WHEEL_EMBEDDED_ADAPTER__" not in globals():
+              from preflight.petclinic_adapter import AdmissionError, admit_pair
+          
+          MAX_COMPRESSED = 32 * 1024 * 1024
+          MAX_EXPANDED = 128 * 1024 * 1024
+          MAX_FILE = 8 * 1024 * 1024
+          MAX_FILES = 3000
+          
+          
+          def collect_archive(data, expected_sha256, root):
+              if len(data) > MAX_COMPRESSED:
+                  raise AdmissionError("Compressed archive exceeds budget")
+              if hashlib.sha256(data).hexdigest() != expected_sha256:
+                  raise AdmissionError("Archive digest differs from reviewed input")
+              try:
+                  with gzip.GzipFile(fileobj=io.BytesIO(data)) as stream:
+                      expanded = stream.read(MAX_EXPANDED + 1)
+                  if len(expanded) > MAX_EXPANDED:
+                      raise AdmissionError("Expanded archive exceeds budget")
+                  files, seen = {}, set()
+                  with tarfile.open(fileobj=io.BytesIO(expanded), mode="r:") as archive:
+                      for member in archive:
+                          if len(seen) >= MAX_FILES:
+                              raise AdmissionError("Archive entry budget exceeded")
+                          name = member.name.rstrip("/") if member.isdir() else member.name
+                          if name in seen:
+                              raise AdmissionError("Duplicate archive path")
+                          seen.add(name)
+                          if not (member.isdir() or member.isfile()) or member.issparse():
+                              raise AdmissionError("Links/sparse/special archive entries unsupported")
+                          if (not name or name.startswith("/") or "\\" in name or
+                                  any(part in ("", ".", "..") for part in name.split("/")) or
+                                  any(ord(c) < 32 or ord(c) == 127 for c in name)):
+                              raise AdmissionError("Unsafe archive path")
+                          if name == root and member.isdir():
+                              continue
+                          if not name.startswith(root + "/"):
+                              raise AdmissionError("Unexpected archive root")
+                          relative = name[len(root) + 1:]
+                          if member.isdir():
+                              continue
+                          if not 0 <= member.size <= MAX_FILE:
+                              raise AdmissionError("File exceeds budget")
+                          source = archive.extractfile(member)
+                          if source is None:
+                              raise AdmissionError("Missing regular-file content")
+                          content = source.read(MAX_FILE + 1)
+                          if len(content) != member.size:
+                              raise AdmissionError("Truncated file content")
+                          # Fail closed if path text cannot be represented canonically.
+                          relative.encode("utf-8", errors="strict")
+                          files[relative] = content
+                  if not files:
+                      raise AdmissionError("Empty source archive")
+                  for path in files:
+                      parts = path.split("/")
+                      if any("/".join(parts[:i]) in files for i in range(1, len(parts))):
+                          raise AdmissionError("File/directory prefix collision")
+                  return files
+              except (OSError, tarfile.TarError, UnicodeError, EOFError) as error:
+                  raise AdmissionError("Malformed source archive") from error
+          
+          
+          def normalized_archive(files):
+              """Reconstruct only checked regular files; discard input ownership/PAX/modes."""
+              result = io.BytesIO()
+              with gzip.GzipFile(fileobj=result, mode="wb", mtime=0) as compressed:
+                  with tarfile.open(fileobj=compressed, mode="w", format=tarfile.USTAR_FORMAT) as archive:
+                      for path, content in sorted(files.items()):
+                          info = tarfile.TarInfo("admitted/" + path)
+                          info.size, info.mode, info.mtime = len(content), 0o644, 0
+                          info.uid = info.gid = 0
+                          archive.addfile(info, io.BytesIO(content))
+              return result.getvalue()
+          
+          
+          def prepare_pair(baseline, candidate, policy):
+              root = "spring-petclinic-rest-" + policy["upstream_revision"]
+              base_files = collect_archive(baseline, policy["baseline_archive_sha256"], root)
+              candidate_files = collect_archive(candidate, policy["candidate_archive_sha256"], root)
+              base_map = {p: hashlib.sha256(v).hexdigest() for p, v in base_files.items()}
+              candidate_map = {p: hashlib.sha256(v).hexdigest() for p, v in candidate_files.items()}
+              admitted = admit_pair(base_map, candidate_map)
+              base_tar, candidate_tar = normalized_archive(base_files), normalized_archive(candidate_files)
+              report = {"status": "admitted", "upstream_revision": policy["upstream_revision"],
+                        "baseline_archive_sha256": policy["baseline_archive_sha256"],
+                        "candidate_archive_sha256": policy["candidate_archive_sha256"],
+                        "baseline_files": base_map, "candidate_files": candidate_map,
+                        "baseline_normalized_sha256": hashlib.sha256(base_tar).hexdigest(),
+                        "candidate_normalized_sha256": hashlib.sha256(candidate_tar).hexdigest(), **admitted}
+              return base_tar, candidate_tar, report
+          
+          
+          def prepare_inputs(input_directory, evidence_directory, policy):
+              source = Path(input_directory)
+              evidence = Path(evidence_directory)
+              try:
+                  # This workflow's live intake exercise is explicitly an unchanged control.
+                  # Future candidate acquisition requires a reviewed candidate artifact/hash.
+                  with (source / "upstream.tar.gz").open("rb") as stream:
+                      baseline = stream.read(MAX_COMPRESSED + 1)
+                  with (source / "candidate-input.tar.gz").open("rb") as stream:
+                      candidate = stream.read(MAX_COMPRESSED + 1)
+                  base_tar, candidate_tar, report = prepare_pair(baseline, candidate, policy)
+                  (source / "source.tar.gz").write_bytes(base_tar)
+                  (source / "candidate.tar.gz").write_bytes(candidate_tar)
+                  (evidence / "source-admission.json").write_text(json.dumps(report, indent=2, sort_keys=True))
+              except Exception as error:
+                  (evidence / "source-admission.json").write_text(json.dumps({
+                      "status": "source_admission_error", "error_type": type(error).__name__,
+                      "error": str(error)}, indent=2))
+                  raise
+          
+          import os
+          source_policy = {'upstream_repository': 'spring-petclinic/spring-petclinic-rest', 'upstream_revision': 'e1987d2b4715b30f8b97050b3a399fdcadf92cb3', 'baseline_archive_sha256': 'e3602e1bbfc30f93120ae0bf32c390e1b03e34561fd47d0ae241a85659a1134e', 'candidate_archive_sha256': 'e3602e1bbfc30f93120ae0bf32c390e1b03e34561fd47d0ae241a85659a1134e', 'input_kind': 'unchanged-public-upstream-control', 'baseline_anchor': 'PR40 run 41224056142 artifact 13051121050 source.sha256', 'candidate_mutations': 0, 'paid_calls': 0}
+          prepare_inputs(os.path.join(os.environ["RUNNER_TEMP"], "public-input"), os.path.join(os.environ["RUNNER_TEMP"], "preflight-evidence"), source_policy)
+          PY_INTAKE
       - name: Build unchanged upstream only inside restricted container
         shell: bash
         run: |
@@ -81,6 +374,37 @@ jobs:
           printf '%s\n' "$build_status" > "$RUNNER_TEMP/preflight-evidence/build-exit.txt"
           docker inspect "petclinic-build-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
             --format '{{json .State}}' > "$RUNNER_TEMP/preflight-evidence/build-state.json"
+          exit "$build_status"
+      - name: Build admitted unchanged candidate in separate restricted container
+        shell: bash
+        run: |
+          set -euo pipefail
+          build_image="$(cat "$RUNNER_TEMP/preflight-evidence/build-image.txt")"
+          work_volume="petclinic-candidate-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          docker volume create "$work_volume"
+          # Trusted image initialization only; no upstream bytes mounted here.
+          docker run --rm --entrypoint chown --network none --read-only --cap-drop ALL --cap-add CHOWN \
+            --security-opt no-new-privileges --mount "type=volume,src=$work_volume,dst=/work" \
+            "$build_image" 1000:1000 /work
+          set +e
+          docker run --name "petclinic-candidate-build-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --entrypoint /bin/sh --user 1000:1000 --read-only --cap-drop ALL --security-opt no-new-privileges \
+            --cpus 2 --memory 3g --pids-limit 256 --network bridge \
+            --tmpfs /tmp:rw,nosuid,nodev,size=1g,uid=1000,gid=1000 \
+            --mount "type=bind,src=$RUNNER_TEMP/public-input/candidate.tar.gz,dst=/input/source.tar.gz,readonly" \
+            --mount "type=volume,src=$work_volume,dst=/work" \
+            "$build_image" -eu -c '
+              tar -xzf /input/source.tar.gz -C /work --strip-components=1
+              cd /work
+              java -version
+              mvn -version
+              mvn -B -ntp -Dmaven.repo.local=/tmp/m2 verify
+            ' > "$RUNNER_TEMP/preflight-evidence/candidate-build.log" 2>&1
+          build_status=$?
+          set -e
+          printf '%s\n' "$build_status" > "$RUNNER_TEMP/preflight-evidence/candidate-build-exit.txt"
+          docker inspect "petclinic-candidate-build-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            --format '{{json .State}}' > "$RUNNER_TEMP/preflight-evidence/candidate-build-state.json"
           exit "$build_status"
       - name: Verify fresh startup and reset twice without outbound networking
         shell: bash
@@ -393,7 +717,6 @@ jobs:
               image = (evidence / "build-image.txt").read_text().strip()
               pg_image = (evidence / "postgres-image.txt").read_text().strip()
               suffix = os.environ["GITHUB_RUN_ID"] + "-" + os.environ["GITHUB_RUN_ATTEMPT"]
-              volume = "petclinic-preflight-" + suffix
               if "PUBLIC_HEALTHY_PLANS" in globals():
                   healthy_plans = PUBLIC_HEALTHY_PLANS
                   expected_hashes = PUBLIC_PLAN_HASHES
@@ -408,13 +731,16 @@ jobs:
                   authenticate_plan(frozen, expected_hash)
               (evidence / "plan-admission.json").write_text(json.dumps({"accepted_plan_sha256": expected_hashes}))
               outcomes = []
-              for trial, (frozen, plan_hash) in enumerate(zip(healthy_plans, expected_hashes), 1):
+              experiments = [(variant, frozen, plan_hash) for variant in ("baseline", "candidate")
+                             for frozen, plan_hash in zip(healthy_plans, expected_hashes)]
+              for trial, (variant, frozen, plan_hash) in enumerate(experiments, 1):
+                  volume = ("petclinic-preflight-" if variant == "baseline" else "petclinic-candidate-") + suffix
                   network = "petclinic-contract-" + suffix + "-" + str(trial)
                   database, service = network + "-db", network + "-api"
                   folder = evidence / ("contract-" + str(trial))
                   folder.mkdir()
                   record = {"scope": "healthy-profile-update-only", "trial": trial,
-                            "status": "execution_error", "requests": []}
+                            "status": "execution_error", "source_variant": variant, "requests": []}
                   try:
                       command(["docker", "network", "create", "--internal", network])
                       admin_password, app_password = token_hex(24), token_hex(24)
@@ -512,9 +838,10 @@ jobs:
               if len(set(outcomes)) != 1:
                   raise ContractFailure("Fresh database seeds differed")
               (evidence / "contract-summary.json").write_text(json.dumps({
-                  "status": "healthy_contract_observed", "trials": 2,
+                  "status": "healthy_contract_observed", "trials": 4,
+                  "source_variants": ["baseline", "candidate"], "unchanged_control": True,
                   "independent_sql_verifier": True, "paid_calls": 0,
-                  "scope": "two-public-bounded-plans; no candidate or repair"}, indent=2))
+                  "scope": "separate-unchanged-source-builds; two-public-plans-each; no repair"}, indent=2))
           
           
           if __name__ == "__main__":
@@ -525,11 +852,12 @@ jobs:
         shell: bash
         run: |
           for name in "petclinic-build-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            "petclinic-candidate-build-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
             "petclinic-service-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-1" \
             "petclinic-service-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-2"; do
             docker rm -f "$name" >/dev/null 2>&1 || true
           done
-          docker volume rm "petclinic-preflight-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >/dev/null 2>&1 || true
+          docker volume rm "petclinic-preflight-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" "petclinic-candidate-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >/dev/null 2>&1 || true
       - name: Preserve preflight evidence including failures
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

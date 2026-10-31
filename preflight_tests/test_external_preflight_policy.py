@@ -31,6 +31,7 @@ def validate_external_job(job):
         for mount in mounts:
             allowed = {
                 "type=bind,src=$RUNNER_TEMP/public-input/source.tar.gz,dst=/input/source.tar.gz,readonly",
+                "type=bind,src=$RUNNER_TEMP/public-input/candidate.tar.gz,dst=/input/source.tar.gz,readonly",
                 "type=volume,src=$work_volume,dst=/work",
                 "type=volume,src=$work_volume,dst=/work,readonly",
             }
