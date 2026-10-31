@@ -90,7 +90,6 @@ def main():
     image = (evidence / "build-image.txt").read_text().strip()
     pg_image = (evidence / "postgres-image.txt").read_text().strip()
     suffix = os.environ["GITHUB_RUN_ID"] + "-" + os.environ["GITHUB_RUN_ATTEMPT"]
-    volume = "petclinic-preflight-" + suffix
     if "PUBLIC_HEALTHY_PLANS" in globals():
         healthy_plans = PUBLIC_HEALTHY_PLANS
         expected_hashes = PUBLIC_PLAN_HASHES
@@ -105,13 +104,16 @@ def main():
         authenticate_plan(frozen, expected_hash)
     (evidence / "plan-admission.json").write_text(json.dumps({"accepted_plan_sha256": expected_hashes}))
     outcomes = []
-    for trial, (frozen, plan_hash) in enumerate(zip(healthy_plans, expected_hashes), 1):
+    experiments = [(variant, frozen, plan_hash) for variant in ("baseline", "candidate")
+                   for frozen, plan_hash in zip(healthy_plans, expected_hashes)]
+    for trial, (variant, frozen, plan_hash) in enumerate(experiments, 1):
+        volume = ("petclinic-preflight-" if variant == "baseline" else "petclinic-candidate-") + suffix
         network = "petclinic-contract-" + suffix + "-" + str(trial)
         database, service = network + "-db", network + "-api"
         folder = evidence / ("contract-" + str(trial))
         folder.mkdir()
         record = {"scope": "healthy-profile-update-only", "trial": trial,
-                  "status": "execution_error", "requests": []}
+                  "status": "execution_error", "source_variant": variant, "requests": []}
         try:
             command(["docker", "network", "create", "--internal", network])
             admin_password, app_password = token_hex(24), token_hex(24)
@@ -209,9 +211,10 @@ def main():
     if len(set(outcomes)) != 1:
         raise ContractFailure("Fresh database seeds differed")
     (evidence / "contract-summary.json").write_text(json.dumps({
-        "status": "healthy_contract_observed", "trials": 2,
+        "status": "healthy_contract_observed", "trials": 4,
+        "source_variants": ["baseline", "candidate"], "unchanged_control": True,
         "independent_sql_verifier": True, "paid_calls": 0,
-        "scope": "two-public-bounded-plans; no candidate or repair"}, indent=2))
+        "scope": "separate-unchanged-source-builds; two-public-plans-each; no repair"}, indent=2))
 
 
 if __name__ == "__main__":

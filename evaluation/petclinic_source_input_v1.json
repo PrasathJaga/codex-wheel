@@ -1,0 +1,10 @@
+{
+  "upstream_repository": "spring-petclinic/spring-petclinic-rest",
+  "upstream_revision": "e1987d2b4715b30f8b97050b3a399fdcadf92cb3",
+  "baseline_archive_sha256": "e3602e1bbfc30f93120ae0bf32c390e1b03e34561fd47d0ae241a85659a1134e",
+  "candidate_archive_sha256": "e3602e1bbfc30f93120ae0bf32c390e1b03e34561fd47d0ae241a85659a1134e",
+  "input_kind": "unchanged-public-upstream-control",
+  "baseline_anchor": "PR40 run 41224056142 artifact 13051121050 source.sha256",
+  "candidate_mutations": 0,
+  "paid_calls": 0
+}
