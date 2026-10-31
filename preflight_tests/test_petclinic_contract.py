@@ -57,7 +57,8 @@ class ContractTests(unittest.TestCase):
         job = workflow["jobs"]["external-baseline"]
         step = next(s for s in job["steps"] if s.get("name") == "Independent committed-state contract checks")
         code = step["run"].split("python - <<'PY_CONTRACT'\n", 1)[1].rsplit("PY_CONTRACT", 1)[0]
-        self.assertEqual(code.rstrip(), (ROOT / "preflight/petclinic_contract.py").read_text().rstrip())
+        self.assertTrue(code.rstrip().endswith((ROOT / "preflight/petclinic_contract.py").read_text().rstrip()))
+        self.assertTrue(code.startswith((ROOT / "preflight/petclinic_adapter.py").read_text()))
         self.assertEqual(job["permissions"], {})
         self.assertNotIn("checkout", "\n".join(s.get("uses", "") for s in job["steps"]))
         self.assertNotIn("type=bind", code)

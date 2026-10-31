@@ -1,0 +1,27 @@
+{
+  "protocol": "petclinic-profile-v1",
+  "status": "freeze-candidate-before-evaluation-changes",
+  "upstream_revision": "e1987d2b4715b30f8b97050b3a399fdcadf92cb3",
+  "components": {
+    "preflight/petclinic_adapter.py": "bc72c0a8278b67aebab02f3c9b093bc554ad7605aeac5d002cd60df9e6e248e9",
+    "preflight/petclinic_contract.py": "29a3674dd1a80afe99e23488fa9e1c66d3a5464c03adf9ce8a9861fb469f5632",
+    ".github/workflows/external-preflight.yml": "a307bb45206342d8aa3f75ef7ea2dab487345cc1e6b18d3d5fa3b8752b9e2fc7",
+    "evaluation/petclinic_healthy_plans_v1.json": "7061460f2deadb3c4b80b1754be7be950fbc70c6465eb75d6fdeda74c8752128",
+    "preflight_tests/test_petclinic_adapter.py": "4b4e5deb1adaba5d13f5162db7fc43a6c579d7d0fdb599506b8ff8d014503e89",
+    "preflight_tests/test_petclinic_contract.py": "708ea5d0d867743bc45913eff9f6a1a4e954ba66bb2878c82a83a5e760d0efcd",
+    "preflight_tests/test_external_preflight_policy.py": "464bab49573e1a1366230435105999fbc2ba3429be15a02c02b753086afa819d"
+  },
+  "public_plan_sha256": [
+    "2002f25be48cd97998ca2c650136769f6d80b2c2725171a892f3012937c41895",
+    "1b250d4f7b53f63fb803ed9d614a6521d5f2385b406dfede1ed22308ca76214d"
+  ],
+  "max_actions": 8,
+  "edit_paths": [
+    "src/main/java/org/springframework/samples/petclinic/mapper/PetMapper.java",
+    "src/main/java/org/springframework/samples/petclinic/model/Pet.java",
+    "src/main/java/org/springframework/samples/petclinic/rest/controller/v1/PetRestControllerV1.java",
+    "src/main/java/org/springframework/samples/petclinic/service/ClinicServiceImpl.java"
+  ],
+  "candidate_execution": "not-yet-enabled",
+  "paid_calls": 0
+}
