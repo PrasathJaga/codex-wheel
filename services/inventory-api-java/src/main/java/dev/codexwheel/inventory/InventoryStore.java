@@ -88,7 +88,6 @@ public final class InventoryStore implements AutoCloseable {
             if (order.reservationId().equals(id) && order.buyer().equals(buyer)) return order;
             throw new Rejected(409, "order_id_conflict");
         }
-        if (reservation.status()!=Status.ACTIVE) throw new Rejected(409, "reservation_not_active");
         var confirmed = new Reservation(id, buyer, reservation.sku(), Status.CONFIRMED);
         var order = new Order(orderId, buyer, id, reservation.sku());
         var orders = new ArrayList<>(state.orders()); orders.add(order);
