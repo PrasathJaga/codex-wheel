@@ -1,0 +1,24 @@
+{
+  "schema": "codex-wheel.inventory-baseline.v1",
+  "phase": "healthy_baseline_only",
+  "candidate": null,
+  "model_requests": 0,
+  "seeded_defects": 0,
+  "fixture": {"sku": "last-item", "stock": 1, "quantity_per_reservation": 1},
+  "states": ["ACTIVE", "EXPIRED", "RELEASED", "CONFIRMED"],
+  "expiry": "explicit evaluator event; no wall-clock or elapsed-TTL assertion",
+  "concurrency": "single Java process; atomic synchronized transitions; bounded competing-request tests",
+  "invariants": [
+    "ACTIVE plus CONFIRMED allocations never exceed initial stock",
+    "Every committed order has one same-owner CONFIRMED reservation",
+    "One reservation confirms at most one unique order",
+    "EXPIRED and RELEASED reservations never become ACTIVE or CONFIRMED",
+    "Accepted checkout receipts resolve to committed allocated orders",
+    "Duplicate identical reserve/confirm/release/expiry causes no extra business effect"
+  ],
+  "controls": ["happy_path", "duplicate_confirm", "expiry_reallocation", "release_reallocation", "wrong_owner", "competing_reserve", "competing_confirm", "graceful_restart", "evaluator_denial"],
+  "gate": "Java, Python and live cross-language tests pass before candidate preparation; existing refund CI remains required",
+  "future_run_requires": ["baseline source and test hashes", "candidate source identity", "supported experiment DSL and caps", "frozen conventional baseline", "model budget and stop rules", "all outcomes retained"],
+  "claims_excluded": ["blind discovery", "AI necessity", "production race coverage", "real-time TTL correctness", "unfamiliar repair", "production financial loss"],
+  "stop": ["invalid baseline", "integrity failure", "missing required access", "material scope expansion"]
+}
