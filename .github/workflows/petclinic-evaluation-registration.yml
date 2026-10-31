@@ -1,0 +1,25 @@
+name: PetClinic evaluation registration
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'preflight/petclinic_evaluation.py'
+      - 'preflight_tests/test_petclinic_evaluation.py'
+      - 'evaluation/petclinic_transfer_*'
+      - 'docs/PETCLINIC_TRANSFER_EVALUATION.md'
+      - '.github/workflows/petclinic-evaluation-registration.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  protocol-and-registration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - run: python -m pip install PyYAML==6.0.3
+      - run: python -m unittest discover -s preflight_tests -v
+      - name: Verify pinned protocol and execution components
+        run: python -m preflight.petclinic_evaluation
