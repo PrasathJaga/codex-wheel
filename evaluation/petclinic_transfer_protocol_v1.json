@@ -1,0 +1,140 @@
+{
+  "accounting": "check current authorized access and accounting before any paid request; retain actual usage and unknown dollar values as unknown",
+  "action_interface": {
+    "birth_date_range": [
+      "2000-01-01",
+      "2025-12-31"
+    ],
+    "max_actions": 8,
+    "name_pattern": "[A-Za-z0-9 ]{0,30}",
+    "operations": [
+      "READ_PET",
+      "UPDATE_PET_PROFILE"
+    ],
+    "protocol": "petclinic-profile-v1",
+    "read_pet_references": [
+      "visited_pet",
+      "unrelated_pet",
+      "missing_pet"
+    ],
+    "requires_nonvacuous_valid_target_update": true,
+    "type_references": [
+      "original_type",
+      "alternate_type"
+    ],
+    "update_pet_references": [
+      "visited_pet",
+      "missing_pet"
+    ]
+  },
+  "baseline_archive_sha256": "e3602e1bbfc30f93120ae0bf32c390e1b03e34561fd47d0ae241a85659a1134e",
+  "created_on": "2026-10-31",
+  "evaluation_components": {
+    ".github/workflows/petclinic-evaluation-registration.yml": "bf52057f8a69898647f69375744adb30363ffc0502f813d20e314c69e46a53b4",
+    "evaluation/petclinic_transfer_prompts_v1.json": "b14b4b30ae9c98550708acb5f863b7c19c5c1b3f14c1bf028e4484f880bc84cd",
+    "preflight/petclinic_evaluation.py": "fd8cc3f624c6b35381071ad4e35b85680db730723c37bbd55c300ae2d370fc12",
+    "preflight_tests/test_petclinic_evaluation.py": "a026f44d338fb596b054caf6d4626853afca3a3d7b8f59bb771db6157523e695"
+  },
+  "execution_enabled": false,
+  "frozen_components": {
+    ".github/workflows/external-preflight.yml": "066307e57c331e1a0da9866d70299dae4690a88fec8f87c5128159b8b6b71003",
+    "evaluation/petclinic_adapter_lock_v1.json": "1f4e8d6ddece19ad9f948b17aa8239da8c8bffd4d938f549f19ac50bbd7b003d",
+    "evaluation/petclinic_healthy_plans_v1.json": "7061460f2deadb3c4b80b1754be7be950fbc70c6465eb75d6fdeda74c8752128",
+    "evaluation/petclinic_source_input_v1.json": "9dab44b433f1337dc47ce68c1451d5d404fe3b09721c8bae5f6cc3eea9ebead9",
+    "preflight/petclinic_adapter.py": "bc72c0a8278b67aebab02f3c9b093bc554ad7605aeac5d002cd60df9e6e248e9",
+    "preflight/petclinic_contract.py": "ac1b8844987d2c283036bd0b3665357c6b358c1ee391037e6780a1625fbbdb88",
+    "preflight/petclinic_source_intake.py": "5d55c052dcfb071a3307dba92aff99989320c4dc6add6e0b785458d1017d11a0",
+    "preflight_tests/test_external_preflight_policy.py": "2ed7d77dd3e354518953c838879d4539903d39b055fda108432aa77b59c3c1dd",
+    "preflight_tests/test_petclinic_adapter.py": "4b4e5deb1adaba5d13f5162db7fc43a6c579d7d0fdb599506b8ff8d014503e89",
+    "preflight_tests/test_petclinic_contract.py": "708ea5d0d867743bc45913eff9f6a1a4e954ba66bb2878c82a83a5e760d0efcd",
+    "preflight_tests/test_petclinic_source_intake.py": "d891d94876a77d27f4f50609c3630abfdd7729502df303aaf9d218009be555e6"
+  },
+  "healthy_control_worlds_per_method": 2,
+  "id": "petclinic-transfer-evaluation-v1",
+  "independence_policy": "internal transfer unless external preparation is separately evidenced; declarations are not verification",
+  "infrastructure_revision": "1a82fdb6cdcfdbe545bf3711c084a5242edc49ba",
+  "max_model_input_bytes": 200000,
+  "methods": {
+    "simple_meta": {
+      "diagnosis_requests": 0,
+      "max_actions": 8,
+      "max_plans": 1,
+      "selection_completion_limit": 20000,
+      "selection_requests": 1,
+      "total_completion_limit_per_case": 20000,
+      "world_limit": 24
+    },
+    "source_aware_conventional": {
+      "max_actions": 8,
+      "max_plans": 8,
+      "paid_requests": 0,
+      "preparation_provenance_required": true,
+      "world_limit": 24
+    },
+    "wheel_meta": {
+      "diagnosis_completion_limit": 8000,
+      "diagnosis_requests": 1,
+      "max_actions": 8,
+      "max_plans": 1,
+      "selection_completion_limit": 12000,
+      "selection_requests": 1,
+      "total_completion_limit_per_case": 20000,
+      "world_limit": 24
+    }
+  },
+  "model": "muse-spark-1.3",
+  "outcomes": [
+    "unsupported_change",
+    "inconclusive",
+    "execution_error",
+    "baseline_invalid",
+    "confirmed_violation",
+    "no_violation_observed"
+  ],
+  "paid_execution_enabled": false,
+  "pilot_case_limit": 2,
+  "pilot_max_paid_requests_including_repairs": 8,
+  "pilot_max_selection_and_diagnosis_requests": 6,
+  "planned_composition": {
+    "preserving": 1,
+    "violating": 1
+  },
+  "public_contract": {
+    "claim_boundary": "tested profile-update semantics only; no production incidence, security isolation or universal-correctness claim",
+    "editable_fields": [
+      "name",
+      "birth_date",
+      "type_id"
+    ],
+    "invariants": [
+      "preserve pet identity and owner",
+      "preserve all existing visits and their contents",
+      "preserve unrelated pets, owners and type records",
+      "reads and rejected requests have no committed effects"
+    ]
+  },
+  "repair": {
+    "completion_limit": 20000,
+    "enabled": false,
+    "feedback_refinement": false,
+    "input_policy": "fresh request; candidate-only source, public intended behavior/tests and execution effects; exclude baseline source/diff, prior investigator conversation, reference repair and withheld tests",
+    "max_cases": 2,
+    "requests_per_case": 1,
+    "world_limit_per_case": 24
+  },
+  "repeat_pairs": 3,
+  "request_timeout_seconds": 300,
+  "retry_policy": "no automatic retry/resampling; infrastructure failures preserved; recovery needs a separately registered rule/version",
+  "sampling": "existing admitted client defaults; preserve exact request parameters",
+  "selection_policy": "one Meta plan; conventional at most eight source-aware plans fixed before execution; stop search at first verified candidate violation and replay in three fresh pairs",
+  "source_access": "shared relevant four-file context and diff for investigation; conventional build/tests use full admitted repository; disclose access and preparation differences",
+  "stop_conditions": [
+    "integrity_failure",
+    "invalid_baseline",
+    "missing_access",
+    "declared_budget_exhausted",
+    "material_scope_expansion"
+  ],
+  "upstream_revision": "e1987d2b4715b30f8b97050b3a399fdcadf92cb3",
+  "world_accounting": "one fresh service/database execution is one world; controls and paired repeats count; builds/setup measured separately"
+}
