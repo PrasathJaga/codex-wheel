@@ -115,13 +115,19 @@ def health_request(address, port, path, timeout):
         if worker.is_alive():
             raise ExecutionError('Health worker cleanup failed')
 
-def run_service_pair(baseline, candidate, source, manifest, policy, output, repetitions=1):
+def run_service_pair(baseline, candidate, source, manifest, policy, output, repetitions=1, *, postgres=False):
     exact(source, {'baseline_sha256', 'candidate_sha256', 'baseline_root', 'candidate_root'})
     discovery = discover_pair(baseline, candidate, source['baseline_sha256'], source['candidate_sha256'],
                               source['baseline_root'], source['candidate_root'])
-    admit(manifest, discovery, policy, repetitions)
+    if postgres:
+        from preflight.postgres_lifecycle import admit_database, validate_seeds, PostgresWorld
+        admit_database(manifest, discovery, policy, repetitions)
+    else:
+        admit(manifest, discovery, policy, repetitions)
     admitted = {side: collect_archive(raw, source[side + '_sha256'], source[side + '_root'])
                 for side, raw in [('baseline', baseline), ('candidate', candidate)]}
+    if postgres:
+        validate_seeds(manifest, admitted)
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
     report = {'schema': 'wheel-service-lifecycle-result-v1', 'status': 'execution_error', 'worlds': [],
@@ -153,6 +159,7 @@ def run_service_pair(baseline, candidate, source, manifest, policy, output, repe
                     report['worlds'].append(world)
                     world_deadline = min(deadline, time.monotonic() + manifest['limits']['world_timeout_seconds'])
                     names, volume_created, network_created, service_created = [], False, False, False
+                    database = None
                     try:
                         checked(['volume', 'create', volume], budget())
                         volume_created = True
@@ -194,8 +201,15 @@ def run_service_pair(baseline, candidate, source, manifest, policy, output, repe
                         if checks_passed:
                             checked(['network', 'create', '--internal', network], budget())
                             network_created = True
+                            environment = []
+                            if postgres:
+                                database = PostgresWorld(manifest, admitted[side], network, identity, budget)
+                                names.append(database.name)
+                                world['database'] = database.start()
+                                world['snapshots'] = {'initial': database.snapshot()}
+                                environment = database.bindings()
                             names.append(service)
-                            checked(['create', *container_flags(manifest, service, volume, network=network, readonly_work=True),
+                            checked(['create', *container_flags(manifest, service, volume, network=network, readonly_work=True), *environment,
                                      '--workdir', workdir, '--entrypoint', runtime['start']['argv'][0], project['image'],
                                      *runtime['start']['argv'][1:]], budget())
                             service_created = True
@@ -227,21 +241,27 @@ def run_service_pair(baseline, candidate, source, manifest, policy, output, repe
                                     attempt = health_request(address, runtime['port'], runtime['health']['path'], max(0.01, min(2, ready_until - time.monotonic())))
                                 except (OSError, http.client.HTTPException) as error:
                                     attempt = {'error_type': type(error).__name__}
+                                if database and 'body_preview' in attempt:
+                                    attempt['body_preview'] = database.sanitize(attempt['body_preview'])
                                 world['health_attempts'].append(attempt)
                                 if attempt.get('status') == runtime['health']['status']:
                                     world['status'] = 'service_ready'
                                     break
                                 time.sleep(min(0.2, max(0, ready_until - time.monotonic())))
                             world['internal_network_verified'] = True
+                            if database:
+                                world['snapshots']['after_health'] = database.snapshot()
                             checked(['stop', '--time', '5', service], budget(10))
                             stopped = json.loads(checked(['inspect', '--format', '{{json .State}}', service], budget()))
                             if stopped['Running']:
                                 raise ExecutionError('Service did not stop')
                             world['stopped_before_cleanup'] = True
+                            if database:
+                                world['snapshots']['after_stop'] = database.snapshot()
                     except ExecutionError as error:
-                        world['error'] = str(error)
+                        world['error'] = database.sanitize(str(error)) if database else str(error)
                         log = side + '-' + str(trial) + '-execution-error.log'
-                        (output / log).write_text(error.output)
+                        (output / log).write_text(database.sanitize(error.output) if database else error.output)
                         world['error_log'] = log
                         raise
                     finally:
@@ -249,14 +269,20 @@ def run_service_pair(baseline, candidate, source, manifest, policy, output, repe
                             try:
                                 result = docker(['logs', service], 10)
                                 log = side + '-' + str(trial) + '-service.log'
-                                (output / log).write_text(result['output'])
+                                (output / log).write_text(database.sanitize(result['output']) if database else result['output'])
                                 world['service_log'] = log
                             except ExecutionError as error:
                                 log = side + '-' + str(trial) + '-service-partial.log'
-                                (output / log).write_text(error.output)
+                                (output / log).write_text(database.sanitize(error.output) if database else error.output)
                                 world['service_log'] = log
                                 world['status'] = 'execution_error'
-                                world['error'] = str(error)
+                                world['error'] = database.sanitize(str(error)) if database else str(error)
+                        if database:
+                            try:
+                                db_log = docker(['logs', database.name], 10)
+                                (output / (side+'-'+str(trial)+'-database.log')).write_text(database.sanitize(db_log['output']))
+                            except Exception:
+                                report['cleanup_errors'].append(database.name+'-logs')
                         for name in reversed(names):
                             try:
                                 if docker(['rm', '-f', name], 30)['returncode']:
@@ -289,6 +315,7 @@ def main():
     for name in ('baseline', 'candidate', 'source', 'manifest', 'policy', 'output'):
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--repetitions', type=int, default=1)
+    parser.add_argument('--postgres', action='store_true', help='Use reviewed disposable Postgres policy')
     args = parser.parse_args()
     def read(path, maximum):
         with path.open('rb') as stream:
@@ -299,7 +326,7 @@ def main():
     report = run_service_pair(read(args.baseline, 32 * 1024 * 1024), read(args.candidate, 32 * 1024 * 1024),
                               strict_json(read(args.source, 1024 * 1024).decode()),
                               strict_json(read(args.manifest, 1024 * 1024).decode()),
-                              strict_json(read(args.policy, 1024 * 1024).decode()), args.output, args.repetitions)
+                              strict_json(read(args.policy, 1024 * 1024).decode()), args.output, args.repetitions, postgres=args.postgres)
     print(json.dumps({'status': report['status'], 'worlds': len(report['worlds']), 'business_behavior_verified': False}))
     if report['status'] != 'service_lifecycle_passed':
         raise SystemExit(1)

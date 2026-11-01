@@ -1,0 +1,56 @@
+name: Disposable Postgres service controls
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'preflight/postgres_lifecycle.py'
+      - 'preflight/postgres_smoke.py'
+      - 'preflight/service_executor.py'
+      - 'preflight_tests/test_postgres_lifecycle.py'
+      - 'docs/POSTGRES_LIFECYCLE_V1.md'
+      - '.github/workflows/postgres-lifecycle.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'preflight/postgres_lifecycle.py'
+      - 'preflight/postgres_smoke.py'
+      - 'preflight/service_executor.py'
+      - 'preflight_tests/test_postgres_lifecycle.py'
+      - 'docs/POSTGRES_LIFECYCLE_V1.md'
+      - '.github/workflows/postgres-lifecycle.yml'
+permissions:
+  contents: read
+jobs:
+  database-controls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s preflight_tests -p test_postgres_lifecycle.py -v
+      - name: Resolve trusted control images on host
+        run: |
+          docker pull python:3.12-slim
+          docker pull eclipse-temurin:21-jdk
+          docker pull postgres:17
+          docker image inspect python:3.12-slim --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/python-image.txt"
+          docker image inspect eclipse-temurin:21-jdk --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/java-image.txt"
+          docker image inspect postgres:17 --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/postgres-image.txt"
+      - name: Java Python persistent state, fresh reset, read-only observer and failure controls
+        run: |
+          python -m preflight.postgres_smoke \
+            --python-image "$(cat "$RUNNER_TEMP/python-image.txt")" \
+            --java-image "$(cat "$RUNNER_TEMP/java-image.txt")" \
+            --postgres-image "$(cat "$RUNNER_TEMP/postgres-image.txt")" \
+            --output "$RUNNER_TEMP/postgres-controls"
+      - name: Retain evidence including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: postgres-service-controls
+          path: ${{ runner.temp }}/postgres-controls/
+          if-no-files-found: warn
