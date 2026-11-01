@@ -1,0 +1,142 @@
+{
+  "lock": {
+    "schema": "wheel-dependency-lock-v1",
+    "discovery_sha256": "a0ed1a377fc69aa5dbb04bd6106acededeb0ea57c4d24d09b5da53ec44d5c37b",
+    "purpose": "authored_acquisition_control",
+    "artifacts": [
+      {
+        "kind": "python_wheel",
+        "url": "https://files.pythonhosted.org/packages/88/ef/eb23f262cca3c0c4eb7ab1933c3b1f03d021f2c48f54763065b6f0e321be/packaging-24.2-py3-none-any.whl",
+        "sha256": "09abb1bccd265c01f4a3aa3f7a7db064b36514d2cba19a2f694fe6150451a759",
+        "size_bytes": 65451,
+        "destination": "python/wheels/packaging-24.2-py3-none-any.whl"
+      },
+      {
+        "kind": "maven_artifact",
+        "url": "https://repo.maven.apache.org/maven2/junit/junit/4.13.2/junit-4.13.2.jar",
+        "sha256": "8e495b634469d64fb8acfa3495a065cbacc8a0fff55ce1e31007be4c16dc57d3",
+        "size_bytes": 384581,
+        "destination": "maven/repository/junit/junit/4.13.2/junit-4.13.2.jar"
+      }
+    ]
+  },
+  "policy": {
+    "schema": "wheel-dependency-acquisition-policy-v1",
+    "lock_sha256": "f3b6d6713bfacd6e8c927c4031740723984b6248e8ccb2c6f285155ad4099ae8",
+    "allowed_urls": [
+      "https://files.pythonhosted.org/packages/88/ef/eb23f262cca3c0c4eb7ab1933c3b1f03d021f2c48f54763065b6f0e321be/packaging-24.2-py3-none-any.whl",
+      "https://repo.maven.apache.org/maven2/junit/junit/4.13.2/junit-4.13.2.jar"
+    ],
+    "total_timeout_seconds": 180,
+    "artifact_timeout_seconds": 60
+  },
+  "discovery": {
+    "schema": "wheel-project-discovery-v1",
+    "operation": "static_discovery_only",
+    "baseline_archive_sha256": "9453b9efbf35319822d9bc77f148f70dab10aa6b6fde53a5540a0a5b0933d41b",
+    "candidate_archive_sha256": "9453b9efbf35319822d9bc77f148f70dab10aa6b6fde53a5540a0a5b0933d41b",
+    "baseline": {
+      "status": "recognized_requires_configuration",
+      "source_file_counts": {
+        "java": 1,
+        "python": 1
+      },
+      "projects": [
+        {
+          "root": ".",
+          "manifest": "pom.xml",
+          "manifest_sha256": "618a333ca21cdc97fc758355c6127cb83ae2a1b0c892a8b7a1b726b02d378a54",
+          "status": "recognized",
+          "build_system": "maven",
+          "declared_modules": [],
+          "modules_resolved": false,
+          "build_extensions_evaluated": false
+        },
+        {
+          "root": ".",
+          "manifest": "pyproject.toml",
+          "manifest_sha256": "3d40283346efcd27c6909e18e49e3b3b3c1315b5d1cb4c8471c6017d0f246756",
+          "status": "recognized",
+          "build_system": "python_pyproject",
+          "declared_requires_python": null,
+          "declared_build_backend": null,
+          "metadata_executed": false,
+          "test_runner_inferred": false
+        }
+      ],
+      "files_total": 4,
+      "files_ignored_for_discovery": 0,
+      "source_identity_sha256": "cb1d79db85545a06a9013574ead11373124d9564d994732e9a3ea6812aac1f63",
+      "ready_for_execution": false,
+      "behavior_verified": false,
+      "blockers": [
+        "sandbox_execution_not_implemented_for_generic_projects",
+        "explicit_build_test_and_service_configuration_required",
+        "declared_business_expectations_and_observers_required",
+        "runtime_dependency_and_network_policy_required"
+      ]
+    },
+    "candidate": {
+      "status": "recognized_requires_configuration",
+      "source_file_counts": {
+        "java": 1,
+        "python": 1
+      },
+      "projects": [
+        {
+          "root": ".",
+          "manifest": "pom.xml",
+          "manifest_sha256": "618a333ca21cdc97fc758355c6127cb83ae2a1b0c892a8b7a1b726b02d378a54",
+          "status": "recognized",
+          "build_system": "maven",
+          "declared_modules": [],
+          "modules_resolved": false,
+          "build_extensions_evaluated": false
+        },
+        {
+          "root": ".",
+          "manifest": "pyproject.toml",
+          "manifest_sha256": "3d40283346efcd27c6909e18e49e3b3b3c1315b5d1cb4c8471c6017d0f246756",
+          "status": "recognized",
+          "build_system": "python_pyproject",
+          "declared_requires_python": null,
+          "declared_build_backend": null,
+          "metadata_executed": false,
+          "test_runner_inferred": false
+        }
+      ],
+      "files_total": 4,
+      "files_ignored_for_discovery": 0,
+      "source_identity_sha256": "cb1d79db85545a06a9013574ead11373124d9564d994732e9a3ea6812aac1f63",
+      "ready_for_execution": false,
+      "behavior_verified": false,
+      "blockers": [
+        "sandbox_execution_not_implemented_for_generic_projects",
+        "explicit_build_test_and_service_configuration_required",
+        "declared_business_expectations_and_observers_required",
+        "runtime_dependency_and_network_policy_required"
+      ]
+    },
+    "changes": [],
+    "project_code_executed": false,
+    "model_requests": 0,
+    "generic_execution_supported": false,
+    "source_uploaded_to_model": false
+  },
+  "provenance": {
+    "python": {
+      "url": "https://files.pythonhosted.org/packages/88/ef/eb23f262cca3c0c4eb7ab1933c3b1f03d021f2c48f54763065b6f0e321be/packaging-24.2-py3-none-any.whl",
+      "sha256": "09abb1bccd265c01f4a3aa3f7a7db064b36514d2cba19a2f694fe6150451a759",
+      "size_bytes": 65451,
+      "filename": "packaging-24.2-py3-none-any.whl",
+      "metadata_source": "https://pypi.org/pypi/packaging/24.2/json"
+    },
+    "java": {
+      "url": "https://repo.maven.apache.org/maven2/junit/junit/4.13.2/junit-4.13.2.jar",
+      "sha256": "8e495b634469d64fb8acfa3495a065cbacc8a0fff55ce1e31007be4c16dc57d3",
+      "size_bytes": 384581,
+      "upstream_sha1": "8ac9e16d933b6fb43bc7f576336b8f4d7eb5ba12",
+      "sha256_provenance": "computed from HTTPS bytes; upstream .sha1 agrees; .sha256 endpoint returned 404"
+    }
+  }
+}
