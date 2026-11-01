@@ -4,6 +4,9 @@ on:
     branches: [master]
     paths:
       - 'preflight/project_discovery.py'
+      - 'preflight/execution_manifest.py'
+      - 'preflight_tests/test_execution_manifest.py'
+      - 'docs/EXECUTION_MANIFEST_V1.md'
       - 'preflight_tests/test_project_discovery.py'
       - 'docs/GENERAL_JAVA_PYTHON_ROADMAP.md'
       - '.github/workflows/project-discovery.yml'
@@ -11,6 +14,9 @@ on:
     branches: [master]
     paths:
       - 'preflight/project_discovery.py'
+      - 'preflight/execution_manifest.py'
+      - 'preflight_tests/test_execution_manifest.py'
+      - 'docs/EXECUTION_MANIFEST_V1.md'
       - 'preflight_tests/test_project_discovery.py'
       - 'docs/GENERAL_JAVA_PYTHON_ROADMAP.md'
       - '.github/workflows/project-discovery.yml'
@@ -29,3 +35,5 @@ jobs:
           python-version: '3.12'
       - name: Discovery and fail-closed archive tests; no external execution or paid calls
         run: python -m unittest discover -s preflight_tests -p test_project_discovery.py -v
+      - name: Shared execution manifest validation only
+        run: python -m unittest discover -s preflight_tests -p test_execution_manifest.py -v

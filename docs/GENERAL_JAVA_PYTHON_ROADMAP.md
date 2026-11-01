@@ -113,9 +113,11 @@ synthetic layouts establish parser behavior only, not real project transfer.
 
 ## Next concrete work
 
-Define and validate the generic execution manifest before adding another fixture
-or model-specific workaround. Then validate isolated healthy execution for both
-languages. Only afterward version the complete investigator interface and
+The shared manifest shape/reference validator is now implemented in
+`preflight.execution_manifest` (see `EXECUTION_MANIFEST_V1.md`). It performs no
+execution and deliberately returns configuration-valid-but-unready. Next review
+the trusted image/command/network admission policy and implement the generic
+isolated executor, then validate healthy execution for both languages. Only afterward version the complete investigator interface and
 register a new investigation. Known PetClinic failures remain useful regression
 inputs, but repeating them cannot establish unfamiliar discovery or independent
 repair ability. A healthy control must be validated before it is used as a control;
