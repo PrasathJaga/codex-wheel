@@ -142,3 +142,13 @@ calling this subset runtime-verified; this does not complete the full Stage 3 ga
 service on a fresh internal network; see `SERVICE_EXECUTOR_V1.md`. This is health,
 startup and shutdown evidence only. Dependency fetching, databases, persistence
 observers and generic investigation remain separate gates.
+
+## Generic bounded HTTP experiment increment
+
+`preflight.http_experiment` adds the shared closed tool/plan schema, source and
+trusted policy binding, declared HTTP expectations and independent checking;
+`preflight.service_executor --experiment` connects it to paired fresh execution.
+See `HTTP_EXPERIMENT_V1.md`. This is supplied-plan execution, not Meta selection,
+automatic source extraction, persistence grading, repair or unfamiliar evaluation.
+The next stage must use the complete tool schema for bounded source-aware selection
+and preserve every result rather than add fixture-specific hints or response aliases.

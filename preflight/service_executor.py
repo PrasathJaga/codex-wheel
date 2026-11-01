@@ -115,7 +115,7 @@ def health_request(address, port, path, timeout):
         if worker.is_alive():
             raise ExecutionError('Health worker cleanup failed')
 
-def run_service_pair(baseline, candidate, source, manifest, policy, output, repetitions=1, *, postgres=False):
+def run_service_pair(baseline, candidate, source, manifest, policy, output, repetitions=1, *, postgres=False, experiment=None):
     exact(source, {'baseline_sha256', 'candidate_sha256', 'baseline_root', 'candidate_root'})
     discovery = discover_pair(baseline, candidate, source['baseline_sha256'], source['candidate_sha256'],
                               source['baseline_root'], source['candidate_root'])
@@ -128,12 +128,18 @@ def run_service_pair(baseline, candidate, source, manifest, policy, output, repe
                 for side, raw in [('baseline', baseline), ('candidate', candidate)]}
     if postgres:
         validate_seeds(manifest, admitted)
+    if experiment is not None:
+        from preflight.http_experiment import admit_experiment
+        experiment = admit_experiment(manifest, policy, admitted, experiment)
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
     report = {'schema': 'wheel-service-lifecycle-result-v1', 'status': 'execution_error', 'worlds': [],
               'source': source, 'manifest_sha256': digest(manifest), 'policy_sha256': digest(policy),
               'discovery_sha256': digest(discovery), 'cleanup_errors': [],
               'model_requests': 0, 'business_behavior_verified': False}
+    if experiment is not None:
+        report['experiment_sha256'] = digest(experiment)
+        (output / 'experiment.json').write_text(json.dumps(experiment, indent=2) + '\n')
     deadline = time.monotonic() + policy['total_timeout_seconds']
     world_deadline = deadline
     def budget(limit=30):
@@ -251,6 +257,14 @@ def run_service_pair(baseline, candidate, source, manifest, policy, output, repe
                             world['internal_network_verified'] = True
                             if database:
                                 world['snapshots']['after_health'] = database.snapshot()
+                            if experiment is not None and world['status'] == 'service_ready':
+                                from preflight.http_experiment import execute
+                                address = endpoint(service, network)
+                                world['experiment'] = execute(experiment, address, runtime['port'], budget(60))
+                                if world['experiment']['status'] == 'execution_error':
+                                    raise ExecutionError('Bounded HTTP experiment failed: ' + world['experiment']['error'])
+                            if database and experiment is not None:
+                                world['snapshots']['after_experiment'] = database.snapshot()
                             checked(['stop', '--time', '5', service], budget(10))
                             stopped = json.loads(checked(['inspect', '--format', '{{json .State}}', service], budget()))
                             if stopped['Running']:
@@ -299,10 +313,17 @@ def run_service_pair(baseline, candidate, source, manifest, policy, output, repe
                         (output / 'result.json').write_text(json.dumps(report, indent=2) + '\n')
                     if report['cleanup_errors'] or world['status'] == 'execution_error':
                         raise ExecutionError('Service infrastructure or cleanup failure')
-                    if side == 'baseline' and world['status'] != 'service_ready':
+                    if side == 'baseline' and (world['status'] != 'service_ready' or
+                            experiment is not None and world.get('experiment', {}).get('status') != 'contract_satisfied'):
                         report['status'] = 'baseline_invalid'
                         return report
             report['status'] = 'service_lifecycle_passed' if all(w['status'] == 'service_ready' for w in report['worlds']) else 'candidate_lifecycle_failed'
+            if experiment is not None and report['status'] == 'service_lifecycle_passed':
+                verdicts = [w['experiment']['status'] for w in report['worlds'] if w['side'] == 'candidate']
+                report['status'] = ('no_violation_observed' if all(v == 'contract_satisfied' for v in verdicts) else
+                                    ('confirmed_contract_violation' if repetitions >= 2 else 'observed_contract_violation')
+                                    if all(v == 'contract_violated' for v in verdicts) else 'inconclusive')
+                report['approved_http_expectations_checked'] = True
     except Exception as error:
         report.update(status='execution_error', error_type=type(error).__name__, error=str(error)[:500])
     finally:
@@ -315,6 +336,7 @@ def main():
     for name in ('baseline', 'candidate', 'source', 'manifest', 'policy', 'output'):
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--repetitions', type=int, default=1)
+    parser.add_argument('--experiment', type=Path, help='Trusted frozen interface/contract/plan/policy bundle')
     parser.add_argument('--postgres', action='store_true', help='Use reviewed disposable Postgres policy')
     args = parser.parse_args()
     def read(path, maximum):
@@ -326,9 +348,10 @@ def main():
     report = run_service_pair(read(args.baseline, 32 * 1024 * 1024), read(args.candidate, 32 * 1024 * 1024),
                               strict_json(read(args.source, 1024 * 1024).decode()),
                               strict_json(read(args.manifest, 1024 * 1024).decode()),
-                              strict_json(read(args.policy, 1024 * 1024).decode()), args.output, args.repetitions, postgres=args.postgres)
+                              strict_json(read(args.policy, 1024 * 1024).decode()), args.output, args.repetitions, postgres=args.postgres,
+                              experiment=strict_json(read(args.experiment, 1024 * 1024).decode()) if args.experiment else None)
     print(json.dumps({'status': report['status'], 'worlds': len(report['worlds']), 'business_behavior_verified': False}))
-    if report['status'] != 'service_lifecycle_passed':
+    if report['status'] not in ('service_lifecycle_passed', 'no_violation_observed'):
         raise SystemExit(1)
 
 
