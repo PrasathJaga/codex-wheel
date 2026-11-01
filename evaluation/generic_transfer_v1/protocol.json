@@ -1,0 +1,28 @@
+{
+  "schema": "wheel-generic-transfer-protocol-v1",
+  "implementation_sha256": "b414cc4e2810d4c46964546fc3f0058ea45acb964d7c0529c83fe91d81e4f768",
+  "comparison_runner_sha256": "b8ee1c8fe21c059858e4b21a2827316346606259ef5d72519b04731c01e5a53c",
+  "frozen_revision": "848d02d807eea22f6b72a5ea257160b371284fe4",
+  "case_limit": 2,
+  "methods": [
+    "source_aware_conventional",
+    "wheel_meta"
+  ],
+  "per_method": {
+    "lifecycle_worlds": 2,
+    "selected_plans": 1,
+    "paired_trials": 2,
+    "max_experiment_actions": 8,
+    "max_worlds": 6
+  },
+  "paid_budget": {
+    "per_meta_case_max_requests": 2,
+    "total_max_requests": 4,
+    "total_max_completion_tokens": 40000
+  },
+  "comparison_preparation": "same exact source context, interface, contract and tool schema; preparation kind/effort disclosed",
+  "independence": "external evidence review required; declaration alone is not proof",
+  "automatic_paid_execution": false,
+  "repair_in_scope": false,
+  "history_retained": true
+}
