@@ -1,0 +1,31 @@
+name: Generic Java Python project discovery
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'preflight/project_discovery.py'
+      - 'preflight_tests/test_project_discovery.py'
+      - 'docs/GENERAL_JAVA_PYTHON_ROADMAP.md'
+      - '.github/workflows/project-discovery.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'preflight/project_discovery.py'
+      - 'preflight_tests/test_project_discovery.py'
+      - 'docs/GENERAL_JAVA_PYTHON_ROADMAP.md'
+      - '.github/workflows/project-discovery.yml'
+permissions:
+  contents: read
+jobs:
+  static-discovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Discovery and fail-closed archive tests; no external execution or paid calls
+        run: python -m unittest discover -s preflight_tests -p test_project_discovery.py -v
