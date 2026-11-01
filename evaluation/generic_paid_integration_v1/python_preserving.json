@@ -1,0 +1,137 @@
+{
+  "baseline_base64": "H4sIAOCf52oC/+3UQUvDMBQH8J77KUIvbWHrUq0yJr0IokfR3URG176yStrUJFWH+N1Nu8lgCF50iP5/PaS890Lapi9adiqnSbtulXyg3ERG1sL5Xtw6TZJhtPZHmzze3ffx+Cg+5Q7jzgF02mTKLu/8T3fbfb93m6ym1FsZ047phfLOVLIZ57IxSgrPfSKlbSD1uOfA36E3/a9J2R2O2vVPrPFV/ycnyV7/x/Ex+v8gSiVr1jd9tPkFWFW3Uhl2nmm6ms+vb+ixI22usqYQpEasj90OlW4uMq3ZNhN8PiGcuaygkhVycXkxDzSJsg+xpSzW6dJfUSbMau2zqmR9Lmozs0pTf7JJ+IyEJrb0X72nTHTkzZI3384eSjU1xUKRbmWjKTjiPDwb4n3YTi/sgRVsQ89lJSh6VpWhoF85dHevEQQ+j4bLH035lIejj0fffJFFKRX1daGL0wIAAAAAAAAAAAAAAAAAAAB+o3c1Lf+iACgAAA==",
+  "candidate_base64": "H4sIAOCf52oC/+3UQUvDMBQH8J77KUIvbWHrUq0yJr0IokfR3URG176yStrUJFWH+N1Nu8lgCF50iP5/PaS890Lapi9adiqnSbtulXyg3ERG1sL5Xtw6TZJhtPZHmzze3ffx+Cg+5Q7jzgF02mTKLu/8T3fbfb93m6ym1FsZ047phfLOVLIZ57IxSgrPfSKlbSD1uOfA36E3/a9J2R2O2vVPrPFV/ycnyV7/x/Ex+v8gSiVr1jd9tPkFWFW3Uhl2nmm6ms+vb+ixI22usqYQpEasj90OlW4uMq3ZNhN8PiGcuaygkhVycXkxDzSJsg+xpSzW6dJfUSbMau2zqmR9Lmozs0pTf7JJ+IyEJrb0X72nTHTkzZI3384eSjU1xUKRbmWjKTjiPDwb4n3YTi/sgRVsQ89lJSh6VpWhoF85dHevEQQ+j4bLH035lIejj0fffJFFKRX1daGL0wIAAAAAAAAAAAAAAAAAAAB+o3c1Lf+iACgAAA==",
+  "source": {
+    "baseline_sha256": "da22c2ecd9648ed93ee73ad7226eb9c83a867f28661d728012bfb521096caeb0",
+    "candidate_sha256": "da22c2ecd9648ed93ee73ad7226eb9c83a867f28661d728012bfb521096caeb0",
+    "baseline_root": "source",
+    "candidate_root": "source"
+  },
+  "manifest": {
+    "schema": "wheel-execution-manifest-v1",
+    "discovery_sha256": "775c2bd767ca34b992773de9998b09af0b1514c4a9463db65889235ac9593b73",
+    "projects": [
+      {
+        "id": "service",
+        "root": ".",
+        "language": "python",
+        "image": "python@sha256:aa943ce411423c7582288f18707ff66eddcbaeb510502d747a72aeb34f30d159",
+        "build": [],
+        "test": [
+          {
+            "argv": [
+              "python",
+              "-m",
+              "py_compile",
+              "server.py"
+            ],
+            "timeout_seconds": 60
+          }
+        ],
+        "service": {
+          "start": {
+            "argv": [
+              "python",
+              "server.py"
+            ],
+            "timeout_seconds": 90
+          },
+          "port": 8080,
+          "health": {
+            "path": "/health",
+            "status": 200,
+            "timeout_seconds": 40
+          },
+          "environment_bindings": []
+        }
+      }
+    ],
+    "dependencies": [],
+    "observers": [],
+    "limits": {
+      "cpu_millis": 1000,
+      "memory_mb": 512,
+      "pids": 128,
+      "world_timeout_seconds": 180
+    },
+    "network": {
+      "build": "reviewed_dependency_fetch_only",
+      "runtime": "internal_only"
+    },
+    "reset": "fresh_environment_per_world"
+  },
+  "lifecycle": {
+    "schema": "wheel-service-execution-policy-v1",
+    "manifest_sha256": "220fcc6b3af3450f316b3fabc56db3db223d16ae85901f03ba9fd139756ca3e8",
+    "allowed_images": [
+      "python@sha256:aa943ce411423c7582288f18707ff66eddcbaeb510502d747a72aeb34f30d159"
+    ],
+    "max_repetitions": 2,
+    "total_timeout_seconds": 600
+  },
+  "interface": {
+    "schema": "wheel-http-interface-v1",
+    "manifest_sha256": "220fcc6b3af3450f316b3fabc56db3db223d16ae85901f03ba9fd139756ca3e8",
+    "operations": [
+      {
+        "id": "read_value",
+        "method": "GET",
+        "path": "/value",
+        "body_schema": null,
+        "source_refs": [
+          {
+            "side": "baseline",
+            "path": "server.py",
+            "line_start": 1,
+            "line_end": 5
+          },
+          {
+            "side": "candidate",
+            "path": "server.py",
+            "line_start": 1,
+            "line_end": 5
+          }
+        ]
+      }
+    ]
+  },
+  "contract": {
+    "schema": "wheel-http-contract-v1",
+    "manifest_sha256": "220fcc6b3af3450f316b3fabc56db3db223d16ae85901f03ba9fd139756ca3e8",
+    "provenance": {
+      "kind": "developer_declared",
+      "reference": "Authored runtime control: /value returns integer value 4"
+    },
+    "checks": [
+      {
+        "operation": "read_value",
+        "statuses": [
+          200
+        ],
+        "json_equals": [
+          {
+            "path": [
+              "value"
+            ],
+            "value": 4
+          }
+        ]
+      }
+    ]
+  },
+  "case_id": "python_preserving",
+  "language": "python",
+  "policy": {
+    "schema": "wheel-generic-investigation-policy-v1",
+    "attempt_id": "python_preserving",
+    "implementation_sha256": "b414cc4e2810d4c46964546fc3f0058ea45acb964d7c0529c83fe91d81e4f768",
+    "source_sha256": "378a38602e5b2113912ad09d0f2bbcaed8653244472125c5fb4de61630233e5e",
+    "lifecycle_policy_sha256": "384a390642f3ae095ec6c11f02c1294b719a1231e26687e61f83854f70946314",
+    "interface_sha256": "01343cee3a063eec10bc774efdc9db95c8cba620979831dce6131098eeb63bf2",
+    "contract_sha256": "794f1078b46a5f1d9eb0b13cec59aa52b7c26ce64d51cc96eaaf3daa8fddd125",
+    "source_paths": [
+      "server.py"
+    ],
+    "paid_execution_enabled": true
+  }
+}
