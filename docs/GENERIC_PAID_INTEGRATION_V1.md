@@ -84,7 +84,61 @@ evidence reference validity alone does not prove a causal explanation correct.
 The independent checker owns the verdict; diagnosis cannot overwrite it. Compare
 against the separately committed known expectations, without altering either.
 
-This PR registers and launches integration. Results are pending until the real run
-and artifact audit complete. The earlier failed PetClinic paid pilot remains
+This PR registers integration and records the completed run and artifact audit
+below. The earlier failed PetClinic paid pilot remains
 unchanged counterevidence. The broader roadmap still requires credible unfamiliar
 comparisons, independent preparation, route extraction and bounded repair.
+
+## Completed run and offline audit
+
+Run: https://github.com/PrasathJaga/codex-wheel/actions/runs/41346828931
+
+Artifact 13099805978, ZIP SHA256
+`d1c3d479c0409874b93c72d842c867f67d9a69354ff4ae52d1c63434df14d204`.
+The launch used committed head `edd7d6112a16603bb13d75f86a32f692069b9749`.
+
+| Known control | Original result | Paid requests | Diagnosis |
+| --- | --- | --- | --- |
+| Python preserving | inconclusive: model abstained | 1 | not requested |
+| Python violating | confirmed_contract_violation | 2 | references validated |
+| Java preserving | no_violation_observed | 2 | references validated |
+| Java violating | confirmed_contract_violation | 2 | references validated |
+
+Seven real Standard Muse Spark requests completed, within the eight-request cap.
+Reported usage totals: 8,839 prompt + 7,071 completion = 15,910 tokens. Existing
+receipt-based token estimate: **US$0.0411005**. No provider invoice/credit balance
+was verified. Twenty worlds were attempted: eight lifecycle prerequisite worlds
+and twelve worlds for the three admitted experiments. There was no retry or
+additional selection to correct the abstention. No process module changed.
+
+For each violating control the independent checker observed HTTP 200 with value 4
+on baseline and value 5 on candidate in both paired trials. Java preserving
+returned 4 on both revisions. All three diagnoses referenced the recorded source
+and four execution observations, with scoped limitations; reference validation
+is not independent proof of causal reasoning quality.
+
+Python preserving abstained, claiming the plan interface/contract hashes did not
+match manifest hashes and also citing the empty diff. The replay confirms the
+schema constants correctly equal the *interface/contract* digests; those hashes
+are not required to equal the manifest digest. Preserve the model's mistaken
+hash rationale rather than changing inputs or counting the abstention as a
+successful no-violation result. It remains inconclusive. Raw selection text is
+retained in the artifact and the machine report.
+
+The offline auditor replays registered source preparation, original model-input
+identity, proposal/schema/source admission, frozen execution hashes, stored HTTP
+checks, diagnosis evidence/citation references and usage accounting. It makes no
+Docker or API calls. Run it against the downloaded ZIP using the committed
+implementation revision:
+
+```bash
+python -m evaluation.generic_paid_integration_v1.audit \
+  --archive /path/to/generic-meta-integration-v1.zip --output /tmp/integration-audit.json
+```
+
+`results.json` is the committed machine audit. These tiny known controls establish
+real model/schema/runtime integration for three admitted experiments, plus a
+preserved abstention. They establish neither useful unfamiliar discovery nor
+superiority over conventional tests, general repair or general Java/Python support.
+The next evaluation must retain a credible conventional comparison and unfamiliar
+independently prepared changes; do not relabel these controls as that evaluation.
