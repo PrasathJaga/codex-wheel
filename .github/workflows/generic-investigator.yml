@@ -1,0 +1,50 @@
+name: Generic investigator orchestration controls
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'preflight/generic_investigator*.py'
+      - 'preflight_tests/test_generic_investigator.py'
+      - 'docs/GENERIC_INVESTIGATOR_V1.md'
+      - '.github/workflows/generic-investigator.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'preflight/generic_investigator*.py'
+      - 'preflight_tests/test_generic_investigator.py'
+      - 'docs/GENERIC_INVESTIGATOR_V1.md'
+      - '.github/workflows/generic-investigator.yml'
+permissions:
+  contents: read
+jobs:
+  unpaid-controls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Strict proposal and evidence admission tests
+        run: python -m unittest discover -s preflight_tests -p test_generic_investigator.py -v
+      - name: Resolve public control images on trusted host
+        run: |
+          docker pull python:3.12-slim
+          docker pull eclipse-temurin:21-jdk
+          docker image inspect python:3.12-slim --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/python-image.txt"
+          docker image inspect eclipse-temurin:21-jdk --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/java-image.txt"
+      - name: Real Java Python execution with explicit model test doubles; no SDK or keys
+        run: |
+          python -m preflight.generic_investigator_smoke \
+            --python-image "$(cat "$RUNNER_TEMP/python-image.txt")" \
+            --java-image "$(cat "$RUNNER_TEMP/java-image.txt")" \
+            --output "$RUNNER_TEMP/investigator-controls"
+      - name: Preserve all orchestration controls
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: generic-investigator-controls
+          path: ${{ runner.temp }}/investigator-controls/
+          if-no-files-found: warn
