@@ -152,3 +152,13 @@ See `HTTP_EXPERIMENT_V1.md`. This is supplied-plan execution, not Meta selection
 automatic source extraction, persistence grading, repair or unfamiliar evaluation.
 The next stage must use the complete tool schema for bounded source-aware selection
 and preserve every result rather than add fixture-specific hints or response aliases.
+
+## Generic investigator orchestration increment
+
+`preflight.generic_investigator` connects source-scoped selection, frozen HTTP
+experiments and evidence-referenced diagnosis through one process for both
+languages. See `GENERIC_INVESTIGATOR_V1.md`. Its unpaid orchestration controls do
+not establish real Meta effectiveness. The next gate is a precommitted bounded
+paid integration validation, followed by unfamiliar evaluation with all outcomes
+retained. Automatic route extraction, persistence predicates and repair remain
+unsupported; no historical failed evaluation is replaced.
