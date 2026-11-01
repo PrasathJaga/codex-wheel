@@ -1,0 +1,39 @@
+{
+  "schema": "wheel-external-candidate-catalog-v1",
+  "classification": "historical_upstream_intake_not_blind_evaluation",
+  "runtime_cases_registered": 0,
+  "new_model_requests": 0,
+  "wheel_source_exported": false,
+  "candidates": [
+    {
+      "id": "spring_record_refactor",
+      "source": "spring-guides/gs-rest-service",
+      "status": "source_verified_runtime_and_review_pending"
+    },
+    {
+      "id": "httpbin_status_fix",
+      "source": "postmanlabs/httpbin",
+      "status": "source_verified_baseline_direction_and_legacy_runtime_review_pending"
+    }
+  ],
+  "rejected_during_screening": [
+    {
+      "repo": "bottlepy/bottle",
+      "pr": 1226,
+      "url": "https://github.com/bottlepy/bottle/pull/1226",
+      "reason": "Changes Allow header; frozen contract has status/JSON assertions but no response-header assertions."
+    },
+    {
+      "repo": "bottlepy/bottle",
+      "pr": 1454,
+      "url": "https://github.com/bottlepy/bottle/pull/1454",
+      "reason": "Changes exception attachment for malformed JSON; frozen schema emits valid structured JSON, not arbitrary malformed bodies or exception inspection."
+    },
+    {
+      "repo": "NanoHttpd/nanohttpd",
+      "pr": 525,
+      "url": "https://github.com/NanoHttpd/nanohttpd/pull/525",
+      "reason": "Stream-close behavior on send failure requires transport fault/resource observation not supported by frozen HTTP experiment."
+    }
+  ]
+}

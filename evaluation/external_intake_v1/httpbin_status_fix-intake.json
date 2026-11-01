@@ -1,0 +1,149 @@
+{
+  "schema": "wheel-external-source-intake-v1",
+  "id": "httpbin_status_fix",
+  "descriptor_sha256": "a1d65e449f46e9360e1031e7f92835f585ba32cfad7bdf5bb21dbde3976344b8",
+  "repo": "postmanlabs/httpbin",
+  "source_reference": "https://github.com/postmanlabs/httpbin/pull/330",
+  "origin": "historical_bugfix",
+  "source_integrity_verified": true,
+  "source_pair_direction": "upstream_parent_to_committed_change",
+  "source": {
+    "baseline": {
+      "archive_sha256": "1ed41083dd9e07375e0b7a70cba1830652a1ca4d851dd4ab3910172fa62dc3b8",
+      "revision": "a22fc1fb65adf8dda9888663a7e778e58c9b83e6",
+      "discovery": {
+        "status": "recognized_requires_configuration",
+        "source_file_counts": {
+          "java": 0,
+          "python": 8
+        },
+        "projects": [
+          {
+            "root": ".",
+            "manifest": "requirements.txt",
+            "manifest_sha256": "e6e3957d8b67ed73ac17d941e7a36225fa782ad89ed7207f9a0140b9f93acb6e",
+            "status": "requires_configuration",
+            "build_system": "python_dependencies_only",
+            "reason": "not_evaluated_or_sufficient_for_execution"
+          },
+          {
+            "root": ".",
+            "manifest": "setup.cfg",
+            "manifest_sha256": "e4bd33cba1e9779df4fe84fc34e92a4c43a4adcbcfe4b937ae1302bd3e73d4b8",
+            "status": "requires_configuration",
+            "build_system": "python_setup",
+            "reason": "not_evaluated_or_sufficient_for_execution"
+          },
+          {
+            "root": ".",
+            "manifest": "setup.py",
+            "manifest_sha256": "d95f9e856bb4c58fbefbd34fcd7a52d0fae4b1b3948816bde350e5c5cc0b72b9",
+            "status": "requires_configuration",
+            "build_system": "python_setup",
+            "reason": "not_evaluated_or_sufficient_for_execution"
+          }
+        ],
+        "files_total": 31,
+        "files_ignored_for_discovery": 0,
+        "source_identity_sha256": "40b32dbfb32bd03fbac466d8b4284cf51391d84aff58818db613ff1bb7ce3f5f",
+        "ready_for_execution": false,
+        "behavior_verified": false,
+        "blockers": [
+          "sandbox_execution_not_implemented_for_generic_projects",
+          "explicit_build_test_and_service_configuration_required",
+          "declared_business_expectations_and_observers_required",
+          "runtime_dependency_and_network_policy_required"
+        ]
+      }
+    },
+    "candidate": {
+      "archive_sha256": "3818197942334a7733de29357e70bc4249fef9488f36279039d793ad6f6a1a7e",
+      "revision": "3fe84ea4760172f2ce2fde709127c3814fa0e88f",
+      "discovery": {
+        "status": "recognized_requires_configuration",
+        "source_file_counts": {
+          "java": 0,
+          "python": 8
+        },
+        "projects": [
+          {
+            "root": ".",
+            "manifest": "requirements.txt",
+            "manifest_sha256": "e6e3957d8b67ed73ac17d941e7a36225fa782ad89ed7207f9a0140b9f93acb6e",
+            "status": "requires_configuration",
+            "build_system": "python_dependencies_only",
+            "reason": "not_evaluated_or_sufficient_for_execution"
+          },
+          {
+            "root": ".",
+            "manifest": "setup.cfg",
+            "manifest_sha256": "e4bd33cba1e9779df4fe84fc34e92a4c43a4adcbcfe4b937ae1302bd3e73d4b8",
+            "status": "requires_configuration",
+            "build_system": "python_setup",
+            "reason": "not_evaluated_or_sufficient_for_execution"
+          },
+          {
+            "root": ".",
+            "manifest": "setup.py",
+            "manifest_sha256": "d95f9e856bb4c58fbefbd34fcd7a52d0fae4b1b3948816bde350e5c5cc0b72b9",
+            "status": "requires_configuration",
+            "build_system": "python_setup",
+            "reason": "not_evaluated_or_sufficient_for_execution"
+          }
+        ],
+        "files_total": 31,
+        "files_ignored_for_discovery": 0,
+        "source_identity_sha256": "45455119de201fb6e4e106f786aaa0e290efbfdc9a25fce9b411b52e59d9f93b",
+        "ready_for_execution": false,
+        "behavior_verified": false,
+        "blockers": [
+          "sandbox_execution_not_implemented_for_generic_projects",
+          "explicit_build_test_and_service_configuration_required",
+          "declared_business_expectations_and_observers_required",
+          "runtime_dependency_and_network_policy_required"
+        ]
+      }
+    }
+  },
+  "changed_files": [
+    {
+      "path": "README.rst",
+      "kind": "modified",
+      "baseline_sha256": "3affa3b27d91724ab4ed1b8cc647605575c145be53b09916b4a354592d250b54",
+      "candidate_sha256": "a7ee45deaa5bf48ea410c18a609cc357b3f49a6053bbdc73269932048725d295"
+    },
+    {
+      "path": "httpbin/core.py",
+      "kind": "modified",
+      "baseline_sha256": "672b3b55ba56292e4fb30fa63bec70eb2b923b0a212afae1ac3e2347752fcf59",
+      "candidate_sha256": "95623bacd360f5ffa77c45bbe8ad561e097ffd8c894de8fd7a0afa270a67566e"
+    },
+    {
+      "path": "test_httpbin.py",
+      "kind": "modified",
+      "baseline_sha256": "3ba4e7ec924ee7e9d72a2019add0eaefcd0d3a42f6b2033ade371c3380f3cbaa",
+      "candidate_sha256": "653ef206005689564273b0a654f853a4fecc5728ea48f15e9faaba91941e2abe"
+    }
+  ],
+  "test_paths_changed": [
+    "test_httpbin.py"
+  ],
+  "comparison_eligible": false,
+  "blockers": [
+    "historical_fix_baseline_may_violate_fixed_behavior_expectation",
+    "legacy_runtime_compatibility_not_verified",
+    "runtime_dependencies_not_locked",
+    "native_build_tests_not_executed",
+    "HTTP_expectations_require_review",
+    "external_adapter_provenance_review_missing"
+  ],
+  "independent_case_preparation_verified": false,
+  "project_code_executed": false,
+  "model_requests": 0,
+  "wheel_source_exported": false,
+  "limitations": [
+    "Source identity verification is not runtime validation.",
+    "Upstream authorship does not verify independent adapter preparation.",
+    "Published historical outcomes are already known, not blind discovery."
+  ]
+}

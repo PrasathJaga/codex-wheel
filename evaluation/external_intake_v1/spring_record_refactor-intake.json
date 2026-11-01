@@ -1,0 +1,165 @@
+{
+  "schema": "wheel-external-source-intake-v1",
+  "id": "spring_record_refactor",
+  "descriptor_sha256": "e0d690bccb0b80797c9567bb611b9d51679de05faa384e96565a413d4592941b",
+  "repo": "spring-guides/gs-rest-service",
+  "source_reference": "https://github.com/spring-guides/gs-rest-service/commit/e03c1e1564715197d3ccaf383f10e7fcebbf2de2",
+  "origin": "historical_preserving_refactor",
+  "source_integrity_verified": true,
+  "source_pair_direction": "upstream_parent_to_committed_change",
+  "source": {
+    "baseline": {
+      "archive_sha256": "6b3c4d2a3777232fa6cb70295f39d0f5dddd2a0c52fb07a32dc519af6bce337a",
+      "revision": "9ed28134892e3218e518fd98f76dcc128af916dc",
+      "discovery": {
+        "status": "recognized_requires_configuration",
+        "source_file_counts": {
+          "java": 6,
+          "python": 0
+        },
+        "projects": [
+          {
+            "root": "complete",
+            "manifest": "complete/build.gradle",
+            "manifest_sha256": "7c19cfabd31dcb511a62cf479f81e3efc7dd382cc3ba20d9d5b4e51a9c3c68d5",
+            "status": "requires_configuration",
+            "build_system": "gradle",
+            "reason": "not_evaluated_or_sufficient_for_execution"
+          },
+          {
+            "root": "complete",
+            "manifest": "complete/pom.xml",
+            "manifest_sha256": "0b6edd9305c7dd3c647f390628a9db7ac69abca6ed0d1188c388d171e8f5d247",
+            "status": "recognized",
+            "build_system": "maven",
+            "declared_modules": [],
+            "modules_resolved": false,
+            "build_extensions_evaluated": false
+          },
+          {
+            "root": "initial",
+            "manifest": "initial/build.gradle",
+            "manifest_sha256": "7c19cfabd31dcb511a62cf479f81e3efc7dd382cc3ba20d9d5b4e51a9c3c68d5",
+            "status": "requires_configuration",
+            "build_system": "gradle",
+            "reason": "not_evaluated_or_sufficient_for_execution"
+          },
+          {
+            "root": "initial",
+            "manifest": "initial/pom.xml",
+            "manifest_sha256": "d1cbf1c7450cdc09bb15a414cd7a8a9f766767e555438dd57fda590305e76485",
+            "status": "recognized",
+            "build_system": "maven",
+            "declared_modules": [],
+            "modules_resolved": false,
+            "build_extensions_evaluated": false
+          }
+        ],
+        "files_total": 37,
+        "files_ignored_for_discovery": 0,
+        "source_identity_sha256": "91d311652fdf36640d3c757faf2c809342f9979eaac83b3f752990f5837bdab4",
+        "ready_for_execution": false,
+        "behavior_verified": false,
+        "blockers": [
+          "sandbox_execution_not_implemented_for_generic_projects",
+          "explicit_build_test_and_service_configuration_required",
+          "declared_business_expectations_and_observers_required",
+          "runtime_dependency_and_network_policy_required",
+          "multiple_project_roots_require_explicit_selection"
+        ]
+      }
+    },
+    "candidate": {
+      "archive_sha256": "a4658d8aa5987be835d565c692d8a257909d1fc05caab00bf2babe58f0fabed5",
+      "revision": "e03c1e1564715197d3ccaf383f10e7fcebbf2de2",
+      "discovery": {
+        "status": "recognized_requires_configuration",
+        "source_file_counts": {
+          "java": 6,
+          "python": 0
+        },
+        "projects": [
+          {
+            "root": "complete",
+            "manifest": "complete/build.gradle",
+            "manifest_sha256": "7c19cfabd31dcb511a62cf479f81e3efc7dd382cc3ba20d9d5b4e51a9c3c68d5",
+            "status": "requires_configuration",
+            "build_system": "gradle",
+            "reason": "not_evaluated_or_sufficient_for_execution"
+          },
+          {
+            "root": "complete",
+            "manifest": "complete/pom.xml",
+            "manifest_sha256": "0b6edd9305c7dd3c647f390628a9db7ac69abca6ed0d1188c388d171e8f5d247",
+            "status": "recognized",
+            "build_system": "maven",
+            "declared_modules": [],
+            "modules_resolved": false,
+            "build_extensions_evaluated": false
+          },
+          {
+            "root": "initial",
+            "manifest": "initial/build.gradle",
+            "manifest_sha256": "7c19cfabd31dcb511a62cf479f81e3efc7dd382cc3ba20d9d5b4e51a9c3c68d5",
+            "status": "requires_configuration",
+            "build_system": "gradle",
+            "reason": "not_evaluated_or_sufficient_for_execution"
+          },
+          {
+            "root": "initial",
+            "manifest": "initial/pom.xml",
+            "manifest_sha256": "d1cbf1c7450cdc09bb15a414cd7a8a9f766767e555438dd57fda590305e76485",
+            "status": "recognized",
+            "build_system": "maven",
+            "declared_modules": [],
+            "modules_resolved": false,
+            "build_extensions_evaluated": false
+          }
+        ],
+        "files_total": 37,
+        "files_ignored_for_discovery": 0,
+        "source_identity_sha256": "159f3aa056fba133285ccf7cab220cb44cc77b81047ecfd0fc874d3c438246d4",
+        "ready_for_execution": false,
+        "behavior_verified": false,
+        "blockers": [
+          "sandbox_execution_not_implemented_for_generic_projects",
+          "explicit_build_test_and_service_configuration_required",
+          "declared_business_expectations_and_observers_required",
+          "runtime_dependency_and_network_policy_required",
+          "multiple_project_roots_require_explicit_selection"
+        ]
+      }
+    }
+  },
+  "changed_files": [
+    {
+      "path": "README.adoc",
+      "kind": "modified",
+      "baseline_sha256": "dca44bc99498f3ecc276b235fdb0840128f67e103c10398f19dab47c97501e42",
+      "candidate_sha256": "2f99f17a9f885a9a56be8a5d4e2834511556515dc19276da83fa4ae6ee56c4af"
+    },
+    {
+      "path": "complete/src/main/java/com/example/restservice/Greeting.java",
+      "kind": "modified",
+      "baseline_sha256": "b9ddbeb54c292997141736f280f913da3bc70c1e94ca9429e30b26a266a72a11",
+      "candidate_sha256": "ab53924d8e8a58c41a302bc1515922dc3b71cd1e4b67986ef5fcdc3a36bdbf81"
+    }
+  ],
+  "test_paths_changed": [],
+  "comparison_eligible": false,
+  "blockers": [
+    "runtime_dependencies_not_locked",
+    "native_build_tests_not_executed",
+    "HTTP_expectations_require_review",
+    "external_adapter_provenance_review_missing"
+  ],
+  "independent_case_preparation_verified": false,
+  "project_code_executed": false,
+  "model_requests": 0,
+  "wheel_source_exported": false,
+  "limitations": [
+    "Source identity verification is not runtime validation.",
+    "Upstream authorship does not verify independent adapter preparation.",
+    "Published historical outcomes are already known, not blind discovery."
+  ]
+}
