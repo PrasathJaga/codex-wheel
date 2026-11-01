@@ -103,24 +103,28 @@ def admit_policy(manifest, discovery, policy, repetitions):
         raise AdmissionError('Image outside trusted execution policy')
 
 
-def container_flags(manifest, name, volume, archive=None, network="none", readonly_work=False):
+def container_flags(manifest, name, volume, archive=None, network="none", readonly_work=False, dependency_volume=None):
     limits = manifest['limits']
     flags = ['--name', name, '--pull', 'never', '--network', network, '--read-only', '--user', '1000:1000',
              '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges', '--cpus', str(limits['cpu_millis'] / 1000),
              '--memory', str(limits['memory_mb']) + 'm', '--memory-swap', str(limits['memory_mb']) + 'm',
              '--pids-limit', str(limits['pids']), '--tmpfs', '/tmp:rw,uid=1000,gid=1000,size=256m',
              '--env', 'HOME=/tmp', '--mount', 'type=volume,src=' + volume + ',dst=/work' + (',readonly' if readonly_work else '')]
+    if dependency_volume is not None:
+        flags += ['--mount', 'type=volume,src=' + dependency_volume + ',dst=/dependencies,readonly']
     if archive is not None:
         flags += ['--mount', 'type=bind,src=' + str(archive) + ',dst=/input/source.tar.gz,readonly']
     return flags
 
 
-def inspect_container(name, volume, archive=None, network="none", readonly_work=False):
+def inspect_container(name, volume, archive=None, network="none", readonly_work=False, dependency_volume=None):
     record = json.loads(checked(['inspect', name]))[0]
     host, config = record['HostConfig'], record['Config']
     binds = host.get('Binds')
     mounts = host.get('Mounts', [])
     expected = [{'Type': 'volume', 'Source': volume, 'Target': '/work', 'ReadOnly': readonly_work}]
+    if dependency_volume is not None:
+        expected.append({'Type': 'volume', 'Source': dependency_volume, 'Target': '/dependencies', 'ReadOnly': True})
     if archive is not None:
         expected.append({'Type': 'bind', 'Source': str(archive), 'Target': '/input/source.tar.gz', 'ReadOnly': True})
     normalized = lambda values: sorted((v['Type'], v['Source'], v['Target'], v.get('ReadOnly', False)) for v in values)
@@ -134,12 +138,18 @@ def inspect_container(name, volume, archive=None, network="none", readonly_work=
             'source_archive_mount': archive is not None}
 
 
-def run_pair(baseline, candidate, source, manifest, policy, output, repetitions=1):
+def run_pair(baseline, candidate, source, manifest, policy, output, repetitions=1, *, dependency=None):
     """Policy must be trusted independently of external source/model output."""
     exact(source, {'baseline_sha256', 'candidate_sha256', 'baseline_root', 'candidate_root'})
     discovery = discover_pair(baseline, candidate, source['baseline_sha256'], source['candidate_sha256'],
                               source['baseline_root'], source['candidate_root'])
-    admit_policy(manifest, discovery, policy, repetitions)  # Before Docker or source materialization.
+    dependency_archive = None
+    if dependency is None:
+        admit_policy(manifest, discovery, policy, repetitions)
+    else:
+        from preflight.dependency_environment import admit_bundle
+        dependency_archive = admit_bundle(manifest, discovery, policy, repetitions, dependency)
+    # Both paths admit before Docker or source materialization.
     files = {side: collect_archive(raw, source[side + '_sha256'], source[side + '_root'])
              for side, raw in [('baseline', baseline), ('candidate', candidate)]}
     for side in files:
@@ -155,7 +165,10 @@ def run_pair(baseline, candidate, source, manifest, policy, output, repetitions=
     report = {'schema': 'wheel-offline-build-test-result-v1', 'status': 'execution_error',
               'manifest_sha256': digest(manifest), 'discovery_sha256': digest(discovery),
               'policy_sha256': digest(policy), 'source': source, 'worlds': [], 'cleanup_errors': [],
-              'model_requests': 0, 'business_behavior_verified': False}
+              'model_requests': 0, 'business_behavior_verified': False,
+              'dependency_bundle_sha256': policy.get('dependency_bundle_sha256'),
+              'dependency_lock_sha256': policy.get('dependency_lock_sha256'),
+              'dependency_closure_verified': False}
     deadline = time.monotonic() + policy['total_timeout_seconds']
     world_deadline = deadline
     def remaining(maximum):
@@ -169,12 +182,17 @@ def run_pair(baseline, candidate, source, manifest, policy, output, repetitions=
             for side in files:
                 archives[side] = Path(temporary) / (side + '.tar.gz')
                 archives[side].write_bytes(normalized_archive(files[side]))
+            dependency_path = None
+            if dependency_archive is not None:
+                dependency_path = Path(temporary) / 'dependencies.tar.gz'
+                dependency_path.write_bytes(dependency_archive)
             for trial in range(1, repetitions + 1):
                 for side in ('baseline', 'candidate'):
                     for project in manifest['projects']:
                         identity = 'wheel-offline-' + uuid4().hex
                         volume = identity + '-work'
                         names, volume_created = [], False
+                        dependency_volume, dependency_volume_created = None, False
                         world = {'trial': trial, 'side': side, 'project': project['id'], 'status': 'execution_error',
                                  'source_identity_sha256': discovery[side]['source_identity_sha256'],
                                  'volume': volume, 'commands': [], 'isolation': []}
@@ -200,15 +218,35 @@ def run_pair(baseline, candidate, source, manifest, policy, output, repetitions=
                             world['isolation'].append(inspect_container(extract, volume, archives[side]))
                             if start_container(extract, remaining(30))['returncode']:
                                 raise ExecutionError('Admitted archive extraction failed')
+                            if dependency_path is not None:
+                                dependency_volume = identity + '-dependencies'
+                                checked(['volume', 'create', dependency_volume], remaining(30))
+                                dependency_volume_created = True
+                                dep_owner, dep_extract = identity + '-dep-owner', identity + '-dep-extract'
+                                names.append(dep_owner)
+                                checked(['create', '--name', dep_owner, '--pull', 'never', '--network', 'none', '--read-only',
+                                         '--cap-drop', 'ALL', '--cap-add', 'CHOWN', '--security-opt', 'no-new-privileges',
+                                         '--mount', 'type=volume,src=' + dependency_volume + ',dst=/work', '--entrypoint', 'chown',
+                                         project['image'], '1000:1000', '/work'], remaining(30))
+                                if start_container(dep_owner, remaining(30))['returncode']:
+                                    raise ExecutionError('Dependency volume ownership failed')
+                                names.append(dep_extract)
+                                checked(['create', *container_flags(manifest, dep_extract, dependency_volume, dependency_path),
+                                         '--entrypoint', 'tar', project['image'], '-xzf', '/input/source.tar.gz',
+                                         '-C', '/work', '--strip-components=1'], remaining(30))
+                                world['isolation'].append(inspect_container(dep_extract, dependency_volume, dependency_path))
+                                if start_container(dep_extract, remaining(30))['returncode']:
+                                    raise ExecutionError('Dependency archive extraction failed')
+                                world['dependency_volume'] = dependency_volume
                             failed = False
                             for phase in ('build', 'test'):
                                 for index, command in enumerate(project[phase]):
                                     name = identity + '-' + phase + '-' + str(index)
                                     names.append(name)
                                     workdir = '/work' if project['root'] == '.' else '/work/' + project['root']
-                                    checked(['create', *container_flags(manifest, name, volume), '--workdir', workdir,
+                                    checked(['create', *container_flags(manifest, name, volume, dependency_volume=dependency_volume), '--workdir', workdir,
                                              '--entrypoint', command['argv'][0], project['image'], *command['argv'][1:]], remaining(30))
-                                    world['isolation'].append(inspect_container(name, volume))
+                                    world['isolation'].append(inspect_container(name, volume, dependency_volume=dependency_volume))
                                     result = start_container(name, remaining(command['timeout_seconds']))
                                     log = side + '-' + str(trial) + '-' + project['id'] + '-' + phase + '-' + str(index) + '.log'
                                     (output / log).write_text(result['output'])
@@ -233,6 +271,12 @@ def run_pair(baseline, candidate, source, manifest, policy, output, repetitions=
                                         report['cleanup_errors'].append(name)
                                 except Exception:
                                     report['cleanup_errors'].append(name)
+                            if dependency_volume_created:
+                                try:
+                                    if docker(['volume', 'rm', dependency_volume], 30)['returncode']:
+                                        report['cleanup_errors'].append(dependency_volume)
+                                except Exception:
+                                    report['cleanup_errors'].append(dependency_volume)
                             if volume_created:
                                 try:
                                     if docker(['volume', 'rm', volume], 30)['returncode']:
@@ -261,6 +305,8 @@ def main():
     for name in ('baseline', 'candidate', 'source', 'manifest', 'policy', 'output'):
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--repetitions', type=int, default=1)
+    for name in ('dependency-bundle', 'dependency-lock', 'acquisition-policy'):
+        parser.add_argument('--' + name, type=Path)
     args = parser.parse_args()
     def read(path, maximum):
         with path.open('rb') as stream:
@@ -268,10 +314,18 @@ def main():
         if len(raw) > maximum:
             raise AdmissionError('Input exceeds size limit')
         return raw
+    dependency = None
+    values = (args.dependency_bundle, args.dependency_lock, args.acquisition_policy)
+    if any(values):
+        if not all(values):
+            parser.error('Bundle, lock and acquisition policy are required together')
+        dependency = {'archive': read(args.dependency_bundle, 32 * 1024 * 1024),
+                      'lock': strict_json(read(args.dependency_lock, 1024 * 1024).decode()),
+                      'acquisition_policy': strict_json(read(args.acquisition_policy, 1024 * 1024).decode())}
     result = run_pair(read(args.baseline, 32 * 1024 * 1024), read(args.candidate, 32 * 1024 * 1024),
                       strict_json(read(args.source, 1024 * 1024).decode()),
                       strict_json(read(args.manifest, 1024 * 1024).decode()),
-                      strict_json(read(args.policy, 1024 * 1024).decode()), args.output, args.repetitions)
+                      strict_json(read(args.policy, 1024 * 1024).decode()), args.output, args.repetitions, dependency=dependency)
     print(json.dumps({'status': result['status'], 'worlds': len(result['worlds']), 'business_behavior_verified': False}))
     if result['status'] != 'build_and_tests_passed':
         raise SystemExit(1)
