@@ -1,0 +1,57 @@
+name: Reviewed dependency artifact acquisition
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'preflight/dependency_bundle.py'
+      - 'preflight_tests/test_dependency_bundle.py'
+      - 'evaluation/dependency_acquisition*'
+      - 'docs/DEPENDENCY_ACQUISITION_V1.md'
+      - '.github/workflows/dependency-acquisition.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'preflight/dependency_bundle.py'
+      - 'preflight_tests/test_dependency_bundle.py'
+      - 'evaluation/dependency_acquisition*'
+      - 'docs/DEPENDENCY_ACQUISITION_V1.md'
+      - '.github/workflows/dependency-acquisition.yml'
+permissions:
+  contents: read
+jobs:
+  acquisition-controls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Offline validation and adverse outcome checks
+        run: python -m unittest discover -s preflight_tests -p test_dependency_bundle.py -v
+      - name: Materialize committed reviewed control lock and policy
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          from preflight.petclinic_adapter import digest
+          value=json.loads(Path('evaluation/dependency_acquisition_controls_v1.json').read_text())
+          assert digest(value['discovery'])==value['lock']['discovery_sha256']
+          for name in ('lock','policy'):
+              (Path(os.environ['RUNNER_TEMP'])/('dependency-'+name+'.json')).write_text(json.dumps(value[name]))
+          PY
+      - name: Fetch fixed reviewed public artifacts; no installation, retries or model calls
+        run: |
+          python -m preflight.dependency_bundle \
+            --lock "$RUNNER_TEMP/dependency-lock.json" \
+            --policy "$RUNNER_TEMP/dependency-policy.json" \
+            --output "$RUNNER_TEMP/dependency-evidence"
+      - name: Preserve acquisition receipts including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: reviewed-dependency-acquisition
+          path: ${{ runner.temp }}/dependency-evidence/
+          if-no-files-found: warn
