@@ -1,0 +1,52 @@
+name: Generic isolated executor controls
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'preflight/isolated_executor.py'
+      - 'preflight/executor_smoke.py'
+      - 'preflight_tests/test_isolated_executor.py'
+      - '.github/workflows/isolated-executor.yml'
+      - 'docs/ISOLATED_EXECUTOR_V1.md'
+  push:
+    branches: [master]
+    paths:
+      - 'preflight/isolated_executor.py'
+      - 'preflight/executor_smoke.py'
+      - 'preflight_tests/test_isolated_executor.py'
+      - '.github/workflows/isolated-executor.yml'
+      - 'docs/ISOLATED_EXECUTOR_V1.md'
+permissions:
+  contents: read
+jobs:
+  offline-controls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Unit checks; no project execution
+        run: python -m unittest discover -s preflight_tests -p test_isolated_executor.py -v
+      - name: Resolve control images on trusted host; application containers never pull
+        run: |
+          docker pull python:3.12-slim
+          docker pull eclipse-temurin:21-jdk
+          docker image inspect python:3.12-slim --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/python-image.txt"
+          docker image inspect eclipse-temurin:21-jdk --format '{{index .RepoDigests 0}}' > "$RUNNER_TEMP/java-image.txt"
+      - name: Live Java and Python offline controls; no API keys or paid calls
+        run: |
+          python -m preflight.executor_smoke \
+            --python-image "$(cat "$RUNNER_TEMP/python-image.txt")" \
+            --java-image "$(cat "$RUNNER_TEMP/java-image.txt")" \
+            --output "$RUNNER_TEMP/executor-controls"
+      - name: Preserve successful and adverse control evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: generic-executor-controls
+          path: ${{ runner.temp }}/executor-controls/
+          if-no-files-found: warn

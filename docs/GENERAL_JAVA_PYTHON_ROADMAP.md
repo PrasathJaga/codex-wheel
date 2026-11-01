@@ -128,3 +128,10 @@ confirmed findings, abstentions/errors, conventional comparison, repair outcomes
 turnaround and token cost. Publish denominators and unsupported attempts. A tie
 or a conventional win is valid evidence. No fixed judging score, production loss,
 savings or universal correctness claim follows from these milestones.
+
+## Stage 3 runtime increment
+
+`preflight.isolated_executor` now implements the offline build/test-only subset;
+see `ISOLATED_EXECUTOR_V1.md`. Service/dependency/observer execution and network
+fetching are rejected. Dedicated live Java/Python controls are required before
+calling this subset runtime-verified; this does not complete the full Stage 3 gate.
