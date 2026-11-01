@@ -135,3 +135,10 @@ savings or universal correctness claim follows from these milestones.
 see `ISOLATED_EXECUTOR_V1.md`. Service/dependency/observer execution and network
 fetching are rejected. Dedicated live Java/Python controls are required before
 calling this subset runtime-verified; this does not complete the full Stage 3 gate.
+
+## Stateless HTTP lifecycle increment
+
+`preflight.service_executor` extends the shared manifest to one stateless HTTP
+service on a fresh internal network; see `SERVICE_EXECUTOR_V1.md`. This is health,
+startup and shutdown evidence only. Dependency fetching, databases, persistence
+observers and generic investigation remain separate gates.

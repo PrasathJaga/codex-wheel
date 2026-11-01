@@ -103,28 +103,28 @@ def admit_policy(manifest, discovery, policy, repetitions):
         raise AdmissionError('Image outside trusted execution policy')
 
 
-def container_flags(manifest, name, volume, archive=None):
+def container_flags(manifest, name, volume, archive=None, network="none", readonly_work=False):
     limits = manifest['limits']
-    flags = ['--name', name, '--pull', 'never', '--network', 'none', '--read-only', '--user', '1000:1000',
+    flags = ['--name', name, '--pull', 'never', '--network', network, '--read-only', '--user', '1000:1000',
              '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges', '--cpus', str(limits['cpu_millis'] / 1000),
              '--memory', str(limits['memory_mb']) + 'm', '--memory-swap', str(limits['memory_mb']) + 'm',
              '--pids-limit', str(limits['pids']), '--tmpfs', '/tmp:rw,uid=1000,gid=1000,size=256m',
-             '--env', 'HOME=/tmp', '--mount', 'type=volume,src=' + volume + ',dst=/work']
+             '--env', 'HOME=/tmp', '--mount', 'type=volume,src=' + volume + ',dst=/work' + (',readonly' if readonly_work else '')]
     if archive is not None:
         flags += ['--mount', 'type=bind,src=' + str(archive) + ',dst=/input/source.tar.gz,readonly']
     return flags
 
 
-def inspect_container(name, volume, archive=None):
+def inspect_container(name, volume, archive=None, network="none", readonly_work=False):
     record = json.loads(checked(['inspect', name]))[0]
     host, config = record['HostConfig'], record['Config']
     binds = host.get('Binds')
     mounts = host.get('Mounts', [])
-    expected = [{'Type': 'volume', 'Source': volume, 'Target': '/work'}]
+    expected = [{'Type': 'volume', 'Source': volume, 'Target': '/work', 'ReadOnly': readonly_work}]
     if archive is not None:
         expected.append({'Type': 'bind', 'Source': str(archive), 'Target': '/input/source.tar.gz', 'ReadOnly': True})
     normalized = lambda values: sorted((v['Type'], v['Source'], v['Target'], v.get('ReadOnly', False)) for v in values)
-    if (host['NetworkMode'] != 'none' or not host['ReadonlyRootfs'] or host['Privileged']
+    if (host['NetworkMode'] != network or not host['ReadonlyRootfs'] or host['Privileged']
             or config['User'] != '1000:1000' or binds or normalized(mounts) != normalized(expected)
             or host.get('CapAdd') or host.get('CapDrop') != ['ALL']
             or not any('no-new-privileges' in value for value in host.get('SecurityOpt', []))):
