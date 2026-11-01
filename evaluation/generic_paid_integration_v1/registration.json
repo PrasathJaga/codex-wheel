@@ -1,0 +1,36 @@
+{
+  "schema": "wheel-generic-paid-integration-registration-v1",
+  "cases": [
+    {
+      "id": "python_preserving",
+      "case_sha256": "96f7f5ad38815c3e53340c0a0bdae54222cb154737597a21ba5bb1f895e82980"
+    },
+    {
+      "id": "python_violating",
+      "case_sha256": "1fd28306f458b9dc33455dfeceb5537c45bddac4ada39feec7436da6dc6312a2"
+    },
+    {
+      "id": "java_preserving",
+      "case_sha256": "154f142fcb51603fc62756d5894776e6e7775dacb592411df8c01cbb968fdca6"
+    },
+    {
+      "id": "java_violating",
+      "case_sha256": "dfee94eb626632a21f07b10e95d1f25ae3c5d03c349ed5205bf75d6fc65e4e63"
+    }
+  ],
+  "implementation_sha256": "b414cc4e2810d4c46964546fc3f0058ea45acb964d7c0529c83fe91d81e4f768",
+  "max_requests": 8,
+  "max_completion_tokens_total": 80000,
+  "kind": "known_authored_integration_controls",
+  "independent_preparer": false,
+  "runtime_outcomes_already_known": true,
+  "images": {
+    "python": "python@sha256:aa943ce411423c7582288f18707ff66eddcbaeb510502d747a72aeb34f30d159",
+    "java": "eclipse-temurin@sha256:ebfbb18d11ff163ee83b21258acf12248af48d22a0fdfdc68fa1a1516c05976a"
+  },
+  "expectations_sha256": "6c70a31b398138cb7d536b6b3a48ef3333ea127892ea9baa4120bb314ce3e5d9",
+  "frozen_runner_revision": "08672d7bc92edfa3a74cec0a4c2f1bebe501af8a",
+  "control_run": 41344873422,
+  "control_artifact": 13098299107,
+  "control_artifact_sha256": "98644b64fe6bad2dd99f0a64037a057d1e7e2e57458b1bbeae84cf6413fab508"
+}

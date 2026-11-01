@@ -1,0 +1,137 @@
+{
+  "baseline_base64": "H4sIAOCf52oC/+3VT2vbMBQAcJ/9KYRPdskUJU22sqyFthTaa3Nce5DlR+zOkYzec/4Q8t2rxOkKOWyXLjD6fj5IPEt6DyPJ6FpvoD8FvwAvX/RCRx9OBV9Ho30bHLcDNfzd7+KDwfnoWyRUdAItkvYhffQ5VfPGeRLGzSW2VlogWRI12O2H+9DttsbkMHC3Q/ajziaxqTWi6N6LjWjavK6MCN+TQrNwVSHmurLplHxlZz+fhfYzzASV3i1R3K0MNFQ5KzaxeM8jusyX7xFpPGiC1MJSPITMU2d+AV0XhQfENFFy/yS9C3Whsp7KJvFhjcPEW2cJVpQm/RJ0TWXSgy9Xm3xNEErKL5Muuk7kDOgmRDHNJiARbPEI2DiLcA+6AI/pUKleLmuwMyp3Y8KEtyE3rlinmVz6KlSa716a2iGEpbZ/KGih6xaO69k8Jfv4U/J9tD1FVbsDQCEWb8U2jtingt3934Tzv5rX/ybHX+7/8AcYHt3/ajw+5/v/FH403r2Aof4VnwXGGGOMMcYYY4wxxhhjjDHGGGPsf/UKGjMdKAAoAAA=",
+  "candidate_base64": "H4sIAOCf52oC/+3VT2vbMBQAcJ/9KYRPdskUJU22sqyFthTaa3Nce5DlR+zOkYzec/4Q8t2rxOkKOWyXLjD6fj5IPEt6DyPJ6FpvoD8FvwAvX/RCRx9OBV9Ho30bHLcDNfzd7+KDwfnoWyRUdAItkvYhffQ5VfPGeRLGzSW2VlogWRI12O2H+9DttsbkMHC3Q/ajziaxqTWi6N6LjWjavK6MCN+TQrNwVSHmurLplHxlZz+fhfYzzASV3i1R3K0MNFQ5KzaxeM8jusyX7xFpPGiC1MJSPITMU2d+AV0XhQfENFFy/yS9C3Whsp7KJvFhjcPEW2cJVpQm/RJ0TWXSgy9Xm3xNEErKL5Muuk7kDOgmRDHNJiARbPEI2DiLcA+6AI/pUKleLmuwMyp3Y8KEtyE3rlinmVz6KlSa716a2iGEpbZ/KGih6xaO69k8Jfv4U/J9tD1FVbsDQCEWb8U2jtingt3934Tzv5rX/ybHX+7/8AcYHt3/ajw+5/v/FH403r2Aof4VnwXGGGOMMcYYY4wxxhhjjDHGGGPsf/UKGjMdKAAoAAA=",
+  "source": {
+    "baseline_sha256": "2d01bfff2b3fa500878546808d3e0bec4c6e6cb18bc0e669f4bb9759c1d931fb",
+    "candidate_sha256": "2d01bfff2b3fa500878546808d3e0bec4c6e6cb18bc0e669f4bb9759c1d931fb",
+    "baseline_root": "source",
+    "candidate_root": "source"
+  },
+  "manifest": {
+    "schema": "wheel-execution-manifest-v1",
+    "discovery_sha256": "8265a12fa29e03c40744e33718904a93edd26794bd805bb6a45b788885a2ad9f",
+    "projects": [
+      {
+        "id": "service",
+        "root": ".",
+        "language": "java",
+        "image": "eclipse-temurin@sha256:ebfbb18d11ff163ee83b21258acf12248af48d22a0fdfdc68fa1a1516c05976a",
+        "build": [],
+        "test": [
+          {
+            "argv": [
+              "java",
+              "--version"
+            ],
+            "timeout_seconds": 60
+          }
+        ],
+        "service": {
+          "start": {
+            "argv": [
+              "java",
+              "--add-modules",
+              "jdk.httpserver",
+              "Server.java"
+            ],
+            "timeout_seconds": 90
+          },
+          "port": 8080,
+          "health": {
+            "path": "/health",
+            "status": 200,
+            "timeout_seconds": 40
+          },
+          "environment_bindings": []
+        }
+      }
+    ],
+    "dependencies": [],
+    "observers": [],
+    "limits": {
+      "cpu_millis": 1000,
+      "memory_mb": 512,
+      "pids": 128,
+      "world_timeout_seconds": 180
+    },
+    "network": {
+      "build": "reviewed_dependency_fetch_only",
+      "runtime": "internal_only"
+    },
+    "reset": "fresh_environment_per_world"
+  },
+  "lifecycle": {
+    "schema": "wheel-service-execution-policy-v1",
+    "manifest_sha256": "b54d597aa5825af6e6cf5551c4dab0b6c9199559d97f00485fc94f6089378ab9",
+    "allowed_images": [
+      "eclipse-temurin@sha256:ebfbb18d11ff163ee83b21258acf12248af48d22a0fdfdc68fa1a1516c05976a"
+    ],
+    "max_repetitions": 2,
+    "total_timeout_seconds": 600
+  },
+  "interface": {
+    "schema": "wheel-http-interface-v1",
+    "manifest_sha256": "b54d597aa5825af6e6cf5551c4dab0b6c9199559d97f00485fc94f6089378ab9",
+    "operations": [
+      {
+        "id": "read_value",
+        "method": "GET",
+        "path": "/value",
+        "body_schema": null,
+        "source_refs": [
+          {
+            "side": "baseline",
+            "path": "Server.java",
+            "line_start": 1,
+            "line_end": 5
+          },
+          {
+            "side": "candidate",
+            "path": "Server.java",
+            "line_start": 1,
+            "line_end": 5
+          }
+        ]
+      }
+    ]
+  },
+  "contract": {
+    "schema": "wheel-http-contract-v1",
+    "manifest_sha256": "b54d597aa5825af6e6cf5551c4dab0b6c9199559d97f00485fc94f6089378ab9",
+    "provenance": {
+      "kind": "developer_declared",
+      "reference": "Authored runtime control: /value returns integer value 4"
+    },
+    "checks": [
+      {
+        "operation": "read_value",
+        "statuses": [
+          200
+        ],
+        "json_equals": [
+          {
+            "path": [
+              "value"
+            ],
+            "value": 4
+          }
+        ]
+      }
+    ]
+  },
+  "case_id": "java_preserving",
+  "language": "java",
+  "policy": {
+    "schema": "wheel-generic-investigation-policy-v1",
+    "attempt_id": "java_preserving",
+    "implementation_sha256": "b414cc4e2810d4c46964546fc3f0058ea45acb964d7c0529c83fe91d81e4f768",
+    "source_sha256": "0f334f26ef283375006d5c1fa1af7c2a994c04784ff8408d115be94982716c00",
+    "lifecycle_policy_sha256": "112f877d6bd12bd32a3d6e61876fd1b507af5d5cfc5184c4682595358603a04f",
+    "interface_sha256": "60c64b81da52b4f4263032319fe05bd63653dbe2cfb51cc10e3e38a9fe9168f2",
+    "contract_sha256": "5f3a3c9cf5400e01cdc35793d0a5f32bb6b87165a90e7fa64415988d9c683acc",
+    "source_paths": [
+      "Server.java"
+    ],
+    "paid_execution_enabled": true
+  }
+}
