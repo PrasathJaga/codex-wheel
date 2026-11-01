@@ -1,0 +1,40 @@
+{
+  "id": "httpbin_status_fix",
+  "repo": "postmanlabs/httpbin",
+  "baseline": "a22fc1fb65adf8dda9888663a7e778e58c9b83e6",
+  "candidate": "3fe84ea4760172f2ce2fde709127c3814fa0e88f",
+  "author": "kingslef",
+  "reference": "https://github.com/postmanlabs/httpbin/pull/330",
+  "kind": "historical_bugfix",
+  "paths": [
+    "README.rst",
+    "httpbin/core.py",
+    "test_httpbin.py"
+  ],
+  "root": "httpbin",
+  "language": "python",
+  "blockers": [
+    "historical_fix_baseline_may_violate_fixed_behavior_expectation",
+    "legacy_runtime_compatibility_not_verified",
+    "runtime_dependencies_not_locked",
+    "native_build_tests_not_executed",
+    "HTTP_expectations_require_review",
+    "external_adapter_provenance_review_missing"
+  ],
+  "archives": {
+    "baseline": {
+      "revision": "a22fc1fb65adf8dda9888663a7e778e58c9b83e6",
+      "url": "https://codeload.github.com/postmanlabs/httpbin/tar.gz/a22fc1fb65adf8dda9888663a7e778e58c9b83e6",
+      "sha256": "1ed41083dd9e07375e0b7a70cba1830652a1ca4d851dd4ab3910172fa62dc3b8",
+      "size_bytes": 91845,
+      "root": "httpbin-a22fc1fb65adf8dda9888663a7e778e58c9b83e6"
+    },
+    "candidate": {
+      "revision": "3fe84ea4760172f2ce2fde709127c3814fa0e88f",
+      "url": "https://codeload.github.com/postmanlabs/httpbin/tar.gz/3fe84ea4760172f2ce2fde709127c3814fa0e88f",
+      "sha256": "3818197942334a7733de29357e70bc4249fef9488f36279039d793ad6f6a1a7e",
+      "size_bytes": 91929,
+      "root": "httpbin-3fe84ea4760172f2ce2fde709127c3814fa0e88f"
+    }
+  }
+}
