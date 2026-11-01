@@ -4,6 +4,10 @@ on:
     branches: [master]
     paths:
       - 'preflight/isolated_executor.py'
+      - 'preflight/service_executor.py'
+      - 'preflight/service_smoke.py'
+      - 'preflight_tests/test_service_executor.py'
+      - 'docs/SERVICE_EXECUTOR_V1.md'
       - 'preflight/executor_smoke.py'
       - 'preflight_tests/test_isolated_executor.py'
       - '.github/workflows/isolated-executor.yml'
@@ -12,6 +16,10 @@ on:
     branches: [master]
     paths:
       - 'preflight/isolated_executor.py'
+      - 'preflight/service_executor.py'
+      - 'preflight/service_smoke.py'
+      - 'preflight_tests/test_service_executor.py'
+      - 'docs/SERVICE_EXECUTOR_V1.md'
       - 'preflight/executor_smoke.py'
       - 'preflight_tests/test_isolated_executor.py'
       - '.github/workflows/isolated-executor.yml'
@@ -31,6 +39,8 @@ jobs:
           python-version: '3.12'
       - name: Unit checks; no project execution
         run: python -m unittest discover -s preflight_tests -p test_isolated_executor.py -v
+      - name: Service lifecycle unit checks
+        run: python -m unittest discover -s preflight_tests -p test_service_executor.py -v
       - name: Resolve control images on trusted host; application containers never pull
         run: |
           docker pull python:3.12-slim
@@ -49,4 +59,17 @@ jobs:
         with:
           name: generic-executor-controls
           path: ${{ runner.temp }}/executor-controls/
+          if-no-files-found: warn
+      - name: Live Java and Python internal-network HTTP lifecycle controls
+        run: |
+          python -m preflight.service_smoke \
+            --python-image "$(cat "$RUNNER_TEMP/python-image.txt")" \
+            --java-image "$(cat "$RUNNER_TEMP/java-image.txt")" \
+            --output "$RUNNER_TEMP/service-controls"
+      - name: Preserve service lifecycle outcomes
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: generic-service-controls
+          path: ${{ runner.temp }}/service-controls/
           if-no-files-found: warn
