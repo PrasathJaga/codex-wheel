@@ -1,0 +1,85 @@
+{
+  "schema": "codex-wheel.submission-evidence.v1",
+  "assembled_on": "2026-11-02",
+  "evidence_source_revision": "192e34fbb1905f0516c2bf50bd33a9cbf2d7697c",
+  "archives": {
+    "refund": "0f8d0d0256b3c47541c9537a9418ba19bba6ecc7964db7cca94ca8eea291d802",
+    "inventory": "564c41a4e03d55366231f823f759fafe2db11949822909654b12841f785cb6ae",
+    "failed_refund": "eb932a3d5bd0f1a91ab3d98af45ebf251de5455baa878928b40a8cee1ed5bf79"
+  },
+  "refund": {
+    "fixture_pr": 27,
+    "authorized_minor_units": 2000,
+    "candidate_committed_minor_units": 4000,
+    "observed_excess_minor_units": 2000,
+    "recorded_receipt": {
+      "committed_minor_units": 2000,
+      "order_id": "ORD-SYN-TRIAL",
+      "refund_effect_id": "43dd56b5-be49-4a40-aee2-ec9caf82cd35",
+      "status": "committed"
+    },
+    "paired_trials": 3,
+    "fresh_worlds": 24,
+    "provider_usage": {
+      "calls": 5,
+      "tokens": 31814,
+      "response_ids": [
+        "chatcmpl-01a18e40-721a-7192-9f83-e43fa6dfed41",
+        "chatcmpl-01a18e40-7a4e-7366-acc3-09ecbc077417",
+        "chatcmpl-01a18e40-901a-7284-8b2c-c6eedc68919d",
+        "chatcmpl-01a18e42-f978-72cd-afaf-b6b497de3cf5",
+        "chatcmpl-01a18e43-0143-72f6-ad11-55bc5356f10b"
+      ]
+    },
+    "repair": "supplied_healthy_baseline_restoration"
+  },
+  "inventory": {
+    "fresh_repair_worlds": 24,
+    "provider_usage": {
+      "calls": 2,
+      "tokens": 15931,
+      "response_ids": [
+        "chatcmpl-01a190e2-dff7-7104-83b6-65af02394a73",
+        "chatcmpl-01a19124-44e6-7180-83d4-14d674e05edf"
+      ]
+    },
+    "repair": "supplied_healthy_baseline_restoration",
+    "unchanged_JUnit_already_caught_defect": true
+  },
+  "generic_meta": {
+    "requests": 7,
+    "worlds": 20,
+    "usage": {
+      "prompt_tokens": 8839,
+      "completion_tokens": 7071,
+      "total_tokens": 15910
+    },
+    "results": [
+      {
+        "case": "python_preserving",
+        "status": "inconclusive",
+        "reason": "model_abstained"
+      },
+      {
+        "case": "python_violating",
+        "status": "confirmed_contract_violation",
+        "reason": null
+      },
+      {
+        "case": "java_preserving",
+        "status": "no_violation_observed",
+        "reason": null
+      },
+      {
+        "case": "java_violating",
+        "status": "confirmed_contract_violation",
+        "reason": null
+      }
+    ],
+    "scope": "known_authored_HTTP_controls"
+  },
+  "external_onboarding": "not_completed",
+  "unfamiliar_comparative_evaluation": "not_completed",
+  "assembly_model_requests": 0,
+  "assembly_business_worlds": 0
+}

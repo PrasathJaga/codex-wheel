@@ -1,4 +1,14 @@
-# Codex Wheel — Meta Hackathon 2026
+# Codex Wheel — investigate changes, verify business effects
+
+**Start with the [recorded-evidence report and reviewer guide](delivery/SUBMISSION.md).** Download [the self-contained report](delivery/index.html) and open it locally; viewing makes no model requests and needs no runtime setup.
+
+The demonstration connects a PR change, source-aware Meta investigation, repeated committed-effect verification and bounded restoration. One USD20 refund can produce USD40 in the changed ledger after a lost response and retry. The report shows original before/after states, source references, actual provider receipts and an inventory extension.
+
+**Verified scope:** known synthetic examples, finite conditions and supplied healthy repair answers. Generic Java/Python HTTP integration includes three admitted experiments and one preserved abstention. Broad framework onboarding, independent unfamiliar-case evaluation and general repair remain future work. See [submission evidence](delivery/evidence.json), [demo script](delivery/DEMO_SCRIPT.md) and [event contributions](CONTRIBUTIONS.md).
+
+---
+
+## Engineering reference
 
 **Verified milestone:** refund and inventory investigation/verification/bounded restoration are integrated through PR #36. Post-merge master baseline and inventory checks passed at `bbd23f1f07d65db7cb7e4f329a9db60af721f81b`. See [two-domain evidence and onboarding](docs/TWO_DOMAIN_DELIVERY.md) for actual results, report viewing and remaining evaluation gates.
 

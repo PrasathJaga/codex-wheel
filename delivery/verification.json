@@ -1,0 +1,33 @@
+{
+  "schema": "codex-wheel.delivery-verification.v1",
+  "assembled_on": "2026-11-02",
+  "authenticated_archive_replay": true,
+  "python_tests": {
+    "passed": 177,
+    "skipped": 5,
+    "subtests_passed": 28
+  },
+  "browser": {
+    "viewports": [
+      1440,
+      390
+    ],
+    "stage_toggles": true,
+    "exposure_arithmetic": true,
+    "unexpected_network_requests": 0,
+    "recorded_interaction": true
+  },
+  "video": {
+    "duration_seconds": 180,
+    "width": 1920,
+    "height": 1080,
+    "codec": "h264",
+    "captioned": true,
+    "live_execution": false
+  },
+  "new_paid_requests": 0,
+  "new_business_worlds": 0,
+  "external_onboarding_completed": false,
+  "public_video_upload_completed": false,
+  "competition_submission_completed": false
+}
