@@ -1,0 +1,282 @@
+{
+  "kind": "known_authored_paid_integration_audit",
+  "run_id": 41346828931,
+  "artifact_id": 13099805978,
+  "artifact_sha256": "d1c3d479c0409874b93c72d842c867f67d9a69354ff4ae52d1c63434df14d204",
+  "registration_sha256": "270a2ceb23e3f63204529113b8c76a8c9a4f4f73c71cd7feb910d85460080633",
+  "worlds": 20,
+  "paid_requests": 7,
+  "usage": {
+    "prompt_tokens": 8839,
+    "completion_tokens": 7071,
+    "total_tokens": 15910
+  },
+  "cost_accounting": {
+    "pricing": {
+      "source": "https://dev.meta.ai/docs/pricing-rate-limits",
+      "checked_on": "2026-11-01",
+      "model": "muse-spark-1.3",
+      "mode": "Standard",
+      "input_per_million_usd": 1.25,
+      "cached_input_per_million_usd": 0.15,
+      "output_per_million_usd": 4.25
+    },
+    "complete_reported_usage": true,
+    "estimated_standard_token_charge_usd": 0.0411005,
+    "known_usage_subtotal_estimate_usd": 0.0411005,
+    "rows": [
+      {
+        "estimated_usd": 0.00663825,
+        "basis": "reported_usage_with_reported_cache",
+        "usage": {
+          "completion_tokens": 1134,
+          "completion_tokens_details": {
+            "reasoning_tokens": 870
+          },
+          "prompt_tokens": 1455,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "total_tokens": 2589
+        }
+      },
+      {
+        "estimated_usd": 0.0078765,
+        "basis": "reported_usage_with_reported_cache",
+        "usage": {
+          "completion_tokens": 1548,
+          "completion_tokens_details": {
+            "reasoning_tokens": 1353
+          },
+          "prompt_tokens": 1038,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "total_tokens": 2586
+        }
+      },
+      {
+        "estimated_usd": 0.0064225,
+        "basis": "reported_usage_with_reported_cache",
+        "usage": {
+          "completion_tokens": 1015,
+          "completion_tokens_details": {
+            "reasoning_tokens": 757
+          },
+          "prompt_tokens": 1687,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "total_tokens": 2702
+        }
+      },
+      {
+        "estimated_usd": 0.00412225,
+        "basis": "reported_usage_with_reported_cache",
+        "usage": {
+          "completion_tokens": 602,
+          "completion_tokens_details": {
+            "reasoning_tokens": 372
+          },
+          "prompt_tokens": 1251,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "total_tokens": 1853
+        }
+      },
+      {
+        "estimated_usd": 0.005512,
+        "basis": "reported_usage_with_reported_cache",
+        "usage": {
+          "completion_tokens": 1034,
+          "completion_tokens_details": {
+            "reasoning_tokens": 966
+          },
+          "prompt_tokens": 894,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "total_tokens": 1928
+        }
+      },
+      {
+        "estimated_usd": 0.00566875,
+        "basis": "reported_usage_with_reported_cache",
+        "usage": {
+          "completion_tokens": 900,
+          "completion_tokens_details": {
+            "reasoning_tokens": 647
+          },
+          "prompt_tokens": 1475,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "total_tokens": 2375
+        }
+      },
+      {
+        "estimated_usd": 0.00486025,
+        "basis": "reported_usage_with_reported_cache",
+        "usage": {
+          "completion_tokens": 838,
+          "completion_tokens_details": {
+            "reasoning_tokens": 608
+          },
+          "prompt_tokens": 1039,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "total_tokens": 1877
+        }
+      }
+    ],
+    "invoice_or_credit_balance_verified": false
+  },
+  "results": [
+    {
+      "case_id": "python_preserving",
+      "known_expected_status": "no_violation_observed",
+      "observed_status": "inconclusive",
+      "reason": "model_abstained",
+      "diagnosis_status": "not_requested",
+      "paid_requests": 1,
+      "original_selection": {
+        "status": "abstain",
+        "reason": "interface_sha256 and contract_sha256 required by plan_tool_schema do not match supplied manifest_sha256 values, so a valid experiment cannot be constructed without inventing expectations; baseline and candidate are identical with empty diff providing no candidate behavioral change to test."
+      },
+      "schema_interface_hash_valid": true,
+      "schema_contract_hash_valid": true
+    },
+    {
+      "case_id": "python_violating",
+      "known_expected_status": "confirmed_contract_violation",
+      "observed_status": "confirmed_contract_violation",
+      "reason": null,
+      "diagnosis_status": "references_validated_not_independent_causal_proof",
+      "paid_requests": 2,
+      "original_selection": {
+        "status": "propose",
+        "hypothesis": "Candidate changes default GET body from {\"value\":4} to {\"value\":5}, so GET /value will return value 5 and violate contract expecting value 4.",
+        "source_refs": [
+          {
+            "side": "baseline",
+            "path": "server.py",
+            "line_start": 3,
+            "line_end": 4
+          },
+          {
+            "side": "candidate",
+            "path": "server.py",
+            "line_start": 3,
+            "line_end": 4
+          }
+        ],
+        "plan": {
+          "schema": "wheel-http-experiment-v1",
+          "interface_sha256": "7a8107393a29f7fe3838493609f16f6b14c93bd71fb9bac6b2cf210786645a5b",
+          "contract_sha256": "405559a6abcd800e020ba88e9491e1481df1b9008b43532a124795cf6ba0c332",
+          "actions": [
+            {
+              "operation": "read_value",
+              "body": null
+            }
+          ]
+        }
+      },
+      "schema_interface_hash_valid": true,
+      "schema_contract_hash_valid": true
+    },
+    {
+      "case_id": "java_preserving",
+      "known_expected_status": "no_violation_observed",
+      "observed_status": "no_violation_observed",
+      "reason": null,
+      "diagnosis_status": "references_validated_not_independent_causal_proof",
+      "paid_requests": 2,
+      "original_selection": {
+        "status": "propose",
+        "hypothesis": "GET /value returns HTTP 200 with JSON body {\"value\":4} in both baseline and candidate Server implementations",
+        "source_refs": [
+          {
+            "side": "baseline",
+            "path": "Server.java",
+            "line_start": 5,
+            "line_end": 5
+          },
+          {
+            "side": "candidate",
+            "path": "Server.java",
+            "line_start": 5,
+            "line_end": 5
+          }
+        ],
+        "plan": {
+          "schema": "wheel-http-experiment-v1",
+          "interface_sha256": "60c64b81da52b4f4263032319fe05bd63653dbe2cfb51cc10e3e38a9fe9168f2",
+          "contract_sha256": "5f3a3c9cf5400e01cdc35793d0a5f32bb6b87165a90e7fa64415988d9c683acc",
+          "actions": [
+            {
+              "operation": "read_value",
+              "body": null
+            }
+          ]
+        }
+      },
+      "schema_interface_hash_valid": true,
+      "schema_contract_hash_valid": true
+    },
+    {
+      "case_id": "java_violating",
+      "known_expected_status": "confirmed_contract_violation",
+      "observed_status": "confirmed_contract_violation",
+      "reason": null,
+      "diagnosis_status": "references_validated_not_independent_causal_proof",
+      "paid_requests": 2,
+      "original_selection": {
+        "status": "propose",
+        "hypothesis": "/value returns 4 in baseline but 5 in candidate, so candidate violates contract expecting value 4",
+        "source_refs": [
+          {
+            "side": "baseline",
+            "path": "Server.java",
+            "line_start": 5,
+            "line_end": 5
+          },
+          {
+            "side": "candidate",
+            "path": "Server.java",
+            "line_start": 5,
+            "line_end": 5
+          }
+        ],
+        "plan": {
+          "schema": "wheel-http-experiment-v1",
+          "interface_sha256": "c81f4c7e22e84b6ec5dceb91a6ea9b0c0c6fe4dad49fa3bfb4d4ac93e0faef2f",
+          "contract_sha256": "1c6cce4afd5c72e6aa5ea421308b39639e50f67dc9879b0adaa55dd6973d2a52",
+          "actions": [
+            {
+              "operation": "read_value",
+              "body": null
+            }
+          ]
+        }
+      },
+      "schema_interface_hash_valid": true,
+      "schema_contract_hash_valid": true
+    }
+  ],
+  "claims_supported": [
+    "real provider/schema/execution integration on three admitted known controls",
+    "all four original outcomes retained"
+  ],
+  "claims_not_supported": [
+    "unfamiliar discovery",
+    "conventional-baseline superiority",
+    "independent preparation",
+    "general Java/Python support",
+    "persistence correctness",
+    "verified repair"
+  ],
+  "python_preserving_abstention_preserved": true
+}

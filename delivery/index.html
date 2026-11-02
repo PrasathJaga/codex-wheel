@@ -1,0 +1,966 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Codex Wheel · Verified behavioral effects</title><style>
+:root{color-scheme:dark;--bg:#0b1322;--panel:#132238;--line:#344b65;--text:#edf4ff;--muted:#b6c7db;--accent:#9ddcff;--green:#a2e5c4}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui}main{max-width:1250px;margin:auto;padding:36px 28px}nav{display:flex;flex-wrap:wrap;gap:20px;padding:12px 0}a,summary{color:var(--accent)}a:focus,button:focus,summary:focus{outline:3px solid #fff;outline-offset:3px}h1{font-size:clamp(34px,4.5vw,62px);line-height:1.1;letter-spacing:-1.6px;max-width:1000px}h2{font-size:clamp(27px,3vw,40px);line-height:1.2}h3{font-size:17px}p{max-width:1000px}.eyebrow{color:var(--accent);font-size:12px;letter-spacing:2px;font-weight:700}.intro{color:var(--muted);font-size:20px}.hero,.domain,.support{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:28px;margin:26px 0}.hero{background:linear-gradient(125deg,#162e45,#132238)}.badges{display:flex;gap:12px;flex-wrap:wrap}.badges span{border:1px solid var(--line);border-radius:30px;padding:6px 12px;font-size:13px}.comparison{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:20px 0}.comparison article{min-width:0;background:#0d1a2b;padding:20px;border:1px solid var(--line);border-radius:12px}.metric{font-size:clamp(26px,3vw,40px);font-weight:750;line-height:1.2;color:var(--accent)}.verdict{color:var(--green);font-weight:650}.stage-buttons{display:flex;gap:10px;flex-wrap:wrap}button{font:inherit;border:1px solid #5c7e9f;border-radius:8px;padding:9px 16px;background:#0d1a2b;color:var(--text);cursor:pointer}button[aria-pressed=true]{background:#a6dfff;color:#102236}.sequence{display:flex;gap:12px;flex-wrap:wrap;padding-left:24px}.sequence li{padding:8px 16px 8px 4px}.notice{border-left:3px solid #edbc80;padding:12px 18px;background:#1d2c40}.table-scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;border-bottom:1px solid var(--line);padding:12px;overflow-wrap:anywhere}caption{text-align:left;color:var(--muted);padding:12px 0}details{margin:20px 0}summary{cursor:pointer;font-weight:600}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:#0d1a2b;padding:16px;border-radius:8px;max-height:520px;overflow:auto}code{overflow-wrap:anywhere}form{display:grid;gap:10px;max-width:450px}input{font:inherit;padding:10px;background:#0d1a2b;color:var(--text);border:1px solid #5c7e9f;border-radius:6px}[hidden]{display:none!important}footer{color:var(--muted);padding:24px 0}@media(max-width:700px){main{padding:20px 14px}.hero,.domain,.support{padding:20px}.comparison{grid-template-columns:1fr}.metric{font-size:30px}.intro{font-size:18px}th,td{padding:8px;font-size:12px}}
+</style></head><body><main><header id="overview"><p class="eyebrow">CODEX WHEEL / AUTHENTICATED RECORDED EVIDENCE</p><nav aria-label="Evidence sections"><a href="#refund">Refund</a><a href="#inventory">Inventory</a><a href="#repair">Repair &amp; receipts</a><a href="#limits">Limits</a><a href="#receipt-story">PR story</a><a href="#generic-meta">Generic Meta results</a><a href="SUBMISSION.md">Reviewer guide</a></nav><h1>A successful response can hide a broken business outcome.</h1><p class="intro">Source-aware investigation → frozen experiment → independent business-effect verification → bounded repair.</p><div class="badges"><span>Two synthetic domains</span><span>Actual persisted effects</span><span>Finite tested conditions</span></div><div class="hero"><h2>Success can hide a business violation.</h2><p>Refund: USD 20 authorized, USD 40 committed. Inventory: an expired reservation accepted for checkout. Both defects were restored to their supplied healthy baselines and checked again.</p><p>This report displays authenticated recordings. Opening it makes no model call, executes no service and requests no credentials.</p></div></header><section class="support" id="receipt-story"><p class="eyebrow">THE REVIEW QUESTION</p>
+<h2>The API receipt is not the whole outcome.</h2><div class="comparison">
+<article><h3>Authorized</h3><p class="metric">USD 20.00</p><p>One refund</p></article>
+<article><h3>Recorded API receipt</h3><p class="metric">USD 20.00</p><p>Status: committed</p></article>
+<article><h3>Persisted ledger</h3><p class="metric">USD 40.00</p><p>Two committed effects</p></article></div>
+<p>First commit → lost response → unchanged client retries → second commit. The independent verifier checks the ledger.</p>
+<p class="notice">These worlds are deterministic execution. The receipt is an actual tool result; no agent conversation is invented.</p>
+<p><a href="https://github.com/PrasathJaga/codex-wheel/pull/27#issuecomment-6531652287">Inspect the fixture PR result</a> · <a href="https://github.com/PrasathJaga/codex-wheel/actions/runs/41114220238">Inspect the original investigation and repair run</a>. The intentionally defective fixture PR is evidence, not a merge recommendation.</p></section><section class="domain" id="refund"><p class="eyebrow">REFUND / VERIFIED SYNTHETIC CASE</p><h2>One refund authorized. Two effects committed.</h2><p>A lost post-commit response triggers a retry; the changed producer permits a second refund.</p><div class="stage-buttons" role="group" aria-label="refund verification stage"><button data-domain="refund" data-stage="broken" aria-pressed="true">Before repair</button><button data-domain="refund" data-stage="repaired" aria-pressed="false">After repair</button></div><div data-panel="refund-broken"><div class="comparison"><article><h3>Authorized</h3><p class="metric">USD 20.00</p><p>One full-order refund</p></article><article><h3>Baseline committed</h3><p class="metric">USD 20.00</p><p>Verified persisted ledger</p></article><article><h3>Changed version committed</h3><p class="metric">USD 40.00</p><p>2 refund effect(s)</p></article></div><p class="verdict">Regression reproduced in 3/3 pairs</p><div class="table-scroll"><table><caption>Three selected baseline/candidate pairs · broken stage</caption><thead><tr><th>Trial</th><th>Baseline</th><th>Changed version</th></tr></thead><tbody><tr><td>1</td><td>USD 20.00 · 1 effect(s)</td><td>USD 40.00 · 2 effect(s)</td></tr><tr><td>2</td><td>USD 20.00 · 1 effect(s)</td><td>USD 40.00 · 2 effect(s)</td></tr><tr><td>3</td><td>USD 20.00 · 1 effect(s)</td><td>USD 40.00 · 2 effect(s)</td></tr></tbody></table></div><details><summary>Actual recorded trial 1: state, response and events</summary><pre>{
+  &quot;baseline&quot;: {
+    &quot;case&quot;: &quot;M1&quot;,
+    &quot;continuation&quot;: &quot;no_model_calls&quot;,
+    &quot;effects&quot;: [
+      {
+        &quot;amount_minor_units&quot;: 2000,
+        &quot;committed_at&quot;: &quot;2026-10-30T19:19:58.256278975Z&quot;,
+        &quot;currency&quot;: &quot;USD&quot;,
+        &quot;effect_id&quot;: &quot;d7bc3cf6-da11-4fae-87b2-d165a69fc926&quot;,
+        &quot;idempotency_key_sha256&quot;: &quot;6ae8f5623a680cd17b1b89912496361aaaff6d64b06465ea34bde980feeabc29&quot;,
+        &quot;order_id&quot;: &quot;ORD-SYN-TRIAL&quot;,
+        &quot;refund_scope&quot;: &quot;full_order&quot;
+      }
+    ],
+    &quot;events&quot;: [
+      {
+        &quot;action&quot;: &quot;DROP_DOWNSTREAM_BEFORE_RESPONSE&quot;,
+        &quot;commit_evidence&quot;: {
+          &quot;effect_id&quot;: &quot;d7bc3cf6-da11-4fae-87b2-d165a69fc926&quot;,
+          &quot;ledger_sha256&quot;: &quot;6d5e39664fce4d55e098c825214c54e560734eb72e1198c17944cbba241c1ce0&quot;,
+          &quot;rows_before_downstream_action&quot;: 1
+        },
+        &quot;key_sha256&quot;: &quot;6ae8f5623a680cd17b1b89912496361aaaff6d64b06465ea34bde980feeabc29&quot;,
+        &quot;upstream_body&quot;: {
+          &quot;committed_minor_units&quot;: 2000,
+          &quot;order_id&quot;: &quot;ORD-SYN-TRIAL&quot;,
+          &quot;refund_effect_id&quot;: &quot;d7bc3cf6-da11-4fae-87b2-d165a69fc926&quot;,
+          &quot;status&quot;: &quot;committed&quot;
+        },
+        &quot;upstream_status&quot;: 200
+      },
+      {
+        &quot;action&quot;: &quot;PASS_THROUGH&quot;,
+        &quot;commit_evidence&quot;: {
+          &quot;effect_id&quot;: &quot;d7bc3cf6-da11-4fae-87b2-d165a69fc926&quot;,
+          &quot;ledger_sha256&quot;: &quot;6d5e39664fce4d55e098c825214c54e560734eb72e1198c17944cbba241c1ce0&quot;,
+          &quot;rows_before_downstream_action&quot;: 1
+        },
+        &quot;key_sha256&quot;: &quot;6ae8f5623a680cd17b1b89912496361aaaff6d64b06465ea34bde980feeabc29&quot;,
+        &quot;upstream_body&quot;: {
+          &quot;committed_minor_units&quot;: 2000,
+          &quot;order_id&quot;: &quot;ORD-SYN-TRIAL&quot;,
+          &quot;refund_effect_id&quot;: &quot;d7bc3cf6-da11-4fae-87b2-d165a69fc926&quot;,
+          &quot;status&quot;: &quot;committed&quot;
+        },
+        &quot;upstream_status&quot;: 200
+      }
+    ],
+    &quot;fixture_sha256&quot;: &quot;8d1ddb9b65642cfd0931ab1d9edb16ac0791dcda04046e4b6c083385feea2746&quot;,
+    &quot;images&quot;: {
+      &quot;java&quot;: &quot;sha256:3cfdbb0f75d10b24e237c078910bd0340cb75828e1c91e2a0b770a8408dae0ad&quot;,
+      &quot;python&quot;: &quot;sha256:d2e4455cb630825c07cf4070d86d3d3a343e8cc845ef1d127bf0dbcda7a1a336&quot;
+    },
+    &quot;jar_sha256&quot;: &quot;aedd495b2b78e72ac83d1e7e3304661d62163c35c00aaa4f7547f1a2c2c0f9b5&quot;,
+    &quot;java_sha256&quot;: &quot;ee85defb2cb736769165dbda011e19d4042ad9bc13daae597a6c79109e9ac3b7&quot;,
+    &quot;label&quot;: &quot;C4-0-0-base&quot;,
+    &quot;method&quot;: &quot;C4&quot;,
+    &quot;model_reply&quot;: null,
+    &quot;oracle_pass&quot;: true,
+    &quot;plan_hash&quot;: &quot;9b63d0ccdab70a52530376758cfb7d05dcd3f9029d6b814c2633adc65d34f01a&quot;,
+    &quot;plan_id&quot;: &quot;C4-0&quot;,
+    &quot;policy&quot;: &quot;g6-three-pairs-v1&quot;,
+    &quot;python_sha256&quot;: &quot;11ba76581d7333215c4d352cb07cdf2eaa9b0b9e767b5a328507794c2667fb55&quot;,
+    &quot;receipt&quot;: {
+      &quot;committed_minor_units&quot;: 2000,
+      &quot;order_id&quot;: &quot;ORD-SYN-TRIAL&quot;,
+      &quot;refund_effect_id&quot;: &quot;d7bc3cf6-da11-4fae-87b2-d165a69fc926&quot;,
+      &quot;status&quot;: &quot;committed&quot;
+    },
+    &quot;reset_empty&quot;: true,
+    &quot;restart_recovered&quot;: true,
+    &quot;rule_sha256&quot;: &quot;a58fda9951c0ef13834aeda1c4e0f40553fdf2d460cd85351753351c1e28fcfb&quot;,
+    &quot;runtime_seconds&quot;: 10.051544669000009,
+    &quot;seed_sha256&quot;: &quot;e04cf8ca7ddcc4bc80e4fc5a3227319d154f736c9d6404d0573c081c88c7a320&quot;,
+    &quot;started_at&quot;: &quot;2026-10-30T19:19:53.466264+00:00&quot;,
+    &quot;status&quot;: &quot;completed&quot;,
+    &quot;transport_errors&quot;: [
+      &quot;RemoteProtocolError&quot;
+    ],
+    &quot;trial&quot;: 0,
+    &quot;world&quot;: &quot;base&quot;
+  },
+  &quot;candidate&quot;: {
+    &quot;case&quot;: &quot;M1&quot;,
+    &quot;continuation&quot;: &quot;no_model_calls&quot;,
+    &quot;effects&quot;: [
+      {
+        &quot;amount_minor_units&quot;: 2000,
+        &quot;committed_at&quot;: &quot;2026-10-30T19:20:07.813370132Z&quot;,
+        &quot;currency&quot;: &quot;USD&quot;,
+        &quot;effect_id&quot;: &quot;91e8289e-39fa-4ae8-a324-c7499777dbe1&quot;,
+        &quot;idempotency_key_sha256&quot;: &quot;94422a406404407f79a61ce86b0cfa8c6fc56cc34418e2169c761f1a6fa25418&quot;,
+        &quot;order_id&quot;: &quot;ORD-SYN-TRIAL&quot;,
+        &quot;refund_scope&quot;: &quot;full_order&quot;
+      },
+      {
+        &quot;amount_minor_units&quot;: 2000,
+        &quot;committed_at&quot;: &quot;2026-10-30T19:20:07.828324439Z&quot;,
+        &quot;currency&quot;: &quot;USD&quot;,
+        &quot;effect_id&quot;: &quot;43dd56b5-be49-4a40-aee2-ec9caf82cd35&quot;,
+        &quot;idempotency_key_sha256&quot;: &quot;94422a406404407f79a61ce86b0cfa8c6fc56cc34418e2169c761f1a6fa25418&quot;,
+        &quot;order_id&quot;: &quot;ORD-SYN-TRIAL&quot;,
+        &quot;refund_scope&quot;: &quot;full_order&quot;
+      }
+    ],
+    &quot;events&quot;: [
+      {
+        &quot;action&quot;: &quot;DROP_DOWNSTREAM_BEFORE_RESPONSE&quot;,
+        &quot;commit_evidence&quot;: {
+          &quot;effect_id&quot;: &quot;91e8289e-39fa-4ae8-a324-c7499777dbe1&quot;,
+          &quot;ledger_sha256&quot;: &quot;ca6b0b54a4e8a4ced34f92f43c20314908e5d567450bb121ebcd4a4b9dfe81a3&quot;,
+          &quot;rows_before_downstream_action&quot;: 1
+        },
+        &quot;key_sha256&quot;: &quot;94422a406404407f79a61ce86b0cfa8c6fc56cc34418e2169c761f1a6fa25418&quot;,
+        &quot;upstream_body&quot;: {
+          &quot;committed_minor_units&quot;: 2000,
+          &quot;order_id&quot;: &quot;ORD-SYN-TRIAL&quot;,
+          &quot;refund_effect_id&quot;: &quot;91e8289e-39fa-4ae8-a324-c7499777dbe1&quot;,
+          &quot;status&quot;: &quot;committed&quot;
+        },
+        &quot;upstream_status&quot;: 200
+      },
+      {
+        &quot;action&quot;: &quot;PASS_THROUGH&quot;,
+        &quot;commit_evidence&quot;: {
+          &quot;effect_id&quot;: &quot;43dd56b5-be49-4a40-aee2-ec9caf82cd35&quot;,
+          &quot;ledger_sha256&quot;: &quot;b90e08f9d8202bf1ba16b5ce2d5e532cd9f4bb2cb3d0effe3f2650b6b67464ca&quot;,
+          &quot;rows_before_downstream_action&quot;: 2
+        },
+        &quot;key_sha256&quot;: &quot;94422a406404407f79a61ce86b0cfa8c6fc56cc34418e2169c761f1a6fa25418&quot;,
+        &quot;upstream_body&quot;: {
+          &quot;committed_minor_units&quot;: 2000,
+          &quot;order_id&quot;: &quot;ORD-SYN-TRIAL&quot;,
+          &quot;refund_effect_id&quot;: &quot;43dd56b5-be49-4a40-aee2-ec9caf82cd35&quot;,
+          &quot;status&quot;: &quot;committed&quot;
+        },
+        &quot;upstream_status&quot;: 200
+      }
+    ],
+    &quot;fixture_sha256&quot;: &quot;8d1ddb9b65642cfd0931ab1d9edb16ac0791dcda04046e4b6c083385feea2746&quot;,
+    &quot;images&quot;: {
+      &quot;java&quot;: &quot;sha256:3cfdbb0f75d10b24e237c078910bd0340cb75828e1c91e2a0b770a8408dae0ad&quot;,
+      &quot;python&quot;: &quot;sha256:d2e4455cb630825c07cf4070d86d3d3a343e8cc845ef1d127bf0dbcda7a1a336&quot;
+    },
+    &quot;jar_sha256&quot;: &quot;533059d3c9175931ea23915f56b5099880634013b10e8536e9b0a2874fa98b02&quot;,
+    &quot;java_sha256&quot;: &quot;2b12c49d88ebda564478e885fed691da599e3c1a3d7364aa4b37ce84381b5278&quot;,
+    &quot;label&quot;: &quot;C4-0-0-candidate&quot;,
+    &quot;method&quot;: &quot;C4&quot;,
+    &quot;model_reply&quot;: null,
+    &quot;oracle_pass&quot;: false,
+    &quot;plan_hash&quot;: &quot;9b63d0ccdab70a52530376758cfb7d05dcd3f9029d6b814c2633adc65d34f01a&quot;,
+    &quot;plan_id&quot;: &quot;C4-0&quot;,
+    &quot;policy&quot;: &quot;g6-three-pairs-v1&quot;,
+    &quot;python_sha256&quot;: &quot;11ba76581d7333215c4d352cb07cdf2eaa9b0b9e767b5a328507794c2667fb55&quot;,
+    &quot;receipt&quot;: {
+      &quot;committed_minor_units&quot;: 2000,
+      &quot;order_id&quot;: &quot;ORD-SYN-TRIAL&quot;,
+      &quot;refund_effect_id&quot;: &quot;43dd56b5-be49-4a40-aee2-ec9caf82cd35&quot;,
+      &quot;status&quot;: &quot;committed&quot;
+    },
+    &quot;reset_empty&quot;: true,
+    &quot;restart_recovered&quot;: true,
+    &quot;rule_sha256&quot;: &quot;a58fda9951c0ef13834aeda1c4e0f40553fdf2d460cd85351753351c1e28fcfb&quot;,
+    &quot;runtime_seconds&quot;: 9.280692359999989,
+    &quot;seed_sha256&quot;: &quot;e04cf8ca7ddcc4bc80e4fc5a3227319d154f736c9d6404d0573c081c88c7a320&quot;,
+    &quot;started_at&quot;: &quot;2026-10-30T19:20:03.558031+00:00&quot;,
+    &quot;status&quot;: &quot;completed&quot;,
+    &quot;transport_errors&quot;: [
+      &quot;RemoteProtocolError&quot;
+    ],
+    &quot;trial&quot;: 0,
+    &quot;world&quot;: &quot;candidate&quot;
+  }
+}</pre></details></div><div data-panel="refund-repaired" hidden><div class="comparison"><article><h3>Authorized</h3><p class="metric">USD 20.00</p><p>One full-order refund</p></article><article><h3>Baseline committed</h3><p class="metric">USD 20.00</p><p>Verified persisted ledger</p></article><article><h3>Changed version committed</h3><p class="metric">USD 20.00</p><p>1 refund effect(s)</p></article></div><p class="verdict">Restoration passed all selected and control worlds</p><div class="table-scroll"><table><caption>Three selected baseline/candidate pairs · repaired stage</caption><thead><tr><th>Trial</th><th>Baseline</th><th>Changed version</th></tr></thead><tbody><tr><td>1</td><td>USD 20.00 · 1 effect(s)</td><td>USD 20.00 · 1 effect(s)</td></tr><tr><td>2</td><td>USD 20.00 · 1 effect(s)</td><td>USD 20.00 · 1 effect(s)</td></tr><tr><td>3</td><td>USD 20.00 · 1 effect(s)</td><td>USD 20.00 · 1 effect(s)</td></tr></tbody></table></div><details><summary>Actual recorded trial 1: state, response and events</summary><pre>{
+  &quot;baseline&quot;: {
+    &quot;case&quot;: &quot;M1&quot;,
+    &quot;continuation&quot;: &quot;no_model_calls&quot;,
+    &quot;effects&quot;: [
+      {
+        &quot;amount_minor_units&quot;: 2000,
+        &quot;committed_at&quot;: &quot;2026-10-30T19:22:06.772655555Z&quot;,
+        &quot;currency&quot;: &quot;USD&quot;,
+        &quot;effect_id&quot;: &quot;2da8d4ae-e2b4-4229-8f2b-ac3b512aa6a2&quot;,
+        &quot;idempotency_key_sha256&quot;: &quot;55608bb890cb52a2617213ce83947e1ed1cb02763d7bc137b7c3d77a26ee3b49&quot;,
+        &quot;order_id&quot;: &quot;ORD-SYN-TRIAL&quot;,
+        &quot;refund_scope&quot;: &quot;full_order&quot;
+      }
+    ],
+    &quot;events&quot;: [
+      {
+        &quot;action&quot;: &quot;DROP_DOWNSTREAM_BEFORE_RESPONSE&quot;,
+        &quot;commit_evidence&quot;: {
+          &quot;effect_id&quot;: &quot;2da8d4ae-e2b4-4229-8f2b-ac3b512aa6a2&quot;,
+          &quot;ledger_sha256&quot;: &quot;05590d33130cdaaca394323a0253697f3d9bd745199bf757df8a13626647109f&quot;,
+          &quot;rows_before_downstream_action&quot;: 1
+        },
+        &quot;key_sha256&quot;: &quot;55608bb890cb52a2617213ce83947e1ed1cb02763d7bc137b7c3d77a26ee3b49&quot;,
+        &quot;upstream_body&quot;: {
+          &quot;committed_minor_units&quot;: 2000,
+          &quot;order_id&quot;: &quot;ORD-SYN-TRIAL&quot;,
+          &quot;refund_effect_id&quot;: &quot;2da8d4ae-e2b4-4229-8f2b-ac3b512aa6a2&quot;,
+          &quot;status&quot;: &quot;committed&quot;
+        },
+        &quot;upstream_status&quot;: 200
+      },
+      {
+        &quot;action&quot;: &quot;PASS_THROUGH&quot;,
+        &quot;commit_evidence&quot;: {
+          &quot;effect_id&quot;: &quot;2da8d4ae-e2b4-4229-8f2b-ac3b512aa6a2&quot;,
+          &quot;ledger_sha256&quot;: &quot;05590d33130cdaaca394323a0253697f3d9bd745199bf757df8a13626647109f&quot;,
+          &quot;rows_before_downstream_action&quot;: 1
+        },
+        &quot;key_sha256&quot;: &quot;55608bb890cb52a2617213ce83947e1ed1cb02763d7bc137b7c3d77a26ee3b49&quot;,
+        &quot;upstream_body&quot;: {
+          &quot;committed_minor_units&quot;: 2000,
+          &quot;order_id&quot;: &quot;ORD-SYN-TRIAL&quot;,
+          &quot;refund_effect_id&quot;: &quot;2da8d4ae-e2b4-4229-8f2b-ac3b512aa6a2&quot;,
+          &quot;status&quot;: &quot;committed&quot;
+        },
+        &quot;upstream_status&quot;: 200
+      }
+    ],
+    &quot;fixture_sha256&quot;: &quot;8d1ddb9b65642cfd0931ab1d9edb16ac0791dcda04046e4b6c083385feea2746&quot;,
+    &quot;images&quot;: {
+      &quot;java&quot;: &quot;sha256:3cfdbb0f75d10b24e237c078910bd0340cb75828e1c91e2a0b770a8408dae0ad&quot;,
+      &quot;python&quot;: &quot;sha256:d2e4455cb630825c07cf4070d86d3d3a343e8cc845ef1d127bf0dbcda7a1a336&quot;
+    },
+    &quot;jar_sha256&quot;: &quot;aedd495b2b78e72ac83d1e7e3304661d62163c35c00aaa4f7547f1a2c2c0f9b5&quot;,
+    &quot;java_sha256&quot;: &quot;ee85defb2cb736769165dbda011e19d4042ad9bc13daae597a6c79109e9ac3b7&quot;,
+    &quot;label&quot;: &quot;C4-0-0-base&quot;,
+    &quot;method&quot;: &quot;C4&quot;,
+    &quot;model_reply&quot;: null,
+    &quot;oracle_pass&quot;: true,
+    &quot;plan_hash&quot;: &quot;8b669b441a10273248f7ad8bb260f02e2033c7271ea4f0f0cd6a8b6b390c558d&quot;,
+    &quot;plan_id&quot;: &quot;C4-0&quot;,
+    &quot;policy&quot;: &quot;g6-three-pairs-v1&quot;,
+    &quot;python_sha256&quot;: &quot;11ba76581d7333215c4d352cb07cdf2eaa9b0b9e767b5a328507794c2667fb55&quot;,
+    &quot;receipt&quot;: {
+      &quot;committed_minor_units&quot;: 2000,
+      &quot;order_id&quot;: &quot;ORD-SYN-TRIAL&quot;,
+      &quot;refund_effect_id&quot;: &quot;2da8d4ae-e2b4-4229-8f2b-ac3b512aa6a2&quot;,
+      &quot;status&quot;: &quot;committed&quot;
+    },
+    &quot;reset_empty&quot;: true,
+    &quot;restart_recovered&quot;: true,
+    &quot;rule_sha256&quot;: &quot;a58fda9951c0ef13834aeda1c4e0f40553fdf2d460cd85351753351c1e28fcfb&quot;,
+    &quot;runtime_seconds&quot;: 9.127590468999983,
+    &quot;seed_sha256&quot;: &quot;e04cf8ca7ddcc4bc80e4fc5a3227319d154f736c9d6404d0573c081c88c7a320&quot;,
+    &quot;started_at&quot;: &quot;2026-10-30T19:22:02.772695+00:00&quot;,
+    &quot;status&quot;: &quot;completed&quot;,
+    &quot;transport_errors&quot;: [
+      &quot;RemoteProtocolError&quot;
+    ],
+    &quot;trial&quot;: 0,
+    &quot;world&quot;: &quot;base&quot;
+  },
+  &quot;candidate&quot;: {
+    &quot;case&quot;: &quot;M1&quot;,
+    &quot;continuation&quot;: &quot;no_model_calls&quot;,
+    &quot;effects&quot;: [
+      {
+        &quot;amount_minor_units&quot;: 2000,
+        &quot;committed_at&quot;: &quot;2026-10-30T19:22:16.128877534Z&quot;,
+        &quot;currency&quot;: &quot;USD&quot;,
+        &quot;effect_id&quot;: &quot;93c3a299-aef9-477a-a0e4-e4ab7a77ee66&quot;,
+        &quot;idempotency_key_sha256&quot;: &quot;8f9adf60113f3fdfe41dc8882225208b415f6c20a78cd062b3f3e94e5c050b5f&quot;,
+        &quot;order_id&quot;: &quot;ORD-SYN-TRIAL&quot;,
+        &quot;refund_scope&quot;: &quot;full_order&quot;
+      }
+    ],
+    &quot;events&quot;: [
+      {
+        &quot;action&quot;: &quot;DROP_DOWNSTREAM_BEFORE_RESPONSE&quot;,
+        &quot;commit_evidence&quot;: {
+          &quot;effect_id&quot;: &quot;93c3a299-aef9-477a-a0e4-e4ab7a77ee66&quot;,
+          &quot;ledger_sha256&quot;: &quot;c8e9c33b9ba0cf3c794055e90328ecb889008b9a8b7fab9d80f6e4e65637084b&quot;,
+          &quot;rows_before_downstream_action&quot;: 1
+        },
+        &quot;key_sha256&quot;: &quot;8f9adf60113f3fdfe41dc8882225208b415f6c20a78cd062b3f3e94e5c050b5f&quot;,
+        &quot;upstream_body&quot;: {
+          &quot;committed_minor_units&quot;: 2000,
+          &quot;order_id&quot;: &quot;ORD-SYN-TRIAL&quot;,
+          &quot;refund_effect_id&quot;: &quot;93c3a299-aef9-477a-a0e4-e4ab7a77ee66&quot;,
+          &quot;status&quot;: &quot;committed&quot;
+        },
+        &quot;upstream_status&quot;: 200
+      },
+      {
+        &quot;action&quot;: &quot;PASS_THROUGH&quot;,
+        &quot;commit_evidence&quot;: {
+          &quot;effect_id&quot;: &quot;93c3a299-aef9-477a-a0e4-e4ab7a77ee66&quot;,
+          &quot;ledger_sha256&quot;: &quot;c8e9c33b9ba0cf3c794055e90328ecb889008b9a8b7fab9d80f6e4e65637084b&quot;,
+          &quot;rows_before_downstream_action&quot;: 1
+        },
+        &quot;key_sha256&quot;: &quot;8f9adf60113f3fdfe41dc8882225208b415f6c20a78cd062b3f3e94e5c050b5f&quot;,
+        &quot;upstream_body&quot;: {
+          &quot;committed_minor_units&quot;: 2000,
+          &quot;order_id&quot;: &quot;ORD-SYN-TRIAL&quot;,
+          &quot;refund_effect_id&quot;: &quot;93c3a299-aef9-477a-a0e4-e4ab7a77ee66&quot;,
+          &quot;status&quot;: &quot;committed&quot;
+        },
+        &quot;upstream_status&quot;: 200
+      }
+    ],
+    &quot;fixture_sha256&quot;: &quot;8d1ddb9b65642cfd0931ab1d9edb16ac0791dcda04046e4b6c083385feea2746&quot;,
+    &quot;images&quot;: {
+      &quot;java&quot;: &quot;sha256:3cfdbb0f75d10b24e237c078910bd0340cb75828e1c91e2a0b770a8408dae0ad&quot;,
+      &quot;python&quot;: &quot;sha256:d2e4455cb630825c07cf4070d86d3d3a343e8cc845ef1d127bf0dbcda7a1a336&quot;
+    },
+    &quot;jar_sha256&quot;: &quot;aedd495b2b78e72ac83d1e7e3304661d62163c35c00aaa4f7547f1a2c2c0f9b5&quot;,
+    &quot;java_sha256&quot;: &quot;ee85defb2cb736769165dbda011e19d4042ad9bc13daae597a6c79109e9ac3b7&quot;,
+    &quot;label&quot;: &quot;C4-0-0-candidate&quot;,
+    &quot;method&quot;: &quot;C4&quot;,
+    &quot;model_reply&quot;: null,
+    &quot;oracle_pass&quot;: true,
+    &quot;plan_hash&quot;: &quot;8b669b441a10273248f7ad8bb260f02e2033c7271ea4f0f0cd6a8b6b390c558d&quot;,
+    &quot;plan_id&quot;: &quot;C4-0&quot;,
+    &quot;policy&quot;: &quot;g6-three-pairs-v1&quot;,
+    &quot;python_sha256&quot;: &quot;11ba76581d7333215c4d352cb07cdf2eaa9b0b9e767b5a328507794c2667fb55&quot;,
+    &quot;receipt&quot;: {
+      &quot;committed_minor_units&quot;: 2000,
+      &quot;order_id&quot;: &quot;ORD-SYN-TRIAL&quot;,
+      &quot;refund_effect_id&quot;: &quot;93c3a299-aef9-477a-a0e4-e4ab7a77ee66&quot;,
+      &quot;status&quot;: &quot;committed&quot;
+    },
+    &quot;reset_empty&quot;: true,
+    &quot;restart_recovered&quot;: true,
+    &quot;rule_sha256&quot;: &quot;a58fda9951c0ef13834aeda1c4e0f40553fdf2d460cd85351753351c1e28fcfb&quot;,
+    &quot;runtime_seconds&quot;: 9.370269355000005,
+    &quot;seed_sha256&quot;: &quot;e04cf8ca7ddcc4bc80e4fc5a3227319d154f736c9d6404d0573c081c88c7a320&quot;,
+    &quot;started_at&quot;: &quot;2026-10-30T19:22:11.939486+00:00&quot;,
+    &quot;status&quot;: &quot;completed&quot;,
+    &quot;transport_errors&quot;: [
+      &quot;RemoteProtocolError&quot;
+    ],
+    &quot;trial&quot;: 0,
+    &quot;world&quot;: &quot;candidate&quot;
+  }
+}</pre></details></div><h3>Recorded causal sequence</h3><ol class="sequence"><li>First refund commits</li><li>Response is lost</li><li>Python client retries</li><li>Second refund commits</li></ol><h3>What Meta contributed</h3><p>Candidate weakens idempotency to amounts &gt;2500 only, so a 2000-unit refund retried with the same Idempotency-Key after the gateway drops the first committed response will append a second ledger effect, while base would return the prior effect.</p><p>Recorded source-aware experiment selection and bounded repair proposal. Execution here is deterministic; no support-agent conversation is invented.</p><details id="refund-sources"><summary>Exact recorded source references</summary><pre>[
+  {
+    &quot;end_line&quot;: 59,
+    &quot;path&quot;: &quot;services/refund-api-java/src/main/java/dev/codexwheel/refunds/domain/RefundService.java&quot;,
+    &quot;quote&quot;: &quot;        var prior = byKey.get(sha256(idempotencyKey));\n        if (prior != null &amp;&amp; request.amountMinorUnits() &gt; 2500) {\n            if (!prior.request().equals(request)) {\n                throw new IdempotencyConflictException(\&quot;Idempotency-Key reused with different parameters\&quot;);\n            }\n            return prior.effect();\n        }&quot;,
+    &quot;start_line&quot;: 53,
+    &quot;version&quot;: &quot;candidate&quot;
+  },
+  {
+    &quot;end_line&quot;: 34,
+    &quot;path&quot;: &quot;services/support-agent-python/refund_tool/client.py&quot;,
+    &quot;quote&quot;: &quot;        key = str(uuid.uuid4())\n        last_exception: Exception | None = None\n        for attempt in range(1,max_attempts+1):\n            try:\n                response = self.client.post(\&quot;/refunds\&quot;,headers={\&quot;Idempotency-Key\&quot;:key},json=payload)&quot;,
+    &quot;start_line&quot;: 30,
+    &quot;version&quot;: &quot;base&quot;
+  },
+  {
+    &quot;end_line&quot;: 43,
+    &quot;path&quot;: &quot;services/support-agent-python/refund_tool/client.py&quot;,
+    &quot;quote&quot;: &quot;            if response.status_code==502:\n                if attempt&lt;max_attempts:\n                    continue\n                raise RefundToolError(f\&quot;HTTP 502 after {attempt} attempts\&quot;)&quot;,
+    &quot;start_line&quot;: 40,
+    &quot;version&quot;: &quot;base&quot;
+  }
+]</pre></details><p class="notice">Known author-seeded M1. Healthy repair answer supplied. The earlier 2048-token diagnosis failed and remains preserved below.</p></section><section class="domain" id="inventory"><p class="eyebrow">INVENTORY / VERIFIED SYNTHETIC CASE</p><h2>Expired reservation. Accepted order.</h2><p>The selected experiment tests lifecycle validity. It does not demonstrate two buyers overselling stock.</p><div class="stage-buttons" role="group" aria-label="inventory verification stage"><button data-domain="inventory" data-stage="broken" aria-pressed="true">Before repair</button><button data-domain="inventory" data-stage="repaired" aria-pressed="false">After repair</button></div><div data-panel="inventory-broken"><div class="comparison"><article><h3>Reservation</h3><p class="metric">Expired</p><p>Checkout must be rejected</p></article><article><h3>Baseline committed</h3><p class="metric">0 orders</p><p>Checkout rejected</p></article><article><h3>Changed version committed</h3><p class="metric">1 order</p><p>Checkout accepted after expiry</p></article></div><p class="verdict">Invalid lifecycle transition reproduced in 3/3 pairs</p><div class="table-scroll"><table><caption>Three selected baseline/candidate pairs · broken stage</caption><thead><tr><th>Trial</th><th>Baseline</th><th>Changed version</th></tr></thead><tbody><tr><td>1</td><td>0 order(s) · checkout rejected</td><td>1 order(s) · checkout accepted</td></tr><tr><td>2</td><td>0 order(s) · checkout rejected</td><td>1 order(s) · checkout accepted</td></tr><tr><td>3</td><td>0 order(s) · checkout rejected</td><td>1 order(s) · checkout accepted</td></tr></tbody></table></div><details><summary>Actual recorded trial 1: state, response and events</summary><pre>{
+  &quot;baseline&quot;: {
+    &quot;accepted_orders&quot;: [],
+    &quot;execution&quot;: &quot;fresh_container_with_trusted_host_peer&quot;,
+    &quot;image&quot;: &quot;sha256:3cfdbb0f75d10b24e237c078910bd0340cb75828e1c91e2a0b770a8408dae0ad&quot;,
+    &quot;jar_sha256&quot;: &quot;c619569a1ea91315691aa1ebde05a8e356d5d7555ae869ea61be72b53b346c0c&quot;,
+    &quot;side&quot;: &quot;base&quot;,
+    &quot;snapshot&quot;: {
+      &quot;events&quot;: [
+        {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;orderId&quot;: null,
+          &quot;reservationId&quot;: &quot;rA&quot;,
+          &quot;sequence&quot;: 1,
+          &quot;type&quot;: &quot;RESERVED&quot;
+        },
+        {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;orderId&quot;: null,
+          &quot;reservationId&quot;: &quot;rA&quot;,
+          &quot;sequence&quot;: 2,
+          &quot;type&quot;: &quot;EXPIRED&quot;
+        }
+      ],
+      &quot;orders&quot;: [],
+      &quot;reservations&quot;: [
+        {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;id&quot;: &quot;rA&quot;,
+          &quot;sku&quot;: &quot;last-item&quot;,
+          &quot;status&quot;: &quot;EXPIRED&quot;
+        }
+      ],
+      &quot;schema&quot;: 1,
+      &quot;sku&quot;: &quot;last-item&quot;,
+      &quot;stock&quot;: 1
+    },
+    &quot;status&quot;: &quot;pass&quot;,
+    &quot;trace&quot;: [
+      {
+        &quot;action&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;op&quot;: &quot;RESERVE&quot;
+        },
+        &quot;index&quot;: 0,
+        &quot;status&quot;: &quot;returned&quot;,
+        &quot;value&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;id&quot;: &quot;rA&quot;,
+          &quot;sku&quot;: &quot;last-item&quot;,
+          &quot;status&quot;: &quot;ACTIVE&quot;
+        }
+      },
+      {
+        &quot;action&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;op&quot;: &quot;TRIGGER_EXPIRY&quot;
+        },
+        &quot;index&quot;: 1,
+        &quot;status&quot;: &quot;returned&quot;,
+        &quot;value&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;id&quot;: &quot;rA&quot;,
+          &quot;sku&quot;: &quot;last-item&quot;,
+          &quot;status&quot;: &quot;EXPIRED&quot;
+        }
+      },
+      {
+        &quot;action&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;op&quot;: &quot;CHECKOUT&quot;
+        },
+        &quot;code&quot;: &quot;reservation_not_active&quot;,
+        &quot;http_status&quot;: 409,
+        &quot;index&quot;: 2,
+        &quot;status&quot;: &quot;rejected&quot;
+      }
+    ],
+    &quot;trial&quot;: 0,
+    &quot;verification&quot;: {
+      &quot;accepted_unique_orders&quot;: 0,
+      &quot;committed_orders&quot;: 0,
+      &quot;events&quot;: 2,
+      &quot;status&quot;: &quot;verified&quot;,
+      &quot;stock&quot;: 1
+    }
+  },
+  &quot;candidate&quot;: {
+    &quot;accepted_orders&quot;: [
+      {
+        &quot;buyer&quot;: &quot;A&quot;,
+        &quot;id&quot;: &quot;orderA&quot;,
+        &quot;reservationId&quot;: &quot;rA&quot;,
+        &quot;sku&quot;: &quot;last-item&quot;
+      }
+    ],
+    &quot;execution&quot;: &quot;fresh_container_with_trusted_host_peer&quot;,
+    &quot;image&quot;: &quot;sha256:3cfdbb0f75d10b24e237c078910bd0340cb75828e1c91e2a0b770a8408dae0ad&quot;,
+    &quot;jar_sha256&quot;: &quot;628b9f70756cefa127bad66fe0ef6dddb02d6abe3f24181f7d8556e171ec910e&quot;,
+    &quot;side&quot;: &quot;candidate&quot;,
+    &quot;snapshot&quot;: {
+      &quot;events&quot;: [
+        {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;orderId&quot;: null,
+          &quot;reservationId&quot;: &quot;rA&quot;,
+          &quot;sequence&quot;: 1,
+          &quot;type&quot;: &quot;RESERVED&quot;
+        },
+        {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;orderId&quot;: null,
+          &quot;reservationId&quot;: &quot;rA&quot;,
+          &quot;sequence&quot;: 2,
+          &quot;type&quot;: &quot;EXPIRED&quot;
+        },
+        {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;orderId&quot;: &quot;orderA&quot;,
+          &quot;reservationId&quot;: &quot;rA&quot;,
+          &quot;sequence&quot;: 3,
+          &quot;type&quot;: &quot;CONFIRMED&quot;
+        }
+      ],
+      &quot;orders&quot;: [
+        {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;id&quot;: &quot;orderA&quot;,
+          &quot;reservationId&quot;: &quot;rA&quot;,
+          &quot;sku&quot;: &quot;last-item&quot;
+        }
+      ],
+      &quot;reservations&quot;: [
+        {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;id&quot;: &quot;rA&quot;,
+          &quot;sku&quot;: &quot;last-item&quot;,
+          &quot;status&quot;: &quot;CONFIRMED&quot;
+        }
+      ],
+      &quot;schema&quot;: 1,
+      &quot;sku&quot;: &quot;last-item&quot;,
+      &quot;stock&quot;: 1
+    },
+    &quot;status&quot;: &quot;contract_violation&quot;,
+    &quot;trace&quot;: [
+      {
+        &quot;action&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;op&quot;: &quot;RESERVE&quot;
+        },
+        &quot;index&quot;: 0,
+        &quot;status&quot;: &quot;returned&quot;,
+        &quot;value&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;id&quot;: &quot;rA&quot;,
+          &quot;sku&quot;: &quot;last-item&quot;,
+          &quot;status&quot;: &quot;ACTIVE&quot;
+        }
+      },
+      {
+        &quot;action&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;op&quot;: &quot;TRIGGER_EXPIRY&quot;
+        },
+        &quot;index&quot;: 1,
+        &quot;status&quot;: &quot;returned&quot;,
+        &quot;value&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;id&quot;: &quot;rA&quot;,
+          &quot;sku&quot;: &quot;last-item&quot;,
+          &quot;status&quot;: &quot;EXPIRED&quot;
+        }
+      },
+      {
+        &quot;action&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;op&quot;: &quot;CHECKOUT&quot;
+        },
+        &quot;index&quot;: 2,
+        &quot;status&quot;: &quot;returned&quot;,
+        &quot;value&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;id&quot;: &quot;orderA&quot;,
+          &quot;reservationId&quot;: &quot;rA&quot;,
+          &quot;sku&quot;: &quot;last-item&quot;
+        }
+      }
+    ],
+    &quot;trial&quot;: 0,
+    &quot;violation&quot;: &quot;Invalid lifecycle transition&quot;
+  }
+}</pre></details></div><div data-panel="inventory-repaired" hidden><div class="comparison"><article><h3>Reservation</h3><p class="metric">Expired</p><p>Checkout must be rejected</p></article><article><h3>Baseline committed</h3><p class="metric">0 orders</p><p>Checkout rejected</p></article><article><h3>Changed version committed</h3><p class="metric">0 orders</p><p>Checkout correctly rejected</p></article></div><p class="verdict">Restoration passed all selected and control worlds</p><div class="table-scroll"><table><caption>Three selected baseline/candidate pairs · repaired stage</caption><thead><tr><th>Trial</th><th>Baseline</th><th>Changed version</th></tr></thead><tbody><tr><td>1</td><td>0 order(s) · checkout rejected</td><td>0 order(s) · checkout rejected</td></tr><tr><td>2</td><td>0 order(s) · checkout rejected</td><td>0 order(s) · checkout rejected</td></tr><tr><td>3</td><td>0 order(s) · checkout rejected</td><td>0 order(s) · checkout rejected</td></tr></tbody></table></div><details><summary>Actual recorded trial 1: state, response and events</summary><pre>{
+  &quot;baseline&quot;: {
+    &quot;accepted_orders&quot;: [],
+    &quot;execution&quot;: &quot;fresh_container_with_trusted_host_peer&quot;,
+    &quot;image&quot;: &quot;sha256:3cfdbb0f75d10b24e237c078910bd0340cb75828e1c91e2a0b770a8408dae0ad&quot;,
+    &quot;jar_sha256&quot;: &quot;c619569a1ea91315691aa1ebde05a8e356d5d7555ae869ea61be72b53b346c0c&quot;,
+    &quot;side&quot;: &quot;base&quot;,
+    &quot;snapshot&quot;: {
+      &quot;events&quot;: [
+        {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;orderId&quot;: null,
+          &quot;reservationId&quot;: &quot;rA&quot;,
+          &quot;sequence&quot;: 1,
+          &quot;type&quot;: &quot;RESERVED&quot;
+        },
+        {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;orderId&quot;: null,
+          &quot;reservationId&quot;: &quot;rA&quot;,
+          &quot;sequence&quot;: 2,
+          &quot;type&quot;: &quot;EXPIRED&quot;
+        }
+      ],
+      &quot;orders&quot;: [],
+      &quot;reservations&quot;: [
+        {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;id&quot;: &quot;rA&quot;,
+          &quot;sku&quot;: &quot;last-item&quot;,
+          &quot;status&quot;: &quot;EXPIRED&quot;
+        }
+      ],
+      &quot;schema&quot;: 1,
+      &quot;sku&quot;: &quot;last-item&quot;,
+      &quot;stock&quot;: 1
+    },
+    &quot;status&quot;: &quot;pass&quot;,
+    &quot;trace&quot;: [
+      {
+        &quot;action&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;op&quot;: &quot;RESERVE&quot;
+        },
+        &quot;index&quot;: 0,
+        &quot;status&quot;: &quot;returned&quot;,
+        &quot;value&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;id&quot;: &quot;rA&quot;,
+          &quot;sku&quot;: &quot;last-item&quot;,
+          &quot;status&quot;: &quot;ACTIVE&quot;
+        }
+      },
+      {
+        &quot;action&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;op&quot;: &quot;TRIGGER_EXPIRY&quot;
+        },
+        &quot;index&quot;: 1,
+        &quot;status&quot;: &quot;returned&quot;,
+        &quot;value&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;id&quot;: &quot;rA&quot;,
+          &quot;sku&quot;: &quot;last-item&quot;,
+          &quot;status&quot;: &quot;EXPIRED&quot;
+        }
+      },
+      {
+        &quot;action&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;op&quot;: &quot;CHECKOUT&quot;
+        },
+        &quot;code&quot;: &quot;reservation_not_active&quot;,
+        &quot;http_status&quot;: 409,
+        &quot;index&quot;: 2,
+        &quot;status&quot;: &quot;rejected&quot;
+      }
+    ],
+    &quot;trial&quot;: 0,
+    &quot;verification&quot;: {
+      &quot;accepted_unique_orders&quot;: 0,
+      &quot;committed_orders&quot;: 0,
+      &quot;events&quot;: 2,
+      &quot;status&quot;: &quot;verified&quot;,
+      &quot;stock&quot;: 1
+    }
+  },
+  &quot;candidate&quot;: {
+    &quot;accepted_orders&quot;: [],
+    &quot;execution&quot;: &quot;fresh_container_with_trusted_host_peer&quot;,
+    &quot;image&quot;: &quot;sha256:3cfdbb0f75d10b24e237c078910bd0340cb75828e1c91e2a0b770a8408dae0ad&quot;,
+    &quot;jar_sha256&quot;: &quot;c619569a1ea91315691aa1ebde05a8e356d5d7555ae869ea61be72b53b346c0c&quot;,
+    &quot;side&quot;: &quot;candidate&quot;,
+    &quot;snapshot&quot;: {
+      &quot;events&quot;: [
+        {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;orderId&quot;: null,
+          &quot;reservationId&quot;: &quot;rA&quot;,
+          &quot;sequence&quot;: 1,
+          &quot;type&quot;: &quot;RESERVED&quot;
+        },
+        {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;orderId&quot;: null,
+          &quot;reservationId&quot;: &quot;rA&quot;,
+          &quot;sequence&quot;: 2,
+          &quot;type&quot;: &quot;EXPIRED&quot;
+        }
+      ],
+      &quot;orders&quot;: [],
+      &quot;reservations&quot;: [
+        {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;id&quot;: &quot;rA&quot;,
+          &quot;sku&quot;: &quot;last-item&quot;,
+          &quot;status&quot;: &quot;EXPIRED&quot;
+        }
+      ],
+      &quot;schema&quot;: 1,
+      &quot;sku&quot;: &quot;last-item&quot;,
+      &quot;stock&quot;: 1
+    },
+    &quot;status&quot;: &quot;pass&quot;,
+    &quot;trace&quot;: [
+      {
+        &quot;action&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;op&quot;: &quot;RESERVE&quot;
+        },
+        &quot;index&quot;: 0,
+        &quot;status&quot;: &quot;returned&quot;,
+        &quot;value&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;id&quot;: &quot;rA&quot;,
+          &quot;sku&quot;: &quot;last-item&quot;,
+          &quot;status&quot;: &quot;ACTIVE&quot;
+        }
+      },
+      {
+        &quot;action&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;op&quot;: &quot;TRIGGER_EXPIRY&quot;
+        },
+        &quot;index&quot;: 1,
+        &quot;status&quot;: &quot;returned&quot;,
+        &quot;value&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;id&quot;: &quot;rA&quot;,
+          &quot;sku&quot;: &quot;last-item&quot;,
+          &quot;status&quot;: &quot;EXPIRED&quot;
+        }
+      },
+      {
+        &quot;action&quot;: {
+          &quot;buyer&quot;: &quot;A&quot;,
+          &quot;op&quot;: &quot;CHECKOUT&quot;
+        },
+        &quot;code&quot;: &quot;reservation_not_active&quot;,
+        &quot;http_status&quot;: 409,
+        &quot;index&quot;: 2,
+        &quot;status&quot;: &quot;rejected&quot;
+      }
+    ],
+    &quot;trial&quot;: 0,
+    &quot;verification&quot;: {
+      &quot;accepted_unique_orders&quot;: 0,
+      &quot;committed_orders&quot;: 0,
+      &quot;events&quot;: 2,
+      &quot;status&quot;: &quot;verified&quot;,
+      &quot;stock&quot;: 1
+    }
+  }
+}</pre></details></div><h3>Recorded causal sequence</h3><ol class="sequence"><li>Reserve · buyer A</li><li>Trigger Expiry · buyer A</li><li>Checkout · buyer A</li></ol><h3>What Meta contributed</h3><p>candidate confirm omits ACTIVE-only guard so expired reservation may still confirm</p><p>Recorded source-aware experiment selection and bounded repair proposal. Execution here is deterministic; no support-agent conversation is invented.</p><details id="inventory-sources"><summary>Exact recorded source references</summary><pre>[
+  {
+    &quot;end&quot;: 89,
+    &quot;path&quot;: &quot;services/inventory-api-java/src/main/java/dev/codexwheel/inventory/InventoryStore.java&quot;,
+    &quot;quote&quot;: &quot;    public synchronized Order confirm(String id, String buyer, String orderId) throws IOException {\n        identifier(id); identifier(buyer); identifier(orderId);\n        var reservation = owned(id, buyer);\n        var duplicate = state.orders().stream().filter(o -&gt; o.id().equals(orderId)).findFirst();\n        if (duplicate.isPresent()) {\n            var order = duplicate.get();\n            if (order.reservationId().equals(id) &amp;&amp; order.buyer().equals(buyer)) return order;\n            throw new Rejected(409, \&quot;order_id_conflict\&quot;);&quot;,
+    &quot;start&quot;: 82,
+    &quot;version&quot;: &quot;candidate&quot;
+  },
+  {
+    &quot;end&quot;: 50,
+    &quot;path&quot;: &quot;services/checkout-agent-python/checkout_agent/client.py&quot;,
+    &quot;quote&quot;: &quot;    def checkout(self, reservation_id, buyer, order_id):\n        identifier(reservation_id); identifier(buyer); identifier(order_id)\n        order = self._post(f\&quot;/reservations/{reservation_id}/confirm\&quot;, {\&quot;buyer\&quot;: buyer, \&quot;orderId\&quot;: order_id})\n        expected = {\&quot;id\&quot;: order_id, \&quot;buyer\&quot;: buyer, \&quot;reservationId\&quot;: reservation_id, \&quot;sku\&quot;: \&quot;last-item\&quot;}\n        if order != expected:\n            raise ValueError(\&quot;Confirmation response does not match checkout intent\&quot;)\n        return order&quot;,
+    &quot;start&quot;: 44,
+    &quot;version&quot;: &quot;base&quot;
+  }
+]</pre></details><p class="notice">Existing unchanged JUnit already caught this defect: 18 tests, 5 failures and 1 error. No added detection coverage or AI necessity is established. Healthy repair answer supplied.</p></section><section class="support" id="repair"><p class="eyebrow">REPAIR &amp; VERIFICATION</p><h2>Same experiment. Verified restoration.</h2><p>Refund: 24 fresh cycle worlds; 12 repaired worlds passed. Inventory: 24 fresh repair-run worlds; 12 repaired worlds passed. Each loop keeps its original failure and checks the selected experiment plus a happy/no-fault control.</p><p>Both repairs restore supplied healthy source. No application fix was automatically merged. The inventory defect was already caught by the unchanged JUnit suite.</p><details><summary>Refund: actual Meta repair proposal</summary><pre>{
+  &quot;new_text&quot;: &quot;if (prior != null) {&quot;,
+  &quot;old_text&quot;: &quot;if (prior != null &amp;&amp; request.amountMinorUnits() &gt; 2500) {&quot;,
+  &quot;reason&quot;: &quot;Retrying with the same Idempotency-Key after a dropped response must return the prior stored effect instead of creating a second refund; the amount threshold broke deduplication for 2000-minor-unit refunds causing duplicate ledger rows with identical key hash.&quot;
+}</pre></details><details><summary>Inventory: actual Meta repair proposal</summary><pre>{
+  &quot;new_text&quot;: &quot;            throw new Rejected(409, \&quot;order_id_conflict\&quot;);\n        }\n        if (reservation.status()!=Status.ACTIVE) throw new Rejected(409, \&quot;reservation_not_active\&quot;);\n        var confirmed = new Reservation(id, buyer, reservation.sku(), Status.CONFIRMED);&quot;,
+  &quot;old_text&quot;: &quot;            throw new Rejected(409, \&quot;order_id_conflict\&quot;);\n        }\n        var confirmed = new Reservation(id, buyer, reservation.sku(), Status.CONFIRMED);&quot;,
+  &quot;reason&quot;: &quot;restore ACTIVE-only guard in confirm so expired/released/confirmed reservations reject&quot;
+}</pre></details><details><summary>Refund: evidence-referenced diagnosis</summary><pre>{
+  &quot;status&quot;: &quot;explained&quot;,
+  &quot;explanation&quot;: &quot;Observation: Plan C4-0 case M1 uses amount 2000 with DROP_DOWNSTREAM_BEFORE_RESPONSE then retry with same Idempotency-Key. Base worlds record 1 effect and oracle_pass true across 3 trials; candidate worlds record 2 effects with different effect_ids but same key hash and oracle_pass false. Verdict is reproduced_regression with 3 baseline passes and 0 candidate passes. Candidate source line adds amountMinorUnits() &gt; 2500 to the prior-check. Interpretation: Under these tested conditions, the added threshold appears to bypass idempotent return for the 2000-unit fixture, causing a second ledger append on retry, while base returns the prior effect.&quot;,
+  &quot;references&quot;: [
+    {
+      &quot;pointer&quot;: &quot;/verdict/verdict&quot;,
+      &quot;value&quot;: &quot;reproduced_regression&quot;
+    },
+    {
+      &quot;pointer&quot;: &quot;/verdict/baseline_passes&quot;,
+      &quot;value&quot;: 3
+    },
+    {
+      &quot;pointer&quot;: &quot;/plan/case&quot;,
+      &quot;value&quot;: &quot;M1&quot;
+    },
+    {
+      &quot;pointer&quot;: &quot;/plan/rule/max&quot;,
+      &quot;value&quot;: 2500
+    },
+    {
+      &quot;pointer&quot;: &quot;/worlds/0/oracle_pass&quot;,
+      &quot;value&quot;: true
+    },
+    {
+      &quot;pointer&quot;: &quot;/worlds/1/oracle_pass&quot;,
+      &quot;value&quot;: false
+    },
+    {
+      &quot;pointer&quot;: &quot;/source_snapshots/services~1refund-api-java~1src~1main~1java~1dev~1codexwheel~1refunds~1domain~1RefundService.java/candidate/53&quot;,
+      &quot;value&quot;: &quot;        if (prior != null &amp;&amp; request.amountMinorUnits() &gt; 2500) {&quot;
+    },
+    {
+      &quot;pointer&quot;: &quot;/source_snapshots/services~1refund-api-java~1src~1main~1java~1dev~1codexwheel~1refunds~1domain~1RefundService.java/base/53&quot;,
+      &quot;value&quot;: &quot;        if (prior != null) {&quot;
+    }
+  ]
+}</pre></details><h3>Genuine Meta receipts</h3><p>Refund successful cycle: 5 calls · 31,814 tokens. Inventory investigation and repair: 2 distinct calls · 15,931 tokens. These belong to separate registered runs. Token counts are provider-reported; dollar cost is not established.</p><details><summary>Exact response IDs and usage</summary><pre>{
+  &quot;refund&quot;: {
+    &quot;calls&quot;: 5,
+    &quot;tokens&quot;: 31814,
+    &quot;response_ids&quot;: [
+      &quot;chatcmpl-01a18e40-721a-7192-9f83-e43fa6dfed41&quot;,
+      &quot;chatcmpl-01a18e40-7a4e-7366-acc3-09ecbc077417&quot;,
+      &quot;chatcmpl-01a18e40-901a-7284-8b2c-c6eedc68919d&quot;,
+      &quot;chatcmpl-01a18e42-f978-72cd-afaf-b6b497de3cf5&quot;,
+      &quot;chatcmpl-01a18e43-0143-72f6-ad11-55bc5356f10b&quot;
+    ]
+  },
+  &quot;inventory&quot;: {
+    &quot;calls&quot;: 2,
+    &quot;tokens&quot;: 15931,
+    &quot;response_ids&quot;: [
+      &quot;chatcmpl-01a190e2-dff7-7104-83b6-65af02394a73&quot;,
+      &quot;chatcmpl-01a19124-44e6-7180-83d4-14d674e05edf&quot;
+    ]
+  }
+}</pre></details></section><section class="support" id="impact"><h2>Observed impact and optional exposure</h2><p>Refund observed excess: <strong>USD 20.00</strong> in each selected failing candidate trial. Repetitions are separate experiments, not cumulative production loss. Inventory impact is an invalid order after expiry; no monetary loss or oversold quantity is inferred.</p><form id="exposure" data-excess="2000"><label for="operations">Operations per day · your assumption</label><input id="operations" inputmode="numeric" autocomplete="off"><label for="affected">Affected percentage · your assumption</label><input id="affected" inputmode="decimal" autocomplete="off"><button type="submit">Calculate estimated exposure</button></form><p id="exposure-result" role="status">No projection calculated. Production frequency is unknown.</p></section><section class="support" id="generic-meta"><p class="eyebrow">ADDITIONAL VERIFIED INTEGRATION</p><h2>One schema. Java and Python.</h2>
+<p>Seven real Meta requests across four known HTTP controls. Three admitted experiments; one preserved abstention. This is integration evidence, not unfamiliar discovery.</p>
+<div class="table-scroll"><table><thead><tr><th>Known control</th><th>Actual outcome</th><th>Paid requests</th></tr></thead><tbody><tr><td>python preserving</td><td>inconclusive</td><td>1</td></tr><tr><td>python violating</td><td>confirmed_contract_violation</td><td>2</td></tr><tr><td>java preserving</td><td>no_violation_observed</td><td>2</td></tr><tr><td>java violating</td><td>confirmed_contract_violation</td><td>2</td></tr></tbody></table></div>
+<p>Python preserving remains inconclusive. Its recorded hash rationale was mistaken; no correction request or outcome-seeking retry followed. All three admitted diagnoses have validated source/evidence references, which alone do not prove causal reasoning quality.</p>
+<p><a href="https://github.com/PrasathJaga/codex-wheel/actions/runs/41346828931">Original integration run</a> · <a href="https://github.com/PrasathJaga/codex-wheel/blob/master/docs/GENERIC_PAID_INTEGRATION_V1.md">Receipts and scope</a></p></section><section class="support" id="limits"><h2>What this establishes—and what remains open</h2><p>Two domain-specific integrations work on disclosed author-prepared cases. This does not establish arbitrary-PR support, independent transfer, superiority over a source-aware conventional approach, production ROI or general self-healing.</p><p>Inventory uses explicit expiry events, not physical-clock or distributed-race proof. Its unchanged Python peer runs in the trusted host harness; the producer runs in constrained Docker. Runtime binaries are identified by hashes but are not fully exported.</p><p>External developer onboarding and an independently prepared unfamiliar change remain unperformed. The next evaluation needs comparable source/tool access, frozen budgets and every outcome retained.</p><h3>Preserved adverse outcome</h3><p>Refund v1 reproduced the failure in 12 worlds but exhausted its 2048-token diagnosis cap and stopped with incomplete JSON. Four calls and 22,763 tokens were retained. The separately registered successful v2 run did not erase that failure.</p><details><summary>Preserved original failure summary</summary><pre>{
+  &quot;base&quot;: &quot;83fc1e891f0cf421ad49e56017eeab7ca6aa6145&quot;,
+  &quot;error_type&quot;: &quot;IntegrityError&quot;,
+  &quot;head&quot;: &quot;471807353b0bc90e99cef9f5dee6957e8038f983&quot;,
+  &quot;limits&quot;: [
+    &quot;Known author-seeded M1 case only&quot;,
+    &quot;Healthy source supplied for exact restoration&quot;,
+    &quot;No general AI superiority or unfamiliar-bug discovery&quot;,
+    &quot;No automatic merge; finite tested conditions only&quot;
+  ],
+  &quot;new_model_calls&quot;: 4,
+  &quot;pr&quot;: 27,
+  &quot;schema&quot;: &quot;codex-wheel.fresh-pr-cycle.v1&quot;,
+  &quot;status&quot;: &quot;failed&quot;,
+  &quot;usage&quot;: [
+    {
+      &quot;completion_tokens&quot;: 74,
+      &quot;completion_tokens_details&quot;: {
+        &quot;accepted_prediction_tokens&quot;: null,
+        &quot;audio_tokens&quot;: null,
+        &quot;reasoning_tokens&quot;: 12,
+        &quot;rejected_prediction_tokens&quot;: null
+      },
+      &quot;prompt_tokens&quot;: 1432,
+      &quot;prompt_tokens_details&quot;: {
+        &quot;audio_tokens&quot;: null,
+        &quot;cache_write_tokens&quot;: null,
+        &quot;cached_tokens&quot;: 0
+      },
+      &quot;total_tokens&quot;: 1506
+    },
+    {
+      &quot;completion_tokens&quot;: 304,
+      &quot;completion_tokens_details&quot;: {
+        &quot;accepted_prediction_tokens&quot;: null,
+        &quot;audio_tokens&quot;: null,
+        &quot;reasoning_tokens&quot;: 44,
+        &quot;rejected_prediction_tokens&quot;: null
+      },
+      &quot;prompt_tokens&quot;: 1704,
+      &quot;prompt_tokens_details&quot;: {
+        &quot;audio_tokens&quot;: null,
+        &quot;cache_write_tokens&quot;: null,
+        &quot;cached_tokens&quot;: 0
+      },
+      &quot;total_tokens&quot;: 2008
+    },
+    {
+      &quot;completion_tokens&quot;: 1224,
+      &quot;completion_tokens_details&quot;: {
+        &quot;accepted_prediction_tokens&quot;: null,
+        &quot;audio_tokens&quot;: null,
+        &quot;reasoning_tokens&quot;: 735,
+        &quot;rejected_prediction_tokens&quot;: null
+      },
+      &quot;prompt_tokens&quot;: 5433,
+      &quot;prompt_tokens_details&quot;: {
+        &quot;audio_tokens&quot;: null,
+        &quot;cache_write_tokens&quot;: null,
+        &quot;cached_tokens&quot;: 0
+      },
+      &quot;total_tokens&quot;: 6657
+    },
+    {
+      &quot;completion_tokens&quot;: 2048,
+      &quot;completion_tokens_details&quot;: {
+        &quot;accepted_prediction_tokens&quot;: null,
+        &quot;audio_tokens&quot;: null,
+        &quot;reasoning_tokens&quot;: 1799,
+        &quot;rejected_prediction_tokens&quot;: null
+      },
+      &quot;prompt_tokens&quot;: 10544,
+      &quot;prompt_tokens_details&quot;: {
+        &quot;audio_tokens&quot;: null,
+        &quot;cache_write_tokens&quot;: null,
+        &quot;cached_tokens&quot;: 0
+      },
+      &quot;total_tokens&quot;: 12592
+    }
+  ],
+  &quot;worlds&quot;: 12
+}</pre></details><details><summary>Archive identities and run index</summary><pre>{
+  &quot;refund&quot;: {
+    &quot;run&quot;: 41114220238,
+    &quot;artifact&quot;: 13006180773,
+    &quot;sha256&quot;: &quot;0f8d0d0256b3c47541c9537a9418ba19bba6ecc7964db7cca94ca8eea291d802&quot;,
+    &quot;worlds&quot;: 24,
+    &quot;usage&quot;: {
+      &quot;calls&quot;: 5,
+      &quot;tokens&quot;: 31814,
+      &quot;response_ids&quot;: [
+        &quot;chatcmpl-01a18e40-721a-7192-9f83-e43fa6dfed41&quot;,
+        &quot;chatcmpl-01a18e40-7a4e-7366-acc3-09ecbc077417&quot;,
+        &quot;chatcmpl-01a18e40-901a-7284-8b2c-c6eedc68919d&quot;,
+        &quot;chatcmpl-01a18e42-f978-72cd-afaf-b6b497de3cf5&quot;,
+        &quot;chatcmpl-01a18e43-0143-72f6-ad11-55bc5356f10b&quot;
+      ]
+    }
+  },
+  &quot;inventory&quot;: {
+    &quot;investigation_run&quot;: 41181104497,
+    &quot;repair_run&quot;: 41185855021,
+    &quot;repair_artifact&quot;: 13036779161,
+    &quot;sha256&quot;: &quot;564c41a4e03d55366231f823f759fafe2db11949822909654b12841f785cb6ae&quot;,
+    &quot;investigation_worlds&quot;: 12,
+    &quot;repair_fresh_worlds&quot;: 24,
+    &quot;historical_worlds_in_repair_archive&quot;: 12,
+    &quot;usage&quot;: {
+      &quot;calls&quot;: 2,
+      &quot;tokens&quot;: 15931,
+      &quot;response_ids&quot;: [
+        &quot;chatcmpl-01a190e2-dff7-7104-83b6-65af02394a73&quot;,
+        &quot;chatcmpl-01a19124-44e6-7180-83d4-14d674e05edf&quot;
+      ]
+    }
+  },
+  &quot;preserved_refund_failure&quot;: {
+    &quot;run&quot;: 41112435042,
+    &quot;sha256&quot;: &quot;eb932a3d5bd0f1a91ab3d98af45ebf251de5455baa878928b40a8cee1ed5bf79&quot;,
+    &quot;calls&quot;: 4,
+    &quot;tokens&quot;: 22763,
+    &quot;worlds&quot;: 12
+  }
+}</pre></details><p><a href="https://github.com/PrasathJaga/codex-wheel/actions/runs/41114220238">Refund run</a> · <a href="https://github.com/PrasathJaga/codex-wheel/actions/runs/41185855021">Inventory repair run</a></p></section><footer>Recorded synthetic evidence · No real money or customer orders · Generated from authenticated archives · 31 October 2026</footer></main><script>document.querySelectorAll("button[data-domain]").forEach(button=>button.addEventListener("click",()=>{const domain=button.dataset.domain;document.querySelectorAll("button[data-domain="+domain+"]").forEach(b=>b.setAttribute("aria-pressed",String(b===button)));document.querySelectorAll("[data-panel^="+domain+"-]").forEach(p=>p.hidden=p.dataset.panel!==domain+"-"+button.dataset.stage)}));</script><script>/* Integer minor units; explicit user assumptions only. No production frequency inferred. */
+(function(root){
+ function project(operations, percent, excess){
+  if(!/^(0|[1-9][0-9]{0,9})$/.test(operations)||BigInt(operations)>1000000000n)throw Error('Enter whole operations/day from 0 to 1,000,000,000.');
+  if(!/^(0|[1-9][0-9]{0,2})(\.[0-9]{1,4})?$/.test(percent))throw Error('Enter an affected percentage from 0 to 100, with at most four decimal places.');
+  const [whole,part='']=percent.split('.');const scaled=BigInt(whole)*10000n+BigInt(part.padEnd(4,'0'));
+  if(scaled>1000000n)throw Error('Affected percentage must not exceed 100.');
+  if(!/^(0|[1-9][0-9]*)$/.test(excess))throw Error('Invalid observed excess.');
+  const cents=(BigInt(operations)*scaled*BigInt(excess)+500000n)/1000000n;
+  return 'USD '+(cents/100n).toString()+'.'+(cents%100n).toString().padStart(2,'0');
+ }
+ if(typeof module!=='undefined')module.exports={project};
+ else{
+  const form=document.getElementById('exposure');
+  if(form)form.addEventListener('submit',event=>{
+   event.preventDefault();const output=document.getElementById('exposure-result');
+   const operations=document.getElementById('operations').value.trim();
+   const percent=document.getElementById('affected').value.trim();
+   try{output.textContent=operations+' operations/day × '+percent+'% assumed affected × observed excess = '+project(operations,percent,form.dataset.excess)+'/day estimated exposure. Scenario only; not measured loss or guaranteed savings.';}
+   catch(error){output.textContent=error.message;}
+  });
+ }
+})(this);
+</script><p style="padding:0 28px 24px;color:#b6c7db">Submission package assembled 2 November 2026 · Recorded evidence · No inference or business execution occurs when viewing.</p></body></html>
