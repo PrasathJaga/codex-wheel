@@ -1,0 +1,17 @@
+{
+  "schema": "wheel-native-readiness-profile-v1",
+  "language": "python",
+  "root": ".",
+  "dependency_manifest": "requirements.txt",
+  "native_tests": [
+    {
+      "argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover"
+      ],
+      "timeout_seconds": 900
+    }
+  ]
+}

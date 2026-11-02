@@ -1,0 +1,111 @@
+{
+  "schema": "wheel-native-readiness-v1",
+  "candidate_id": "spring_record_refactor",
+  "descriptor_sha256": "e0d690bccb0b80797c9567bb611b9d51679de05faa384e96565a413d4592941b",
+  "status": "environment_blocked_before_native_execution",
+  "revisions": {
+    "baseline": {
+      "status": "blocked_complete_maven_environment_missing",
+      "pom_sha256": "0b6edd9305c7dd3c647f390628a9db7ac69abca6ed0d1188c388d171e8f5d247",
+      "declared_parent": {
+        "groupId": "org.springframework.boot",
+        "artifactId": "spring-boot-starter-parent",
+        "version": "3.0.0"
+      },
+      "declared_java_version": "17",
+      "direct_dependencies": [
+        {
+          "groupId": "org.springframework.boot",
+          "artifactId": "spring-boot-starter-web",
+          "version": null,
+          "scope": "compile"
+        },
+        {
+          "groupId": "org.springframework.boot",
+          "artifactId": "spring-boot-starter-test",
+          "version": null,
+          "scope": "test"
+        }
+      ],
+      "direct_plugins": [
+        {
+          "groupId": "org.springframework.boot",
+          "artifactId": "spring-boot-maven-plugin",
+          "version": null
+        }
+      ],
+      "native_test_dependencies_declared": true,
+      "dependency_management_resolved": false,
+      "transitive_closure_verified": false,
+      "ready_for_native_tests": false,
+      "baseline_executed": false,
+      "blockers": [
+        "complete_reviewed_parent_BOM_plugin_test_dependency_closure_not_supplied",
+        "offline_dependency_bundle_execution_not_connected_to_HTTP_service_lifecycle"
+      ],
+      "limitations": [
+        "This is literal POM analysis, not Maven model/plugin resolution.",
+        "No native build failure or application defect has been observed."
+      ]
+    },
+    "candidate": {
+      "status": "blocked_complete_maven_environment_missing",
+      "pom_sha256": "0b6edd9305c7dd3c647f390628a9db7ac69abca6ed0d1188c388d171e8f5d247",
+      "declared_parent": {
+        "groupId": "org.springframework.boot",
+        "artifactId": "spring-boot-starter-parent",
+        "version": "3.0.0"
+      },
+      "declared_java_version": "17",
+      "direct_dependencies": [
+        {
+          "groupId": "org.springframework.boot",
+          "artifactId": "spring-boot-starter-web",
+          "version": null,
+          "scope": "compile"
+        },
+        {
+          "groupId": "org.springframework.boot",
+          "artifactId": "spring-boot-starter-test",
+          "version": null,
+          "scope": "test"
+        }
+      ],
+      "direct_plugins": [
+        {
+          "groupId": "org.springframework.boot",
+          "artifactId": "spring-boot-maven-plugin",
+          "version": null
+        }
+      ],
+      "native_test_dependencies_declared": true,
+      "dependency_management_resolved": false,
+      "transitive_closure_verified": false,
+      "ready_for_native_tests": false,
+      "baseline_executed": false,
+      "blockers": [
+        "complete_reviewed_parent_BOM_plugin_test_dependency_closure_not_supplied",
+        "offline_dependency_bundle_execution_not_connected_to_HTTP_service_lifecycle"
+      ],
+      "limitations": [
+        "This is literal POM analysis, not Maven model/plugin resolution.",
+        "No native build failure or application defect has been observed."
+      ]
+    }
+  },
+  "project_or_package_code_executed": false,
+  "model_requests": 0,
+  "comparison_registry_changed": false,
+  "desired_native_pass_achieved": false,
+  "profile_sha256": "39ec023054baadd33e55d093d1c0a8e1f4c9800959444a56d486eabc18ab49e5",
+  "native_tests_requested": [
+    {
+      "argv": [
+        "mvn",
+        "-B",
+        "verify"
+      ],
+      "timeout_seconds": 900
+    }
+  ]
+}

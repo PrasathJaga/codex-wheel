@@ -1,0 +1,272 @@
+{
+  "retrieved_on": "2026-11-02",
+  "requirements_sha256": "e6e3957d8b67ed73ac17d941e7a36225fa782ad89ed7207f9a0140b9f93acb6e",
+  "releases": [
+    {
+      "requirement": "decorator==3.4.0",
+      "metadata_url": "https://pypi.org/pypi/decorator/3.4.0/json",
+      "metadata_response_sha256": "f5b43bbc850da8c00822962ff438bf1b8e3921ffc797d6c375f7fed58e563350",
+      "artifacts": [
+        {
+          "filename": "decorator-3.4.0.tar.gz",
+          "packagetype": "sdist",
+          "size_bytes": 30333,
+          "sha256": "c20b404cbb7ee5cebd506688e0114e3cd76f5ce233805a51f36e1a7988d9d783",
+          "url": "https://files.pythonhosted.org/packages/f3/26/876d492f2394f29401eb652ddfa53dec2bc8721861c7fe0dce1b5d0d2b6a/decorator-3.4.0.tar.gz"
+        }
+      ]
+    },
+    {
+      "requirement": "Flask==0.10.1",
+      "metadata_url": "https://pypi.org/pypi/Flask/0.10.1/json",
+      "metadata_response_sha256": "c06f9b00632247b535349ce1ec851bd173b736d371adad868c17c1533d2a7e22",
+      "artifacts": [
+        {
+          "filename": "Flask-0.10.1.tar.gz",
+          "packagetype": "sdist",
+          "size_bytes": 544247,
+          "sha256": "4c83829ff83d408b5e1d4995472265411d2c414112298f2eb4b359d9e4563373",
+          "url": "https://files.pythonhosted.org/packages/db/9c/149ba60c47d107f85fe52564133348458f093dd5e6b57a5b60ab9ac517bb/Flask-0.10.1.tar.gz"
+        }
+      ]
+    },
+    {
+      "requirement": "gevent==1.0.2",
+      "metadata_url": "https://pypi.org/pypi/gevent/1.0.2/json",
+      "metadata_response_sha256": "4a074653981f58a262f4693db53ad88a8df7e82053afc960a8460ded7fcfda84",
+      "artifacts": [
+        {
+          "filename": "gevent-1.0.2-cp26-none-macosx_10_10_intel.whl",
+          "packagetype": "bdist_wheel",
+          "size_bytes": 554897,
+          "sha256": "704a048005e6389fcb8276113bb9e7d0a3160bc382b9bcc629e398a43645de5c",
+          "url": "https://files.pythonhosted.org/packages/56/20/ae33c9ef5c4d867d7c1a3fdcf9cac442e2bb60f509107f1dcb74a27e0c0d/gevent-1.0.2-cp26-none-macosx_10_10_intel.whl"
+        },
+        {
+          "filename": "gevent-1.0.2-cp26-none-macosx_10_11_intel.whl",
+          "packagetype": "bdist_wheel",
+          "size_bytes": 554846,
+          "sha256": "004cdbc6c18b4076acfa256c1794abf87bf9b97e0cfd4136f5098535c4b4132e",
+          "url": "https://files.pythonhosted.org/packages/6c/4e/40ede405310f0a444eb7aa44b4d75c1bc2d1018d0f15145d677fd1635a2c/gevent-1.0.2-cp26-none-macosx_10_11_intel.whl"
+        },
+        {
+          "filename": "gevent-1.0.2-cp27-none-macosx_10_10_x86_64.whl",
+          "packagetype": "bdist_wheel",
+          "size_bytes": 337008,
+          "sha256": "aa224957cbbc028bbdfbec89625c7efa66bb8ddb845ed2fe323bd6b24e919dcf",
+          "url": "https://files.pythonhosted.org/packages/64/61/4ed23de95aeec5a891a9b8a7a067417f166ad5780885a97bd182569e9f44/gevent-1.0.2-cp27-none-macosx_10_10_x86_64.whl"
+        },
+        {
+          "filename": "gevent-1.0.2-cp27-none-macosx_10_11_x86_64.whl",
+          "packagetype": "bdist_wheel",
+          "size_bytes": 336957,
+          "sha256": "f3e8656f0b7bce355f14896d0b644c0a91e01fa12d9d65e6b09faad1d2c06e65",
+          "url": "https://files.pythonhosted.org/packages/e6/f0/d0cfe13460cd1ccc267bf246ef8ed80a889e72acb5cc65691e0d740ad3e6/gevent-1.0.2-cp27-none-macosx_10_11_x86_64.whl"
+        },
+        {
+          "filename": "gevent-1.0.2-cp27-none-macosx_10_6_intel.whl",
+          "packagetype": "bdist_wheel",
+          "size_bytes": 344535,
+          "sha256": "80ee22c28dae6dc70c7e4385f0d0292da9eebccf14b90620a32f10d71797838e",
+          "url": "https://files.pythonhosted.org/packages/4f/4f/bf5fc7b980da5a09de6c41a85a66fe4223a4c71e2cd41c926be3943b7133/gevent-1.0.2-cp27-none-macosx_10_6_intel.whl"
+        },
+        {
+          "filename": "gevent-1.0.2-py2.7-macosx-10.6-intel.egg",
+          "packagetype": "bdist_egg",
+          "size_bytes": 344884,
+          "sha256": "222d56542edd2883f9972d30243808e76ad75d2f0218bc219467b170653df5d0",
+          "url": "https://files.pythonhosted.org/packages/bb/db/f3f0857c7aee4936989377bce230a5189265aa535e2939d5419a64c66c72/gevent-1.0.2-py2.7-macosx-10.6-intel.egg"
+        },
+        {
+          "filename": "gevent-1.0.2.tar.gz",
+          "packagetype": "sdist",
+          "size_bytes": 1735721,
+          "sha256": "3ae1ca0f533ddcb17aab16ce66b424b3f3b855ff3b9508526915d3c6b73fba31",
+          "url": "https://files.pythonhosted.org/packages/8a/71/9bb13513d39c513fa71344d57a11affd6ccad775575458f435ff9142daf5/gevent-1.0.2.tar.gz"
+        }
+      ]
+    },
+    {
+      "requirement": "greenlet==0.4.2",
+      "metadata_url": "https://pypi.org/pypi/greenlet/0.4.2/json",
+      "metadata_response_sha256": "da5b6bca0ea8785192777499dc4c974e892717bf120c491438b76bee332617a5",
+      "artifacts": [
+        {
+          "filename": "greenlet-0.4.2-cp27-none-win32.whl",
+          "packagetype": "bdist_wheel",
+          "size_bytes": 15246,
+          "sha256": "298d45c49c7aaa188271d89e00f13c10bdf2904263400a9308bd8b410b6593d8",
+          "url": "https://files.pythonhosted.org/packages/21/0a/ea79121efece1e1e8dc7d049e7c0fe293e9260d654136bce1428d9fda757/greenlet-0.4.2-cp27-none-win32.whl"
+        },
+        {
+          "filename": "greenlet-0.4.2-cp27-none-win_amd64.whl",
+          "packagetype": "bdist_wheel",
+          "size_bytes": 15989,
+          "sha256": "a4536aee72713dff677998b2374ef0c282389345aa1485120d487d5558e328c4",
+          "url": "https://files.pythonhosted.org/packages/22/49/bc181cbcfd46c1128c44f0380a6317f9694a684bd98ef38d75bf9a19b04a/greenlet-0.4.2-cp27-none-win_amd64.whl"
+        },
+        {
+          "filename": "greenlet-0.4.2-cp33-none-win32.whl",
+          "packagetype": "bdist_wheel",
+          "size_bytes": 15114,
+          "sha256": "43d4de9776fe089aa822d54cc7103b5b403e725c13c2afd074551924416c3c5d",
+          "url": "https://files.pythonhosted.org/packages/b6/6e/612c9c49e56bb7fcd3af36f2861ca08798b49bcd14fc7f418a1679772319/greenlet-0.4.2-cp33-none-win32.whl"
+        },
+        {
+          "filename": "greenlet-0.4.2-cp33-none-win_amd64.whl",
+          "packagetype": "bdist_wheel",
+          "size_bytes": 15879,
+          "sha256": "19f5d77ba77311d969d9008f2ed6ed172c911655d70ea2384466144ca379b149",
+          "url": "https://files.pythonhosted.org/packages/88/aa/aef946c33430cd36a866cf2251f6ede902b3d53e5db2a08440bf6d196874/greenlet-0.4.2-cp33-none-win_amd64.whl"
+        },
+        {
+          "filename": "greenlet-0.4.2.win-amd64-py2.7.exe",
+          "packagetype": "bdist_wininst",
+          "size_bytes": 239905,
+          "sha256": "2a1f122133c113f21188c6f07ffec0a75dbddab45d9f398216532cfde74ce0da",
+          "url": "https://files.pythonhosted.org/packages/00/73/63fa90c85f94c2deebe229d940da56148bababc8678d3109bd3ff67f1ace/greenlet-0.4.2.win-amd64-py2.7.exe"
+        },
+        {
+          "filename": "greenlet-0.4.2.win-amd64-py3.3.exe",
+          "packagetype": "bdist_wininst",
+          "size_bytes": 238294,
+          "sha256": "6519f2a84f62d150fc660e6e4c55c0d68ba65e0a6eac5eb05bbd9a0dc5cb51a7",
+          "url": "https://files.pythonhosted.org/packages/8f/e7/a3c9d438b6d98968a1db8e64fa0a7ebfa5ab670912ffc38441008c93f012/greenlet-0.4.2.win-amd64-py3.3.exe"
+        },
+        {
+          "filename": "greenlet-0.4.2.win32-py2.5.exe",
+          "packagetype": "bdist_wininst",
+          "size_bytes": 75602,
+          "sha256": "6b1e20a871ad6ec098a925e44f8a0a013016c17fca99c8c0b361f67d60af080a",
+          "url": "https://files.pythonhosted.org/packages/eb/83/75fcd458528fce9d15fc85a0873ab6603d8854b1fc15ec5279958a9f7a5f/greenlet-0.4.2.win32-py2.5.exe"
+        },
+        {
+          "filename": "greenlet-0.4.2.win32-py2.6.exe",
+          "packagetype": "bdist_wininst",
+          "size_bytes": 211781,
+          "sha256": "69b8887c391c72727345d27ab9208e9b93c45e6ecb45c80457dd178e54b49e6e",
+          "url": "https://files.pythonhosted.org/packages/77/a2/0e41cb3ba526c78fd65175bb87240aad70a792bd4308f54c25b16f2f8fc6/greenlet-0.4.2.win32-py2.6.exe"
+        },
+        {
+          "filename": "greenlet-0.4.2.win32-py2.7.exe",
+          "packagetype": "bdist_wininst",
+          "size_bytes": 211520,
+          "sha256": "e3fe9e0c7fbae2a6f3f5da8a9ac105a32300b2d891df69e0993cc9d52022c410",
+          "url": "https://files.pythonhosted.org/packages/5d/dc/7762cfd21091a503094f1e26e4206db7073051b2c10e7957434f51322b62/greenlet-0.4.2.win32-py2.7.exe"
+        },
+        {
+          "filename": "greenlet-0.4.2.win32-py3.3.exe",
+          "packagetype": "bdist_wininst",
+          "size_bytes": 206300,
+          "sha256": "1d5c590c42fbc250e5154440952227d7240a953c735c5f667f3b8ddde9b3885e",
+          "url": "https://files.pythonhosted.org/packages/5c/c2/72fe4d8367755798b20b4b267a580b777097b4657ae8c99cbe63d674c52c/greenlet-0.4.2.win32-py3.3.exe"
+        },
+        {
+          "filename": "greenlet-0.4.2.zip",
+          "packagetype": "sdist",
+          "size_bytes": 74404,
+          "sha256": "b160e556a22e16bae3f3f63ffce7898682c803cd896457192f7b54fe74fe991e",
+          "url": "https://files.pythonhosted.org/packages/11/46/ce7c6f01fba12f86924f4e5b7730652322c8e6069d69f479ade516785c4f/greenlet-0.4.2.zip"
+        }
+      ]
+    },
+    {
+      "requirement": "gunicorn==19.2",
+      "metadata_url": "https://pypi.org/pypi/gunicorn/19.2/json",
+      "metadata_response_sha256": "1e8a4e35aa68b0f9e3e6690c53894b550c4e624f1ca0eaa24cd78ec380a8da8d",
+      "artifacts": [
+        {
+          "filename": "gunicorn-19.2.0-py2.py3-none-any.whl",
+          "packagetype": "bdist_wheel",
+          "size_bytes": 110214,
+          "sha256": "c879e1f8320d2dca2baa31ba6746f16ef9ee821f99b0f9c71967311dff9b5679",
+          "url": "https://files.pythonhosted.org/packages/06/b2/591ed3ffd25fabbd6f3d48247ee9e4df4011b1a270216bd7eb5e616fb0b3/gunicorn-19.2.0-py2.py3-none-any.whl"
+        },
+        {
+          "filename": "gunicorn-19.2.0.tar.gz",
+          "packagetype": "sdist",
+          "size_bytes": 394618,
+          "sha256": "6f4d087e2ddc63ee89ff0eae1a707eebc6fed47bd174dc81987adbf06f1f8cbf",
+          "url": "https://files.pythonhosted.org/packages/98/ab/0cf3ce33b2d05aa50dd8171ae3f0ae63380adf607e5827d43f7fba21a78d/gunicorn-19.2.0.tar.gz"
+        }
+      ]
+    },
+    {
+      "requirement": "itsdangerous==0.24",
+      "metadata_url": "https://pypi.org/pypi/itsdangerous/0.24/json",
+      "metadata_response_sha256": "a563f0f63e4b43ff637b3b368b784e8a46b6e3526cd13920f214cd555165e3c0",
+      "artifacts": [
+        {
+          "filename": "itsdangerous-0.24.tar.gz",
+          "packagetype": "sdist",
+          "size_bytes": 46541,
+          "sha256": "cbb3fcf8d3e33df861709ecaf89d9e6629cff0a217bc2848f1b41cd30d360519",
+          "url": "https://files.pythonhosted.org/packages/dc/b4/a60bcdba945c00f6d608d8975131ab3f25b22f2bcfe1dab221165194b2d4/itsdangerous-0.24.tar.gz"
+        }
+      ]
+    },
+    {
+      "requirement": "Jinja2==2.7.2",
+      "metadata_url": "https://pypi.org/pypi/Jinja2/2.7.2/json",
+      "metadata_response_sha256": "99f4bae6faefe0359d88ccd70e2c0c93a74d507ebcffc7db1d70632b95d54612",
+      "artifacts": [
+        {
+          "filename": "Jinja2-2.7.2.tar.gz",
+          "packagetype": "sdist",
+          "size_bytes": 378300,
+          "sha256": "310a35fbccac3af13ebf927297f871ac656b9da1d248b1fe6765affa71b53235",
+          "url": "https://files.pythonhosted.org/packages/23/94/ca42176bf7a252ce1f5d165953013573dffdbe4b5dac07f57146146ea432/Jinja2-2.7.2.tar.gz"
+        }
+      ]
+    },
+    {
+      "requirement": "MarkupSafe==0.23",
+      "metadata_url": "https://pypi.org/pypi/MarkupSafe/0.23/json",
+      "metadata_response_sha256": "2138841d5ec7866c44d9c50940923fe68039fce1ee51fa2de2cfef3a9bb796c8",
+      "artifacts": [
+        {
+          "filename": "MarkupSafe-0.23.tar.gz",
+          "packagetype": "sdist",
+          "size_bytes": 13416,
+          "sha256": "a4ec1aff59b95a14b45eb2e23761a0179e98319da5a7eb76b56ea8cdc7b871c3",
+          "url": "https://files.pythonhosted.org/packages/c0/41/bae1254e0396c0cc8cf1751cb7d9afc90a602353695af5952530482c963f/MarkupSafe-0.23.tar.gz"
+        }
+      ]
+    },
+    {
+      "requirement": "six==1.6.1",
+      "metadata_url": "https://pypi.org/pypi/six/1.6.1/json",
+      "metadata_response_sha256": "2e30f01507321c97222d4db65ce197b5328a2028b3b82b5d40e4793a699a1bf1",
+      "artifacts": [
+        {
+          "filename": "six-1.6.1-py2.py3-none-any.whl",
+          "packagetype": "bdist_wheel",
+          "size_bytes": 8557,
+          "sha256": "8f34f5b89e17fa8a6e3945310318cbd5c8cbb16fa288f78ea96dbc70344cb1bf",
+          "url": "https://files.pythonhosted.org/packages/ba/19/aa48edcff9d0c396a4d009d362d0a0a1ac3db6f9d7d5736e0175b94d7ef8/six-1.6.1-py2.py3-none-any.whl"
+        },
+        {
+          "filename": "six-1.6.1.tar.gz",
+          "packagetype": "sdist",
+          "size_bytes": 24792,
+          "sha256": "d4392a7c8d91b005c002568a85faf617c67241c8cd8399cc395e8f1005aff80d",
+          "url": "https://files.pythonhosted.org/packages/e8/70/b9c441d8c02b70eb3bf923c49944b8fc656f78a43c084d2a98534d7404e2/six-1.6.1.tar.gz"
+        }
+      ]
+    },
+    {
+      "requirement": "Werkzeug==0.9.4",
+      "metadata_url": "https://pypi.org/pypi/Werkzeug/0.9.4/json",
+      "metadata_response_sha256": "d5bf48554e16a59b0a91a793068c26b692d376b23b7d7c12098431ee63af4c9e",
+      "artifacts": [
+        {
+          "filename": "Werkzeug-0.9.4.tar.gz",
+          "packagetype": "sdist",
+          "size_bytes": 1126353,
+          "sha256": "c1baf7a3e8be70f34d931ee173283f406877bd3d17f372bbe82318a5b3c510cc",
+          "url": "https://files.pythonhosted.org/packages/d8/5e/8abc95630f9c4248edffed30592468f884e845ba656a959a12e452fafcec/Werkzeug-0.9.4.tar.gz"
+        }
+      ]
+    }
+  ]
+}
