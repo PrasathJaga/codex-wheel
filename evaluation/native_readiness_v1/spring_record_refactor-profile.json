@@ -1,0 +1,16 @@
+{
+  "schema": "wheel-native-readiness-profile-v1",
+  "language": "java",
+  "root": "complete",
+  "dependency_manifest": "pom.xml",
+  "native_tests": [
+    {
+      "argv": [
+        "mvn",
+        "-B",
+        "verify"
+      ],
+      "timeout_seconds": 900
+    }
+  ]
+}

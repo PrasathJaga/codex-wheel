@@ -1,0 +1,220 @@
+{
+  "schema": "wheel-native-readiness-v1",
+  "candidate_id": "httpbin_status_fix",
+  "descriptor_sha256": "a1d65e449f46e9360e1031e7f92835f585ba32cfad7bdf5bb21dbde3976344b8",
+  "status": "environment_blocked_before_native_execution",
+  "revisions": {
+    "baseline": {
+      "status": "blocked_wheel_only_acquisition",
+      "requirements_sha256": "e6e3957d8b67ed73ac17d941e7a36225fa782ad89ed7207f9a0140b9f93acb6e",
+      "release_evidence_sha256": "f6362f10ab43fdb3c34786f1a1f2884aa44e8d1d449a297da3b5fabe68c569f5",
+      "snapshot_date": "2026-11-02",
+      "requirements_without_wheels": [
+        "decorator==3.4.0",
+        "Flask==0.10.1",
+        "itsdangerous==0.24",
+        "Jinja2==2.7.2",
+        "MarkupSafe==0.23",
+        "Werkzeug==0.9.4"
+      ],
+      "releases": [
+        {
+          "requirement": "decorator==3.4.0",
+          "wheel_files": [],
+          "status": "no_wheel_in_recorded_release",
+          "metadata_url": "https://pypi.org/pypi/decorator/3.4.0/json"
+        },
+        {
+          "requirement": "Flask==0.10.1",
+          "wheel_files": [],
+          "status": "no_wheel_in_recorded_release",
+          "metadata_url": "https://pypi.org/pypi/Flask/0.10.1/json"
+        },
+        {
+          "requirement": "gevent==1.0.2",
+          "wheel_files": [
+            "gevent-1.0.2-cp26-none-macosx_10_10_intel.whl",
+            "gevent-1.0.2-cp26-none-macosx_10_11_intel.whl",
+            "gevent-1.0.2-cp27-none-macosx_10_10_x86_64.whl",
+            "gevent-1.0.2-cp27-none-macosx_10_11_x86_64.whl",
+            "gevent-1.0.2-cp27-none-macosx_10_6_intel.whl"
+          ],
+          "status": "wheels_present_compatibility_unverified",
+          "metadata_url": "https://pypi.org/pypi/gevent/1.0.2/json"
+        },
+        {
+          "requirement": "greenlet==0.4.2",
+          "wheel_files": [
+            "greenlet-0.4.2-cp27-none-win32.whl",
+            "greenlet-0.4.2-cp27-none-win_amd64.whl",
+            "greenlet-0.4.2-cp33-none-win32.whl",
+            "greenlet-0.4.2-cp33-none-win_amd64.whl"
+          ],
+          "status": "wheels_present_compatibility_unverified",
+          "metadata_url": "https://pypi.org/pypi/greenlet/0.4.2/json"
+        },
+        {
+          "requirement": "gunicorn==19.2",
+          "wheel_files": [
+            "gunicorn-19.2.0-py2.py3-none-any.whl"
+          ],
+          "status": "wheels_present_compatibility_unverified",
+          "metadata_url": "https://pypi.org/pypi/gunicorn/19.2/json"
+        },
+        {
+          "requirement": "itsdangerous==0.24",
+          "wheel_files": [],
+          "status": "no_wheel_in_recorded_release",
+          "metadata_url": "https://pypi.org/pypi/itsdangerous/0.24/json"
+        },
+        {
+          "requirement": "Jinja2==2.7.2",
+          "wheel_files": [],
+          "status": "no_wheel_in_recorded_release",
+          "metadata_url": "https://pypi.org/pypi/Jinja2/2.7.2/json"
+        },
+        {
+          "requirement": "MarkupSafe==0.23",
+          "wheel_files": [],
+          "status": "no_wheel_in_recorded_release",
+          "metadata_url": "https://pypi.org/pypi/MarkupSafe/0.23/json"
+        },
+        {
+          "requirement": "six==1.6.1",
+          "wheel_files": [
+            "six-1.6.1-py2.py3-none-any.whl"
+          ],
+          "status": "wheels_present_compatibility_unverified",
+          "metadata_url": "https://pypi.org/pypi/six/1.6.1/json"
+        },
+        {
+          "requirement": "Werkzeug==0.9.4",
+          "wheel_files": [],
+          "status": "no_wheel_in_recorded_release",
+          "metadata_url": "https://pypi.org/pypi/Werkzeug/0.9.4/json"
+        }
+      ],
+      "ready_for_native_tests": false,
+      "baseline_executed": false,
+      "limitations": [
+        "Presence of a wheel does not establish platform/runtime compatibility or transitive closure.",
+        "An absent wheel in this snapshot is not a universal claim about all environments.",
+        "Reviewed preinstalled environments/source builds would be separate capabilities, not automatic fallbacks."
+      ]
+    },
+    "candidate": {
+      "status": "blocked_wheel_only_acquisition",
+      "requirements_sha256": "e6e3957d8b67ed73ac17d941e7a36225fa782ad89ed7207f9a0140b9f93acb6e",
+      "release_evidence_sha256": "f6362f10ab43fdb3c34786f1a1f2884aa44e8d1d449a297da3b5fabe68c569f5",
+      "snapshot_date": "2026-11-02",
+      "requirements_without_wheels": [
+        "decorator==3.4.0",
+        "Flask==0.10.1",
+        "itsdangerous==0.24",
+        "Jinja2==2.7.2",
+        "MarkupSafe==0.23",
+        "Werkzeug==0.9.4"
+      ],
+      "releases": [
+        {
+          "requirement": "decorator==3.4.0",
+          "wheel_files": [],
+          "status": "no_wheel_in_recorded_release",
+          "metadata_url": "https://pypi.org/pypi/decorator/3.4.0/json"
+        },
+        {
+          "requirement": "Flask==0.10.1",
+          "wheel_files": [],
+          "status": "no_wheel_in_recorded_release",
+          "metadata_url": "https://pypi.org/pypi/Flask/0.10.1/json"
+        },
+        {
+          "requirement": "gevent==1.0.2",
+          "wheel_files": [
+            "gevent-1.0.2-cp26-none-macosx_10_10_intel.whl",
+            "gevent-1.0.2-cp26-none-macosx_10_11_intel.whl",
+            "gevent-1.0.2-cp27-none-macosx_10_10_x86_64.whl",
+            "gevent-1.0.2-cp27-none-macosx_10_11_x86_64.whl",
+            "gevent-1.0.2-cp27-none-macosx_10_6_intel.whl"
+          ],
+          "status": "wheels_present_compatibility_unverified",
+          "metadata_url": "https://pypi.org/pypi/gevent/1.0.2/json"
+        },
+        {
+          "requirement": "greenlet==0.4.2",
+          "wheel_files": [
+            "greenlet-0.4.2-cp27-none-win32.whl",
+            "greenlet-0.4.2-cp27-none-win_amd64.whl",
+            "greenlet-0.4.2-cp33-none-win32.whl",
+            "greenlet-0.4.2-cp33-none-win_amd64.whl"
+          ],
+          "status": "wheels_present_compatibility_unverified",
+          "metadata_url": "https://pypi.org/pypi/greenlet/0.4.2/json"
+        },
+        {
+          "requirement": "gunicorn==19.2",
+          "wheel_files": [
+            "gunicorn-19.2.0-py2.py3-none-any.whl"
+          ],
+          "status": "wheels_present_compatibility_unverified",
+          "metadata_url": "https://pypi.org/pypi/gunicorn/19.2/json"
+        },
+        {
+          "requirement": "itsdangerous==0.24",
+          "wheel_files": [],
+          "status": "no_wheel_in_recorded_release",
+          "metadata_url": "https://pypi.org/pypi/itsdangerous/0.24/json"
+        },
+        {
+          "requirement": "Jinja2==2.7.2",
+          "wheel_files": [],
+          "status": "no_wheel_in_recorded_release",
+          "metadata_url": "https://pypi.org/pypi/Jinja2/2.7.2/json"
+        },
+        {
+          "requirement": "MarkupSafe==0.23",
+          "wheel_files": [],
+          "status": "no_wheel_in_recorded_release",
+          "metadata_url": "https://pypi.org/pypi/MarkupSafe/0.23/json"
+        },
+        {
+          "requirement": "six==1.6.1",
+          "wheel_files": [
+            "six-1.6.1-py2.py3-none-any.whl"
+          ],
+          "status": "wheels_present_compatibility_unverified",
+          "metadata_url": "https://pypi.org/pypi/six/1.6.1/json"
+        },
+        {
+          "requirement": "Werkzeug==0.9.4",
+          "wheel_files": [],
+          "status": "no_wheel_in_recorded_release",
+          "metadata_url": "https://pypi.org/pypi/Werkzeug/0.9.4/json"
+        }
+      ],
+      "ready_for_native_tests": false,
+      "baseline_executed": false,
+      "limitations": [
+        "Presence of a wheel does not establish platform/runtime compatibility or transitive closure.",
+        "An absent wheel in this snapshot is not a universal claim about all environments.",
+        "Reviewed preinstalled environments/source builds would be separate capabilities, not automatic fallbacks."
+      ]
+    }
+  },
+  "project_or_package_code_executed": false,
+  "model_requests": 0,
+  "comparison_registry_changed": false,
+  "desired_native_pass_achieved": false,
+  "profile_sha256": "5e86ec0eaae7ef4fd2472387ddd23b504e4bc75598f639f8ecce01691ddb45f1",
+  "native_tests_requested": [
+    {
+      "argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover"
+      ],
+      "timeout_seconds": 900
+    }
+  ]
+}
