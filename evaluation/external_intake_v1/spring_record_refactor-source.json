@@ -1,0 +1,37 @@
+{
+  "id": "spring_record_refactor",
+  "repo": "spring-guides/gs-rest-service",
+  "baseline": "9ed28134892e3218e518fd98f76dcc128af916dc",
+  "candidate": "e03c1e1564715197d3ccaf383f10e7fcebbf2de2",
+  "author": "sdeleuze",
+  "reference": "https://github.com/spring-guides/gs-rest-service/commit/e03c1e1564715197d3ccaf383f10e7fcebbf2de2",
+  "kind": "historical_preserving_refactor",
+  "paths": [
+    "README.adoc",
+    "complete/src/main/java/com/example/restservice/Greeting.java"
+  ],
+  "root": "gs-rest-service",
+  "language": "java",
+  "blockers": [
+    "runtime_dependencies_not_locked",
+    "native_build_tests_not_executed",
+    "HTTP_expectations_require_review",
+    "external_adapter_provenance_review_missing"
+  ],
+  "archives": {
+    "baseline": {
+      "revision": "9ed28134892e3218e518fd98f76dcc128af916dc",
+      "url": "https://codeload.github.com/spring-guides/gs-rest-service/tar.gz/9ed28134892e3218e518fd98f76dcc128af916dc",
+      "sha256": "6b3c4d2a3777232fa6cb70295f39d0f5dddd2a0c52fb07a32dc519af6bce337a",
+      "size_bytes": 228223,
+      "root": "gs-rest-service-9ed28134892e3218e518fd98f76dcc128af916dc"
+    },
+    "candidate": {
+      "revision": "e03c1e1564715197d3ccaf383f10e7fcebbf2de2",
+      "url": "https://codeload.github.com/spring-guides/gs-rest-service/tar.gz/e03c1e1564715197d3ccaf383f10e7fcebbf2de2",
+      "sha256": "a4658d8aa5987be835d565c692d8a257909d1fc05caab00bf2babe58f0fabed5",
+      "size_bytes": 228166,
+      "root": "gs-rest-service-e03c1e1564715197d3ccaf383f10e7fcebbf2de2"
+    }
+  }
+}

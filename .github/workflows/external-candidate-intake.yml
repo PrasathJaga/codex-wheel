@@ -1,0 +1,49 @@
+name: External candidate source intake
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'evaluation/external_intake_v1/**'
+      - 'preflight_tests/test_external_candidate_intake.py'
+      - 'docs/EXTERNAL_CANDIDATE_INTAKE_V1.md'
+      - '.github/workflows/external-candidate-intake.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'evaluation/external_intake_v1/**'
+      - 'preflight_tests/test_external_candidate_intake.py'
+      - 'docs/EXTERNAL_CANDIDATE_INTAKE_V1.md'
+      - '.github/workflows/external-candidate-intake.yml'
+permissions:
+  contents: read
+jobs:
+  source-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Fetch exact public source bytes only; no execution, installation or auth
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,pathlib,urllib.request
+          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'external-intake';out.mkdir()
+          allowed={'spring_record_refactor':'spring-guides/gs-rest-service','httpbin_status_fix':'postmanlabs/httpbin'}
+          for cid,repo in allowed.items():
+              spec=json.load(open('evaluation/external_intake_v1/'+cid+'-source.json'))
+              assert spec['repo']==repo
+              for side,archive in spec['archives'].items():
+                  url='https://codeload.github.com/'+repo+'/tar.gz/'+archive['revision']
+                  assert url==archive['url']
+                  with urllib.request.urlopen(url,timeout=60) as response: data=response.read(32*1024*1024+1)
+                  assert len(data)==archive['size_bytes'] and hashlib.sha256(data).hexdigest()==archive['sha256']
+                  (out/(cid+'-'+side+'.tar.gz')).write_bytes(data)
+          PY
+      - name: Replay exact source identities and all admission boundaries
+        env:
+          WHEEL_EXTERNAL_INTAKE_DIR: ${{ runner.temp }}/external-intake
+        run: python -m unittest discover -s preflight_tests -p test_external_candidate_intake.py -v
